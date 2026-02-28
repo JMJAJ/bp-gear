@@ -131,9 +131,9 @@ export const GAME_DATA = {
 
   RAID_BONUS: {
     "Earthfort": { l: "Shield (%)", v: 8.0, t: "f" },
-    "Block": { l: "Luck (%)", v: 6.0, t: "p" },
+    "Block": { l: "Luck (%)", v: 6.0, t: "f" },
     "Iado": { l: "Crit DMG (%)", v: 15.0, t: "f" },
-    "Moonstrike": { l: "Luck (%)", v: 6.0, t: "p" },
+    "Moonstrike": { l: "Luck (%)", v: 6.0, t: "f" },
     "Vanguard": { l: "Melee Damage Bonus (%)", v: 8.0, t: "f" },
     "Skyward": { l: "Lucky Strike DMG Multiplier (%)", v: 20.0, t: "f" },
     "Wildpack": { l: "Ranged Damage Bonus (%)", v: 8.0, t: "f" },

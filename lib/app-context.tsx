@@ -30,7 +30,7 @@ export interface ExtBuffs {
 }
 
 export type AccentColor = "yellow" | "red" | "blue" | "green"
-export type NavSection = "classes" | "planner" | "optimizer" | "modules" | "talents" | "profile" | "curves" | "database" | "guide" | "guide_stormblade"
+export type NavSection = "classes" | "planner" | "optimizer" | "modules" | "talents" | "profile" | "curves" | "database" | "guide" | "guide_stormblade" | "dps_simulator"
 
 const ACCENT_MAP: Record<AccentColor, string> = {
   yellow: "#e5c229",
@@ -62,6 +62,16 @@ export function getClassForSpec(spec: string): string | null {
 }
 
 export function getStatPercent(stat: string, raw: number): number {
+  const cData = GAME_DATA.CONSTANTS[stat]
+  if (!cData) return 0
+  const safeRaw = Math.max(0, raw)
+  // Game UI displays without base, but base still applies in combat
+  // For display purposes, we match the in-game UI
+  return (safeRaw / (safeRaw + cData.c)) * 100
+}
+
+/** Combat-accurate stat percent that includes the base value */
+export function getStatPercentCombat(stat: string, raw: number): number {
   const cData = GAME_DATA.CONSTANTS[stat]
   if (!cData) return 0
   const safeRaw = Math.max(0, raw)
@@ -184,7 +194,15 @@ export function calculateStats(
     }
   }
 
-  total.Haste += (baseAgi + moduleAgility) * 0.45
+  // Collect total agility from all sources:
+  // baseAgi (user-input character agility), moduleAgility (from power core modules),
+  // sigilAgility (from sigil bonuses like Blackfire Foxen, Goblin Axeman, etc.)
+  const sigilAgility = extraStats["Agility"] ?? 0
+  const rawAgility = baseAgi + moduleAgility + sigilAgility
+  // Apply Agility (%) from purple/legendary stats on armor
+  const agiPctBonus = purpleStats["Agility (%)"] ?? 0
+  const totalAgility = rawAgility * (1 + agiPctBonus / 100)
+  total.Haste += totalAgility * 0.45
 
   let extraTalentAspd = 0
   let extraTalentCspd = 0

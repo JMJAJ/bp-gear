@@ -3,23 +3,24 @@ import { useApp } from "@/lib/app-context"
 import type { NavSection, AccentColor } from "@/lib/app-context"
 
 const NAV_ITEMS: { id: NavSection; label: string; icon: string }[] = [
-  { id: "classes",             label: "Classes",            icon: "◆" },
-  { id: "planner",             label: "Planner",            icon: "▦" },
-  { id: "optimizer",           label: "Optimizer",          icon: "⚡" },
-  { id: "modules",             label: "Modules",            icon: "⚙" },
-  { id: "talents",             label: "Talents",            icon: "★" },
-  { id: "profile",             label: "Profile",            icon: "▣" },
-  { id: "curves",              label: "Stat Curves",        icon: "~" },
-  { id: "database",            label: "Database",           icon: "▤" },
-  { id: "guide",               label: "Beginner Guide",     icon: "?" },
-  { id: "guide_stormblade",    label: "Moonstrike Guide",   icon: "⚔" },
+  { id: "classes", label: "Classes", icon: "◆" },
+  { id: "planner", label: "Planner", icon: "▦" },
+  { id: "optimizer", label: "Optimizer", icon: "⚡" },
+  { id: "modules", label: "Modules", icon: "⚙" },
+  { id: "talents", label: "Talents", icon: "★" },
+  { id: "profile", label: "Profile", icon: "▣" },
+  { id: "curves", label: "Stat Curves", icon: "~" },
+  { id: "database", label: "Database", icon: "▤" },
+  { id: "guide", label: "Beginner Guide", icon: "?" },
+  { id: "guide_stormblade", label: "Moonstrike Guide", icon: "⚔" },
+  { id: "dps_simulator", label: "DPS Simulator", icon: "📈" },
 ]
 
 const ACCENT_OPTIONS: { id: AccentColor; color: string; label: string }[] = [
   { id: "yellow", color: "#e5c229", label: "Gold" },
-  { id: "red",    color: "#e84545", label: "Red" },
-  { id: "blue",   color: "#49A8FF", label: "Blue" },
-  { id: "green",  color: "#4ade80", label: "Green" },
+  { id: "red", color: "#e84545", label: "Red" },
+  { id: "blue", color: "#49A8FF", label: "Blue" },
+  { id: "green", color: "#4ade80", label: "Green" },
 ]
 
 export function Sidebar({ mobile }: { mobile?: boolean }) {

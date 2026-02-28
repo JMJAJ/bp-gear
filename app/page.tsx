@@ -11,24 +11,26 @@ import { DatabaseSection } from "@/components/database-section"
 import { GuideSection } from "@/components/guide-section"
 import { TalentsSection } from "@/components/talents-section"
 import { ProfileSection } from "@/components/profile-section"
+import { DpsSimulator } from "@/components/dps-simulator"
 import { useState, useEffect } from "react"
 
 const SECTION_TITLES: Record<string, string> = {
-  classes:             "Classes",
-  planner:             "Gear Planner",
-  optimizer:           "Auto-Optimizer",
-  modules:             "Power Core",
-  curves:              "Stat Curves",
-  database:            "Database",
-  guide:               "Beginner Guide",
-  guide_stormblade:    "Moonstrike Guide",
-  talents:             "Talents",
-  profile:             "Profile",
+  classes: "Classes",
+  planner: "Gear Planner",
+  optimizer: "Auto-Optimizer",
+  modules: "Power Core",
+  curves: "Stat Curves",
+  database: "Database",
+  guide: "Beginner Guide",
+  guide_stormblade: "Moonstrike Guide",
+  talents: "Talents",
+  profile: "Profile",
+  dps_simulator: "DPS Simulator",
 }
 
 function AppShell() {
   const { section, accentColor } = useApp()
-  const [mobileNavOpen,   setMobileNavOpen]   = useState(false)
+  const [mobileNavOpen, setMobileNavOpen] = useState(false)
   const [mobileStatsOpen, setMobileStatsOpen] = useState(false)
 
   // Scale the entire UI so it looks identical on any physical screen width.
@@ -88,9 +90,9 @@ function AppShell() {
             aria-label="Open menu"
           >
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-              <rect y="2"  width="16" height="1.5" fill="currentColor"/>
-              <rect y="7"  width="16" height="1.5" fill="currentColor"/>
-              <rect y="12" width="16" height="1.5" fill="currentColor"/>
+              <rect y="2" width="16" height="1.5" fill="currentColor" />
+              <rect y="7" width="16" height="1.5" fill="currentColor" />
+              <rect y="12" width="16" height="1.5" fill="currentColor" />
             </svg>
           </button>
 
@@ -125,16 +127,17 @@ function AppShell() {
           {/* Scrollable content area */}
           <main className="flex-1 min-w-0 overflow-y-auto">
             <div className="px-4 lg:px-6 xl:px-10 py-5 w-full">
-              {section === "classes"          && <ClassesSection />}
-              {section === "planner"          && <PlannerSection />}
-              {section === "optimizer"        && <OptimizerSection />}
-              {section === "modules"          && <ModulesSection />}
-              {section === "curves"           && <CurvesSection />}
-              {section === "database"         && <DatabaseSection />}
-              {section === "guide"            && <GuideSection />}
-              {section === "guide_stormblade"   && <GuideSection variant="stormblade" />}
+              {section === "classes" && <ClassesSection />}
+              {section === "planner" && <PlannerSection />}
+              {section === "optimizer" && <OptimizerSection />}
+              {section === "modules" && <ModulesSection />}
+              {section === "curves" && <CurvesSection />}
+              {section === "database" && <DatabaseSection />}
+              {section === "guide" && <GuideSection />}
+              {section === "guide_stormblade" && <GuideSection variant="stormblade" />}
               {section === "talents" && <TalentsSection />}
               {section === "profile" && <ProfileSection />}
+              {section === "dps_simulator" && <DpsSimulator />}
             </div>
           </main>
 
