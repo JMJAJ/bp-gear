@@ -333,7 +333,7 @@ export function calculateStats(
   }
 
   const hastePct = getStatPercent("Haste", total.Haste) + ext.haste
-  const aspdRatio = talentFlags?.swift ? 1.0 : ratios.aspd
+  const aspdRatio = talentFlags?.swift ? ratios.aspd + 1.0 : ratios.aspd
   const talentAspdVal = talentFlags?.aspd ?? 0
   const set2pcAspd = (raid2pcBonus?.t === "aspd") ? raid2pcBonus.v : 0
   const set2pcCspd = (raid2pcBonus?.t === "cspd") ? raid2pcBonus.v : 0
