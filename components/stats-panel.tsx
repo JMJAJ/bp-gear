@@ -264,7 +264,7 @@ export function StatsPanel() {
       </div>
 
       {/* Base raw stats */}
-      <div className="px-4 py-3 border-b border-[#1a1a1a]">
+      {/* <div className="px-4 py-3 border-b border-[#1a1a1a]">
         <div className="text-[9px] uppercase tracking-[1px] text-[#444] mb-2">
           <span
             className="game-tooltip"
@@ -281,10 +281,10 @@ export function StatsPanel() {
           <NumberInput label="Vers"    value={base.vers}  onChange={v => setBase({vers:v})} />
           <NumberInput label="Agility*" value={base.agi}  onChange={v => setBase({agi:v})} tip="Your character's base Agility (from class/level). Converts to raw Haste at 0.45 ratio. Check in-game character panel." />
         </div>
-      </div>
+      </div> */}
 
       {/* External buffs */}
-      <div className="px-4 py-3">
+      {/* <div className="px-4 py-3">
         <div className="text-[9px] uppercase tracking-[1px] text-[#444] mb-2">
           <span
             className="game-tooltip"
@@ -303,7 +303,7 @@ export function StatsPanel() {
           <NumberInput label="CSPD %"    value={ext.cspd}  onChange={v => setExt({cspd:v})}  step={0.1} />
           <NumberInput label="Illusion" value={ext.illu}  onChange={v => setExt({illu:v})}  tip="Sum of Illusion Strength from all gear pieces." />
         </div>
-      </div>
+      </div> */}
     </aside>
   )
 }
