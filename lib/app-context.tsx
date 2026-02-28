@@ -5,6 +5,7 @@ import {
   type GearSlot, type StatsResult, type Build, type GearLibItem,
   getSlotType, getTierData, getDefaultTier,
 } from "@/lib/game-data"
+import { TALENT_DATA } from "@/lib/talent-data"
 
 export type { GearSlot, StatsResult, Build, GearLibItem }
 
@@ -81,7 +82,7 @@ export function calculateStats(
   ext: ExtBuffs,
   legendaryTypes: string[],
   legendaryVals: number[],
-  talentFlags?: { swift?: boolean; aspd?: number },
+  talentFlags?: { swift?: boolean; aspd?: number; selectedIds?: string[] }
 ): StatsResult {
   const total: Record<string, number> = { Versatility: 0, Mastery: 0, Haste: 0, Crit: 0, Luck: 0 }
   const purpleStats: Record<string, number> = {}
@@ -185,6 +186,64 @@ export function calculateStats(
 
   total.Haste += (baseAgi + moduleAgility) * 0.45
 
+  let extraTalentAspd = 0
+  let extraTalentCspd = 0
+
+  if (className && talentFlags?.selectedIds && talentFlags.selectedIds.length > 0) {
+    const classTalents = TALENT_DATA[className] || []
+    talentFlags.selectedIds.forEach(tId => {
+      const t = classTalents.find((x: any) => x.id === tId)
+      if (!t) return
+      let desc = t.desc
+
+      const condMatch = desc.match(/When (Agility|Strength|Intellect|Endurance) reaches (\d+) points?, (.*)/i)
+      if (condMatch) {
+        const statReq = condMatch[1]
+        const reqVal = parseInt(condMatch[2])
+        if ((total[statReq] || 0) >= reqVal) {
+          desc = condMatch[3]
+        } else {
+          desc = ""
+        }
+      }
+
+      if (!desc) return
+
+      const aspdMatch = desc.match(/Attack Speed \+?(\d+(?:\.\d+)?)%/i)
+      if (aspdMatch) extraTalentAspd += parseFloat(aspdMatch[1])
+
+      const cspdMatch = desc.match(/Cast Speed \+?(\d+(?:\.\d+)?)%/i)
+      if (cspdMatch) extraTalentCspd += parseFloat(cspdMatch[1])
+
+      const critDmgMatch = desc.match(/Crit DMG \+?(\d+(?:\.\d+)?)%/i)
+      if (critDmgMatch) extraStats["Crit DMG (%)"] = (extraStats["Crit DMG (%)"] ?? 0) + parseFloat(critDmgMatch[1])
+
+      const critMatch = desc.match(/(?<!DMG )Crit(?: Rate)? \+?(\d+(?:\.\d+)?)%/i)
+      if (critMatch) purpleStats["Crit (%)"] = (purpleStats["Crit (%)"] ?? 0) + parseFloat(critMatch[1])
+
+      const luckMatch = desc.match(/Luck(?: Chance)? \+?(\d+(?:\.\d+)?)%/i)
+      if (luckMatch) purpleStats["Luck (%)"] = (purpleStats["Luck (%)"] ?? 0) + parseFloat(luckMatch[1])
+
+      const hpMatch = desc.match(/Max HP \+?(\d+(?:\.\d+)?)%/i)
+      if (hpMatch) extraStats["Max HP (%)"] = (extraStats["Max HP (%)"] ?? 0) + parseFloat(hpMatch[1])
+
+      const mastPctMatch = desc.match(/Mastery \+?(\d+(?:\.\d+)?)%/i)
+      if (mastPctMatch) purpleStats["Mastery (%)"] = (purpleStats["Mastery (%)"] ?? 0) + parseFloat(mastPctMatch[1])
+
+      const armorPctMatch = desc.match(/Armor \+?(\d+(?:\.\d+)?)%/i)
+      if (armorPctMatch) extraStats["Armor (%)"] = (extraStats["Armor (%)"] ?? 0) + parseFloat(armorPctMatch[1])
+
+      const versPctMatch = desc.match(/Versatility \+?(\d+(?:\.\d+)?)%/i)
+      if (versPctMatch) purpleStats["Versatility (%)"] = (purpleStats["Versatility (%)"] ?? 0) + parseFloat(versPctMatch[1])
+
+      const mastFlatMatch = desc.match(/Mastery \+?([\d,]+)(?!%)/i)
+      if (mastFlatMatch) total["Mastery"] = (total["Mastery"] ?? 0) + parseInt(mastFlatMatch[1].replace(/,/g, ""))
+
+      const armorFlatMatch = desc.match(/Armor ([\d,]+)(?!%)/i)
+      if (armorFlatMatch) total["Armor"] = (total["Armor"] ?? 0) + parseInt(armorFlatMatch[1].replace(/,/g, ""))
+    })
+  }
+
   let appliedBonus: StatsResult["appliedBonus"] = null
   const weaponEffects: string[] = []
   const hasRaidWeapon = gear[0]?.raid
@@ -261,12 +320,12 @@ export function calculateStats(
   const set2pcAspd = (raid2pcBonus?.t === "aspd") ? raid2pcBonus.v : 0
   const set2pcCspd = (raid2pcBonus?.t === "cspd") ? raid2pcBonus.v : 0
   // Moonstrike: ASPD +6% only if base ASPD < 80 (compute base first, then conditionally add)
-  const aspdBase = hastePct * aspdRatio + (purpleStats["Attack Speed (%)"] ?? 0) + ext.aspd + moduleAspd + talentAspdVal + set2pcAspd
+  const aspdBase = hastePct * aspdRatio + (purpleStats["Attack Speed (%)"] ?? 0) + ext.aspd + moduleAspd + talentAspdVal + extraTalentAspd + set2pcAspd
   const set2pcAspdCond = (raid2pcBonus?.t === "aspd_cond" && aspdBase < 80) ? raid2pcBonus.v : 0
   const aspd = aspdBase + set2pcAspdCond
   // Shield 4pc: Haste +6% (additive to final haste percent, affects CSPD/ASPD indirectly via display)
   const set4pcHaste = (raid4pcBonus?.t === "haste_pct") ? raid4pcBonus.v : 0
-  const cspd = hastePct * ratios.cspd + (purpleStats["Cast Speed (%)"] ?? 0) + ext.cspd + moduleCspd + set2pcCspd
+  const cspd = hastePct * ratios.cspd + (purpleStats["Cast Speed (%)"] ?? 0) + ext.cspd + moduleCspd + extraTalentCspd + set2pcCspd
 
   return {
     total, purpleStats, extraStats, moduleStats, powerCorePoints, appliedBonus, weaponEffects, aspd, cspd, talentAspd: talentAspdVal, ext: {
@@ -428,7 +487,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const recalculate = useCallback(() => {
     const className = getClassForSpec(spec)
-    const talentFlags = { swift: className === "Stormblade" && selectedTalents.includes("swift"), aspd: talentAspd }
+    const talentFlags = { swift: className === "Stormblade" && selectedTalents.includes("swift"), aspd: talentAspd, selectedIds: selectedTalents }
     const result = calculateStats(gear, imagines, modules, spec, base, ext, legendaryTypes, legendaryVals, talentFlags)
     setStats(result)
   }, [gear, imagines, modules, spec, base, ext, talentAspd, legendaryTypes, legendaryVals, selectedTalents])

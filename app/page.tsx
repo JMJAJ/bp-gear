@@ -14,12 +14,12 @@ import { ProfileSection } from "@/components/profile-section"
 import { useState, useEffect } from "react"
 
 const SECTION_TITLES: Record<string, string> = {
-  classes:          "Classes",
-  planner:          "Gear Planner",
-  optimizer:        "Auto-Optimizer",
-  modules:          "Power Core",
-  curves:           "Stat Curves",
-  database:         "Database",
+  classes:             "Classes",
+  planner:             "Gear Planner",
+  optimizer:           "Auto-Optimizer",
+  modules:             "Power Core",
+  curves:              "Stat Curves",
+  database:            "Database",
   guide:               "Beginner Guide",
   guide_stormblade:    "Moonstrike Guide",
   talents:             "Talents",
@@ -38,7 +38,7 @@ function AppShell() {
   const [uiScale, setUiScale] = useState({ zoom: 1, w: "100vw", h: "100vh" })
   useEffect(() => {
     const physW = window.screen.width
-    const BASE  = 1920
+    const BASE = 1920
     if (physW > BASE) {
       const z = physW / BASE
       setUiScale({ zoom: z, w: `${(100 / z).toFixed(4)}vw`, h: `${(100 / z).toFixed(4)}vh` })
@@ -115,7 +115,7 @@ function AppShell() {
             >
               Stats
             </button>
-            <span className="text-[9px] text-[#2a2a2a] hidden md:block">v2.1</span>
+            <span className="text-[9px] text-[#2a2a2a] hidden md:block">v2.5-beta</span>
           </div>
         </header>
 

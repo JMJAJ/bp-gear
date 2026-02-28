@@ -3,15 +3,15 @@ import { useApp } from "@/lib/app-context"
 import type { NavSection, AccentColor } from "@/lib/app-context"
 
 const NAV_ITEMS: { id: NavSection; label: string; icon: string }[] = [
-  { id: "classes",         label: "Classes",         icon: "◆" },
-  { id: "planner",         label: "Planner",          icon: "▦" },
-  { id: "optimizer",       label: "Optimizer",        icon: "⚡" },
-  { id: "modules",         label: "Modules",          icon: "⚙" },
-  { id: "talents",            label: "Talents",             icon: "★" },
-  { id: "profile",            label: "Profile",             icon: "▣" },
-  { id: "curves",          label: "Stat Curves",      icon: "~" },
-  { id: "database",        label: "Database",         icon: "▤" },
-  { id: "guide",           label: "Beginner Guide",   icon: "?" },
+  { id: "classes",             label: "Classes",            icon: "◆" },
+  { id: "planner",             label: "Planner",            icon: "▦" },
+  { id: "optimizer",           label: "Optimizer",          icon: "⚡" },
+  { id: "modules",             label: "Modules",            icon: "⚙" },
+  { id: "talents",             label: "Talents",            icon: "★" },
+  { id: "profile",             label: "Profile",            icon: "▣" },
+  { id: "curves",              label: "Stat Curves",        icon: "~" },
+  { id: "database",            label: "Database",           icon: "▤" },
+  { id: "guide",               label: "Beginner Guide",     icon: "?" },
   { id: "guide_stormblade",    label: "Moonstrike Guide",   icon: "⚔" },
 ]
 
@@ -39,7 +39,7 @@ export function Sidebar({ mobile }: { mobile?: boolean }) {
           className="text-[10px] font-light tracking-[1px] mt-0.5"
           style={{ color: accentColor }}
         >
-          GEAR ARCHITECT v2.1
+          GEAR BUILDER v2.5-beta
         </div>
       </div>
 
