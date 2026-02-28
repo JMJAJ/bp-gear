@@ -1,0 +1,153 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  /* ── BPSR Gear Architect — in-game black/white + accent theme ── */
+  --background: #000000;
+  --foreground: #ffffff;
+  --card: #0a0a0a;
+  --card-foreground: #ffffff;
+  --popover: #111111;
+  --popover-foreground: #ffffff;
+  --primary: #ffffff;
+  --primary-foreground: #000000;
+  --secondary: #1a1a1a;
+  --secondary-foreground: #ffffff;
+  --muted: #111111;
+  --muted-foreground: #666666;
+  --accent: #e5c229;         /* yellow default — overridden by JS */
+  --accent-foreground: #000000;
+  --destructive: #ff4444;
+  --destructive-foreground: #ffffff;
+  --border: #222222;
+  --border-light: #333333;
+  --input: #111111;
+  --ring: #555555;
+  --radius: 0px;
+
+  /* Game-specific tokens */
+  --panel-bg: rgba(10,10,10,0.95);
+  --panel-border: #2a2a2a;
+  --stat-bar-bg: #1a1a1a;
+  --text-mid: #aaaaaa;
+  --text-dim: #555555;
+}
+
+@theme inline {
+  --font-sans: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
+  --font-mono: var(--font-space-grotesk), 'Space Grotesk', monospace;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-xl: 0px;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+    box-sizing: border-box;
+  }
+  body {
+    @apply bg-background text-foreground font-sans;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: #000; }
+  ::-webkit-scrollbar-thumb { background: #333; }
+  ::-webkit-scrollbar-thumb:hover { background: #555; }
+
+  select, input[type="number"], input[type="text"] {
+    background: var(--input);
+    border: 1px solid var(--border);
+    color: #fff;
+    padding: 6px 8px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.8rem;
+    width: 100%;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  select:focus, input:focus {
+    border-color: #555;
+  }
+  select:disabled, input:disabled {
+    opacity: 0.25;
+    cursor: not-allowed;
+  }
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
+  input[type="number"] { -moz-appearance: textfield; }
+  input[type="checkbox"] { accent-color: var(--accent); width: 14px; height: 14px; cursor: pointer; }
+  a { color: #88c0ff; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+}
+
+/* Accent color classes (controlled by JS/React state) */
+.accent-yellow { --accent: #e5c229; }
+.accent-red    { --accent: #e84545; }
+.accent-blue   { --accent: #49A8FF; }
+.accent-green  { --accent: #4ade80; }
+
+/* Scan-line overlay for in-game feel */
+.scanlines::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.03) 2px,
+    rgba(0,0,0,0.03) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* Tooltip */
+.game-tooltip {
+  position: relative;
+  cursor: help;
+  border-bottom: 1px dotted #555;
+}
+.game-tooltip::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1a1a1a;
+  border: 1px solid #333;
+  color: #fff;
+  padding: 6px 10px;
+  font-size: 0.72rem;
+  white-space: normal;
+  max-width: 260px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s;
+  z-index: 50;
+  line-height: 1.4;
+}
+.game-tooltip:hover::after { opacity: 1; }
