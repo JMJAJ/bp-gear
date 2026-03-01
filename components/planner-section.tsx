@@ -335,6 +335,7 @@ export function PlannerSection() {
     modules, gearLib, setModules,
     selectedTalents, setSelectedTalents,
     talentAspd, setTalentAspd,
+    gearSets, importGearSets,
   } = useApp()
   const importRef = useRef<HTMLInputElement>(null)
   const [importStatus, setImportStatus] = useState<"" | "ok" | "err" | "scan">("")
@@ -351,7 +352,7 @@ export function PlannerSection() {
 
   function exportAll() {
     const payload = {
-      version: 2,
+      version: 3,
       build,
       spec,
       gear,
@@ -362,6 +363,7 @@ export function PlannerSection() {
       gearLib,
       selectedTalents,
       talentAspd,
+      gearSets,
       exportedAt: new Date().toISOString(),
     }
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" })
@@ -391,8 +393,8 @@ export function PlannerSection() {
           return
         }
 
-        // Detect our own export format (v2 with gear/modules/etc.)
-        if (parsed.version === 2 || parsed.gear) {
+        // Detect our own export format (v2/v3 with gear/modules/etc.)
+        if (parsed.version >= 2 || parsed.gear) {
           if (parsed.build) setBuild(parsed.build)
           if (parsed.spec) setSpec(parsed.spec)
           if (parsed.gear) setGear(parsed.gear)
@@ -402,6 +404,7 @@ export function PlannerSection() {
           if (parsed.imagines && Array.isArray(parsed.imagines)) setAllImagines(parsed.imagines)
           if (parsed.selectedTalents && Array.isArray(parsed.selectedTalents)) setSelectedTalents(parsed.selectedTalents)
           if (typeof parsed.talentAspd === "number") setTalentAspd(parsed.talentAspd)
+          if (parsed.gearSets && Array.isArray(parsed.gearSets)) importGearSets(parsed.gearSets)
           setImportStatus("ok")
           setTimeout(() => setImportStatus(""), 3000)
         }

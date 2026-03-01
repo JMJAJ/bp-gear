@@ -437,6 +437,7 @@ interface AppState {
   deleteGearSet: (id: string) => void
   loadGearSet: (id: string) => void
   renameGearSet: (id: string, name: string) => void
+  importGearSets: (sets: GearSet[]) => void
 }
 
 const AppContext = createContext<AppState | null>(null)
@@ -571,6 +572,15 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setGearSets(prev => prev.map(s => s.id === id ? { ...s, name } : s))
   }, [])
 
+  const importGearSets = useCallback((sets: GearSet[]) => {
+    setGearSets(prev => {
+      // Merge: keep existing sets, add new ones (skip duplicates by id)
+      const existingIds = new Set(prev.map(s => s.id))
+      const newSets = sets.filter(s => !existingIds.has(s.id))
+      return [...prev, ...newSets]
+    })
+  }, [])
+
   const recalculate = useCallback(() => {
     const className = getClassForSpec(spec)
     const talentFlags = { swift: className === "Stormblade" && selectedTalents.includes("swift"), aspd: talentAspd, selectedIds: selectedTalents }
@@ -658,7 +668,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     getAllowedForSlot,
     selectedTalents, setSelectedTalents,
     talentAspd, setTalentAspd,
-    gearSets, saveGearSet, deleteGearSet, loadGearSet, renameGearSet,
+    gearSets, saveGearSet, deleteGearSet, loadGearSet, renameGearSet, importGearSets,
   }
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>
