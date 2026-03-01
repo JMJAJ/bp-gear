@@ -12,7 +12,7 @@ export const GAME_DATA = {
     "Mastery": { c: 19975, base: 6 },
     "Haste": { c: 19975, base: 0 },
     "Crit": { c: 19975, base: 5 },
-    "Luck": { c: 16230, base: 5 },
+    "Luck": { c: 19975, base: 5 },
   } as Record<string, { c: number; base: number }>,
 
   IMAGINE: {

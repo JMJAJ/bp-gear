@@ -1,7 +1,8 @@
 "use client"
 import { useState, useEffect, useCallback } from "react"
-import { useApp, getStatPercent, getClassForSpec } from "@/lib/app-context"
+import { useApp, getStatPercentCombat, getClassForSpec } from "@/lib/app-context"
 import type { FetchedTalent } from "@/app/api/talents/route"
+import { ArrowUpRight } from "lucide-react"
 
 // ── ASPD keyword detection ─────────────────────────────────────────────────
 function isAspdTalent(desc: string): boolean {
@@ -79,7 +80,7 @@ export function TalentsSection() {
   const swiftActive = className === "Stormblade" && selectedTalents.includes("swift")
   const swiftAspdContrib =
     swiftActive && stats
-      ? (getStatPercent("Haste", stats.total.Haste) + stats.ext.haste) * 0.4
+      ? (getStatPercentCombat("Haste", stats.total.Haste) + stats.ext.haste) * 0.4
       : 0
 
   const aspdTalentsSelected = talents.filter(
@@ -132,7 +133,7 @@ export function TalentsSection() {
               <div className="text-[10px] mb-1" style={{ color: accentColor }}>
                 Swift auto-contribution:{" "}
                 <span className="font-bold">+{swiftAspdContrib.toFixed(2)}%</span> ASPD (
-                {(getStatPercent("Haste", stats.total.Haste) + stats.ext.haste).toFixed(1)}% Haste
+                {(getStatPercentCombat("Haste", stats.total.Haste) + stats.ext.haste).toFixed(1)}% Haste
                 × 1.0 ratio, base was ×0.6)
               </div>
             )}
@@ -352,8 +353,8 @@ export function TalentsSection() {
                       {talent.desc}
                     </div>
                     {isAspd && selected && (
-                      <div className="text-[9px] mt-1" style={{ color: accentColor + "cc" }}>
-                        ↑ {getAspdNote(talent.name, className)}
+                      <div className="text-[9px] mt-1 inline-flex items-center gap-1" style={{ color: accentColor + "cc" }}>
+                        <ArrowUpRight className="w-3 h-3" /> {getAspdNote(talent.name, className)}
                       </div>
                     )}
                   </div>

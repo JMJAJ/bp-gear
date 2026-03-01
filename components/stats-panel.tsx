@@ -1,6 +1,7 @@
 "use client"
-import { useApp, getStatPercent } from "@/lib/app-context"
+import { useApp, getStatPercentCombat } from "@/lib/app-context"
 import { GAME_DATA, MODULE_THRESHOLDS, LEVEL_COLORS } from "@/lib/game-data"
+import { Check, X, Settings } from "lucide-react"
 
 const STATS = [
   { key: "crit", stat: "Crit", extKey: "crit" },
@@ -69,7 +70,7 @@ export function StatsPanel() {
         {STATS.map(({ key, stat, extKey }) => {
           const raw = stats?.total[stat] ?? 0
           const extVal = stats?.ext[extKey as keyof typeof stats.ext] ?? 0
-          const pct = getStatPercent(stat, raw) + extVal
+          const pct = getStatPercentCombat(stat, raw) + extVal
           return (
             <div key={key}>
               <div className="flex justify-between items-center">
@@ -110,7 +111,7 @@ export function StatsPanel() {
           {(stats?.aspd ?? 0) > 0 && (
             <div className="text-[9px] text-[#444] mb-2">
               {[25, 50, 80].filter(bp => (stats?.aspd ?? 0) >= bp).map(bp => (
-                <span key={bp} className="mr-1.5" style={{ color: "#4ade80" }}>{bp}% ✓</span>
+                <span key={bp} className="mr-1.5 inline-flex items-center gap-0.5" style={{ color: "#4ade80" }}>{bp}% <Check className="w-3 h-3" /></span>
               ))}
               {[25, 50, 80].find(bp => (stats?.aspd ?? 0) < bp) && (
                 <span className="text-[#444]">
@@ -213,13 +214,13 @@ export function StatsPanel() {
             <div className="text-[9px] uppercase tracking-[1px] text-[#444] mb-1">Raid Set Bonuses</div>
             {stats?.raid2pcBonus && (
               <div className="text-[10px] py-0.5" style={{ color: (stats.raidArmorCount ?? 0) >= 2 ? accentColor : "#333" }}>
-                <span className="font-bold mr-1">{(stats.raidArmorCount ?? 0) >= 2 ? "✓" : "✗"}</span>
+                <span className="font-bold mr-1">{(stats.raidArmorCount ?? 0) >= 2 ? <Check className="w-3 h-3 inline" /> : <X className="w-3 h-3 inline" />}</span>
                 {stats.raid2pcBonus.l}
               </div>
             )}
             {stats?.raid4pcBonus && (
               <div className="text-[10px] py-0.5 mt-0.5" style={{ color: (stats.raidArmorCount ?? 0) >= 4 ? accentColor : "#333" }}>
-                <span className="font-bold mr-1">{(stats.raidArmorCount ?? 0) >= 4 ? "✓" : "✗"}</span>
+                <span className="font-bold mr-1">{(stats.raidArmorCount ?? 0) >= 4 ? <Check className="w-3 h-3 inline" /> : <X className="w-3 h-3 inline" />}</span>
                 {stats.raid4pcBonus.l}
               </div>
             )}
@@ -238,7 +239,7 @@ export function StatsPanel() {
             onClick={() => setSection("modules")}
             className="text-[9px] uppercase tracking-[0.5px] text-[#555] hover:text-[#aaa] transition-colors"
           >
-            Config ⚙
+            Config <Settings className="w-3 h-3 inline" />
           </button>
         </div>
         {stats?.powerCorePoints && Object.keys(stats.powerCorePoints).length > 0 ? (

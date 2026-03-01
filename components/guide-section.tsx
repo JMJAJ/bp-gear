@@ -1,5 +1,6 @@
 "use client"
 import { useApp } from "@/lib/app-context"
+import { ArrowRight } from "lucide-react"
 
 function Block({ title, children }: { title: string; children: React.ReactNode }) {
   const { accentColor } = useApp()
@@ -109,7 +110,7 @@ export function GuideSection({ variant }: { variant?: "stormblade" }) {
             className="px-5 py-2.5 text-[11px] font-bold uppercase tracking-[1.5px] transition-all"
             style={{ background: accentColor, color: "#000" }}
           >
-            Load Moonstrike Template →
+            Load Moonstrike Template <ArrowRight className="w-3 h-3 inline" />
           </button>
         </div>
       </div>

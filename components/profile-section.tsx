@@ -1,6 +1,6 @@
 "use client"
 import { useState } from "react"
-import { useApp, getClassForSpec, getStatPercent } from "@/lib/app-context"
+import { useApp, getClassForSpec, getStatPercentCombat } from "@/lib/app-context"
 import { GAME_DATA, SIGIL_DB, getTierData, getSlotType } from "@/lib/game-data"
 import type { GearSlot } from "@/lib/game-data"
 
@@ -291,7 +291,7 @@ export function ProfileSection() {
       const raw = stats.total[label] || 0
       const extKey = label === "Versatility" ? "vers" : label === "Mastery" ? "mast" : label === "Haste" ? "haste" : label === "Crit" ? "crit" : label === "Luck" ? "luck" : ""
       const extVal = (stats.ext as any)?.[extKey] || 0
-      const pct = getStatPercent(label, raw) + extVal
+      const pct = getStatPercentCombat(label, raw) + extVal
       return `${pct.toFixed(2)}%`
     }
 

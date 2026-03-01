@@ -304,6 +304,17 @@ export function calculateStats(
     if (total[statName] !== undefined) total[statName] *= (1 + raidBonus.v / 100)
     appliedBonus = raidBonus
   }
+  if (hasRaidWeapon && raidBonus && raidBonus.t === "f") {
+    // Flat percentage bonus - add to purpleStats for display
+    const statName = raidBonus.l
+    if (statName.includes("Luck")) purpleStats["Luck (%)"] = (purpleStats["Luck (%)"] ?? 0) + raidBonus.v
+    else if (statName.includes("Crit")) purpleStats["Crit (%)"] = (purpleStats["Crit (%)"] ?? 0) + raidBonus.v
+    else if (statName.includes("Haste")) purpleStats["Haste (%)"] = (purpleStats["Haste (%)"] ?? 0) + raidBonus.v
+    else if (statName.includes("Mastery")) purpleStats["Mastery (%)"] = (purpleStats["Mastery (%)"] ?? 0) + raidBonus.v
+    else if (statName.includes("Versatility")) purpleStats["Versatility (%)"] = (purpleStats["Versatility (%)"] ?? 0) + raidBonus.v
+    else extraStats[statName] = (extraStats[statName] ?? 0) + raidBonus.v
+    appliedBonus = raidBonus
+  }
   if (hasRaidWeapon && weaponBuff) {
     if (weaponBuff.b1 && total[weaponBuff.b1] !== undefined) {
       total[weaponBuff.b1] *= (1 + weaponBuff.b1v / 100)
@@ -320,7 +331,7 @@ export function calculateStats(
   if (raid2pcBonus) {
     if (raid2pcBonus.t === "mastery_crit") {
       // Wildpack: each 1% Mastery grants v% Crit DMG
-      const mastPct = getStatPercent("Mastery", total.Mastery)
+      const mastPct = getStatPercentCombat("Mastery", total.Mastery)
       extraStats["Crit DMG (%)"] = (extraStats["Crit DMG (%)"] ?? 0) + mastPct * raid2pcBonus.v
     }
     if (raid2pcBonus.t === "armor_ignore") {
@@ -345,7 +356,7 @@ export function calculateStats(
     }
   }
 
-  const hastePct = getStatPercent("Haste", total.Haste) + ext.haste
+  const hastePct = getStatPercentCombat("Haste", total.Haste) + ext.haste
   const aspdRatio = talentFlags?.swift ? ratios.aspd + 1.0 : ratios.aspd
   const talentAspdVal = talentFlags?.aspd ?? 0
   const set2pcAspd = (raid2pcBonus?.t === "aspd") ? raid2pcBonus.v : 0

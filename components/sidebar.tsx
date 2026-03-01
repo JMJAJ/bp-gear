@@ -1,20 +1,25 @@
 "use client"
 import { useApp } from "@/lib/app-context"
 import type { NavSection, AccentColor } from "@/lib/app-context"
+import { 
+  Crown, LayoutDashboard, Package, Zap, Puzzle, Star, 
+  User, TrendingUp, Database, BookOpen, BarChart3 
+} from "lucide-react"
+import type { LucideIcon } from "lucide-react"
 
-const NAV_ITEMS: { id: NavSection; label: string; icon: string }[] = [
-  { id: "classes", label: "Classes", icon: "◆" },
-  { id: "planner", label: "Planner", icon: "▦" },
-  { id: "gear_sets", label: "Gear Sets", icon: "◈" },
-  { id: "optimizer", label: "Optimizer", icon: "⚡" },
-  { id: "modules", label: "Modules", icon: "⚙" },
-  { id: "talents", label: "Talents", icon: "★" },
-  { id: "profile", label: "Profile", icon: "▣" },
-  { id: "curves", label: "Stat Curves", icon: "~" },
-  { id: "database", label: "Database", icon: "▤" },
-  { id: "guide", label: "Beginner Guide", icon: "?" },
+const NAV_ITEMS: { id: NavSection; label: string; icon: LucideIcon }[] = [
+  { id: "classes", label: "Classes", icon: Crown },
+  { id: "planner", label: "Planner", icon: LayoutDashboard },
+  { id: "gear_sets", label: "Gear Sets", icon: Package },
+  { id: "optimizer", label: "Optimizer", icon: Zap },
+  { id: "modules", label: "Modules", icon: Puzzle },
+  { id: "talents", label: "Talents", icon: Star },
+  { id: "profile", label: "Profile", icon: User },
+  { id: "curves", label: "Stat Curves", icon: TrendingUp },
+  { id: "database", label: "Database", icon: Database },
+  { id: "guide", label: "Beginner Guide", icon: BookOpen },
   // { id: "guide_stormblade", label: "Moonstrike Guide", icon: "⚔" },
-  { id: "dps_simulator", label: "DPS Simulator", icon: "📈" },
+  { id: "dps_simulator", label: "DPS Simulator", icon: BarChart3 },
 ]
 
 const ACCENT_OPTIONS: { id: AccentColor; color: string; label: string }[] = [
@@ -41,7 +46,7 @@ export function Sidebar({ mobile }: { mobile?: boolean }) {
           className="text-[10px] font-light tracking-[1px] mt-0.5"
           style={{ color: accentColor }}
         >
-          GEAR BUILDER v2.5-beta
+          GEAR BUILDER v0.3.1-beta
         </div>
       </div>
 
@@ -58,7 +63,7 @@ export function Sidebar({ mobile }: { mobile?: boolean }) {
               background: section === item.id ? "#111" : "transparent",
             }}
           >
-            <span className="w-4 text-center text-[12px]">{item.icon}</span>
+            <item.icon className="w-4 h-4" />
             {item.label}
           </button>
         ))}

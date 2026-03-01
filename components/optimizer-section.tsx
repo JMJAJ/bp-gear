@@ -1,6 +1,6 @@
 "use client"
 import { useState } from "react"
-import { useApp, calculateStats, getStatPercent } from "@/lib/app-context"
+import { useApp, calculateStats, getStatPercentCombat } from "@/lib/app-context"
 import {
   GAME_DATA, getDefaultTier, getSlotType, getTierData,
   getPurpleValOptions, getArmorPurpleForBuild, findRaidTier, findGoldTier,
@@ -153,11 +153,11 @@ export function OptimizerSection() {
   function calcDiff(g: GearSlot[], img: typeof imagines, lt: string[], lv: number[]) {
     const res = calculateStats(g, img, modules, spec, base, ext, lt, lv)
     const p = {
-      v: getStatPercent("Versatility", res.total.Versatility) + res.ext.vers,
-      m: getStatPercent("Mastery", res.total.Mastery) + res.ext.mast,
-      h: getStatPercent("Haste", res.total.Haste) + res.ext.haste,
-      c: getStatPercent("Crit", res.total.Crit) + res.ext.crit,
-      l: getStatPercent("Luck", res.total.Luck) + res.ext.luck,
+      v: getStatPercentCombat("Versatility", res.total.Versatility) + res.ext.vers,
+      m: getStatPercentCombat("Mastery", res.total.Mastery) + res.ext.mast,
+      h: getStatPercentCombat("Haste", res.total.Haste) + res.ext.haste,
+      c: getStatPercentCombat("Crit", res.total.Crit) + res.ext.crit,
+      l: getStatPercentCombat("Luck", res.total.Luck) + res.ext.luck,
     }
     return (
       Math.abs(p.v-targets.vers) + Math.abs(p.m-targets.mast) +

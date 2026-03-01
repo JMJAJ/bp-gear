@@ -2,6 +2,7 @@
 import { useState, useMemo, useRef, useCallback, DragEvent } from "react"
 import { useApp, getStatPercent, getStatPercentCombat, getClassForSpec, calculateStatsFromGearSet, type GearSet, type StatsResult } from "@/lib/app-context"
 import { XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, AreaChart, Area, Line, LineChart, BarChart, Bar, Cell, ScatterChart, Scatter, ZAxis } from "recharts"
+import { Check } from "lucide-react"
 
 // ═══════════════════════════════════════════════════════════
 // SKILL DATA — Real motion values from Lv.30/30 in-game tooltips
@@ -1380,7 +1381,7 @@ export function DpsSimulator() {
                                 : "border-[#444] text-[#666] hover:border-[#555] hover:text-[#888]"
                                 }`}
                         >
-                            {compareMode ? "✓ Comparison Mode Active" : "Enable Comparison"}
+                            {compareMode ? <><Check className="w-3 h-3 inline" /> Comparison Mode Active</> : "Enable Comparison"}
                         </button>
                     </div>
                     {compareMode && gearSets.length > 0 && (
@@ -1424,7 +1425,7 @@ export function DpsSimulator() {
                                                 {set.name}
                                             </span>
                                             {isSelected && (
-                                                <span className="text-[9px] text-[#555]">✓</span>
+                                                <Check className="w-3 h-3 text-[#555]" />
                                             )}
                                         </button>
                                     )

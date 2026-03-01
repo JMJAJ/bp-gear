@@ -10,11 +10,10 @@ node_modules/
 .DS_Store
 .vercel
 
-BPSR*
-bpsr-*.json
-
 b_VpbGAFGoTnp-1772203562884.zip
 every_talent.txt
 read_xlsx.py
 public/test
 scripts
+datamine
+bpsr-*.json
