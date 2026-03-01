@@ -52,7 +52,7 @@ function NumberInput({ label, value, onChange, step, tip }: {
 }
 
 export function StatsPanel() {
-  const { stats, base, setBase, ext, setExt, accentColor, setSection, spec, psychoscopeConfig } = useApp()
+  const { stats, base, setBase, ext, setExt, accentColor, setSection, spec, psychoscopeConfig, setPsychoscopeConfig } = useApp()
   
   // Get active Deep-Slumber projection
   const activeProjection = MIND_PROJECTIONS.find(p => p.id === psychoscopeConfig?.projectionId)
@@ -69,37 +69,31 @@ export function StatsPanel() {
         </div>
       </div>
 
-      {/* Active Deep-Slumber */}
-      {activeProjection && (
-        <div className="px-4 py-3 border-b border-[#1a1a1a]">
-          <div className="flex items-center gap-2 mb-1">
-            <div 
-              className="w-2 h-2 rounded-full animate-pulse"
-              style={{ background: accentColor }}
-            />
-            <span className="text-[8px] uppercase tracking-[1px] text-[#444]">
-              Active Deep-Slumber
-            </span>
-          </div>
-          <div className="flex items-center gap-2">
-            {activeProjection.nodes[0]?.icon && (
-              <img 
-                src={activeProjection.nodes[0].icon} 
-                alt="" 
-                className="w-5 h-5 rounded"
-              />
-            )}
-            <span className="text-[10px] font-bold text-white">{activeProjection.name}</span>
-          </div>
-        </div>
-      )}
+      {/* Psychoscope toggle */}
+      <div className="px-4 py-2 border-b border-[#1a1a1a] flex items-center justify-between">
+        <span className="text-[9px] uppercase tracking-[1px] text-[#555]">Psychoscope</span>
+        <button
+          onClick={() => setPsychoscopeConfig({ ...psychoscopeConfig, enabled: !psychoscopeConfig.enabled })}
+          className="flex items-center gap-1.5 px-2 py-0.5 rounded border transition-all text-[9px] font-bold uppercase tracking-[0.5px]"
+          style={{
+            borderColor: psychoscopeConfig.enabled ? accentColor : '#333',
+            background: psychoscopeConfig.enabled ? `${accentColor}18` : 'transparent',
+            color: psychoscopeConfig.enabled ? accentColor : '#555',
+          }}
+        >
+          {psychoscopeConfig.enabled ? <Check className="w-3 h-3" /> : <X className="w-3 h-3" />}
+          {psychoscopeConfig.enabled ? 'On' : 'Off'}
+        </button>
+      </div>
 
       {/* Main stats */}
       <div className="px-4 py-3 border-b border-[#1a1a1a]">
         {STATS.map(({ key, stat, extKey }) => {
           const raw = stats?.total[stat] ?? 0
           const extVal = stats?.ext[extKey as keyof typeof stats.ext] ?? 0
-          const pct = getStatPercentCombat(stat, raw) + extVal
+          // Include purple stat % bonuses (Crit%, Luck%, Mastery%, etc.)
+          const purplePct = stats?.purpleStats?.[`${stat} (%)`] ?? 0
+          const pct = getStatPercentCombat(stat, raw) + extVal + purplePct
           return (
             <div key={key}>
               <div className="flex justify-between items-center">
@@ -221,6 +215,41 @@ export function StatsPanel() {
                 <span className="text-[#aaa]">+{v}</span>
               </div>
             ))}
+          </div>
+        )}
+
+        {/* Psychoscope Effects */}
+        {activeProjection && stats?.psychoscopeEffects && stats.psychoscopeEffects.activeEffects.length > 0 && (
+          <div className="mt-2 pt-2 border-t border-[#111]">
+            <div className="flex items-center gap-2 mb-1.5 px-2 py-1 rounded bg-[#0d0d0d] border border-[#1a1a1a]">
+              {activeProjection.nodes[0]?.icon && (
+                <img
+                  src={activeProjection.nodes[0].icon}
+                  alt=""
+                  className="w-5 h-5 rounded-sm"
+                />
+              )}
+
+              <span className="text-[9px] uppercase tracking-[1px] text-[#666]">
+                Psychoscope
+              </span>
+            
+              <span className="text-[#333] text-[9px]">—</span>
+            
+              <span className="text-[10px] font-semibold text-white leading-none">
+                {activeProjection.name}
+              </span>
+            </div>
+            
+            {/* Effects */}
+            <div className="border-b border-[#1a1a1a]">
+              {stats.psychoscopeEffects.activeEffects.map((effect, i) => (
+                <div key={i} className="text-[9px] text-[#777] py-0.5 leading-3.5">
+                  <span className="mr-1" style={{ color: accentColor }}>•</span>
+                  {effect}
+                </div>
+              ))}
+            </div>
           </div>
         )}
 

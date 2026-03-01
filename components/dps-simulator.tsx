@@ -281,7 +281,7 @@ export function DpsSimulator() {
     }, [im1Name, im2Name])
 
     // User-configurable inputs
-    const [manualAtk, setManualAtk] = useState(2944)
+    const [manualAtk, setManualAtk] = useState(3738)
     const [manualAspd, setManualAspd] = useState(0) // 0 = use planner value, >0 = override (e.g. 89 for 89%)
     const [fightDuration, setFightDuration] = useState(90)
     const [activeTab, setActiveTab] = useState<"chart" | "breakdown" | "log" | "timeline">("chart")
@@ -295,7 +295,7 @@ export function DpsSimulator() {
     // Comparison mode state
     const [compareMode, setCompareMode] = useState(false)
     const [selectedSetIds, setSelectedSetIds] = useState<string[]>([])
-    const { gearSets, base, ext } = useApp()
+    const { gearSets, base, ext, psychoscopeConfig } = useApp()
 
     // Drag handlers
     const onDragStartPalette = useCallback((e: DragEvent<HTMLDivElement>, key: string) => {
@@ -365,8 +365,9 @@ export function DpsSimulator() {
         // (Mastery +6% base, Crit +5% base, Luck +5% base)
         const versPct = getStatPercentCombat("Versatility", stats.total.Versatility) / 100
         const mastPct = getStatPercentCombat("Mastery", stats.total.Mastery) / 100
-        const critRate = Math.min(getStatPercentCombat("Crit", stats.total.Crit) / 100, 1)
-        const luckRate = Math.min(getStatPercentCombat("Luck", stats.total.Luck) / 100, 1)
+        // Include purple stat % bonuses (Crit%, Luck% from gear legendaries, talents, psychoscope bond)
+        const critRate = Math.min((getStatPercentCombat("Crit", stats.total.Crit) + (stats.purpleStats?.["Crit (%)"] ?? 0)) / 100, 1)
+        const luckRate = Math.min((getStatPercentCombat("Luck", stats.total.Luck) + (stats.purpleStats?.["Luck (%)"] ?? 0)) / 100, 1)
         const hastePct = getStatPercentCombat("Haste", stats.total.Haste)
         const aspd = stats.aspd / 100
 
@@ -403,6 +404,8 @@ export function DpsSimulator() {
             dmgBoss, meleeDmg, weaponAtkPct,
             physDmgPct, dmgStackPct,
             raid2pc: stats.raid2pcBonus, raid4pc: stats.raid4pcBonus,
+            // Psychoscope effects
+            psyEffects: stats.psychoscopeEffects,
         }
     }, [stats, isMoonstrike])
 
@@ -413,7 +416,7 @@ export function DpsSimulator() {
             versPct, mastPct, critRate, luckRate, hastePct, aspd, avgCritLuck,
             dmgBoss, meleeDmg, weaponAtkPct,
             critMult, luckMult, physDmgPct, dmgStackPct,
-            raid2pc, raid4pc,
+            raid2pc, raid4pc, psyEffects,
         } = combat
 
         // ── Attack Speed: use manual override if provided, else planner value ──
@@ -423,6 +426,22 @@ export function DpsSimulator() {
         // module ATK, agility conversion, and purple ATK% bonuses.
         // Only apply weapon combat buff ATK% (not shown on character sheet).
         let effAtk = manualAtk * (1 + weaponAtkPct)
+
+        // Psychoscope: ATK from stat scaling (e.g., Stormblade X6: Each 1% Crit → 0.5% ATK)
+        // This is a persistent passive, applied as additional ATK multiplier
+        const psyAtkFromStatPct = psyEffects?.atkFromStat && psyEffects.atkFromStat.target !== "CritDMG"
+            ? getStatPercentCombat(psyEffects.atkFromStat.stat, stats?.total[psyEffects.atkFromStat.stat] ?? 0) * psyEffects.atkFromStat.ratio / 100
+            : 0
+        effAtk *= (1 + psyAtkFromStatPct)
+
+        // Psychoscope DPS bonuses (as decimals for multiplicative application)
+        const psyDreamDmg = (psyEffects?.dreamDmgPct ?? 0) / 100
+        const psySpecialDmg = (psyEffects?.specialDmgPct ?? 0) / 100
+        const psyExpertiseDmg = (psyEffects?.expertiseDmgPct ?? 0) / 100
+        const psyConditionalAtkPct = (psyEffects?.conditionalAtkPct ?? 0) / 100
+        const psyConditionalElementDmg = (psyEffects?.conditionalElementDmg ?? 0) / 100
+        const psySkillDmg = psyEffects?.skillDmg ?? {}
+        const psyAllElementFlat = psyEffects?.allElementFlat ?? 0
 
         // Talent flags
         const t = {
@@ -477,10 +496,11 @@ export function DpsSimulator() {
 
         // ── Damage Helpers ──
         // Formula: (ATK × mv% + flat) × multipliers
-        const calcHit = (mv: number, flat: number, type: string, tcStacks: number, sfActive: boolean, vsActive: boolean, element?: string): number => {
-            // Volt Surge ATK buff: +10% ATK +80
-            const atkNow = vsActive ? effAtk * 1.10 + 80 : effAtk
-            const base = atkNow * (mv / 100) + flat
+        const calcHit = (mv: number, flat: number, type: string, tcStacks: number, sfActive: boolean, vsActive: boolean, element?: string, skillName?: string): number => {
+            // Volt Surge ATK buff: +10% ATK +80; Psychoscope conditionalAtkPct stacks additively
+            const vsAtkMult = vsActive ? 0.10 + psyConditionalAtkPct : 0
+            const atkNow = vsActive ? effAtk * (1 + vsAtkMult) + 80 : effAtk
+            const base = atkNow * (mv / 100) + flat + psyAllElementFlat
             if (base <= 0) return 0
             let mult = 1 + versPct     // Versatility = general amp
             // Mastery: full benefit for expertise/special/ult, reduced for basic
@@ -496,6 +516,14 @@ export function DpsSimulator() {
             bonus += physDmgPct
             // Module DMG Stack average bonus (applies to all damage)
             bonus += dmgStackPct
+            // Psychoscope Dream DMG bonuses
+            bonus += psyDreamDmg
+            if (type === "Special") bonus += psySpecialDmg
+            if (type === "Expertise") bonus += psyExpertiseDmg
+            // Psychoscope: Element DMG during class buff (e.g., Thunder Element DMG +8% during Volt Surge)
+            if (vsActive && element === "Thunder") bonus += psyConditionalElementDmg
+            // Psychoscope: Skill-specific Dream DMG bonuses
+            if (skillName && psySkillDmg[skillName]) bonus += psySkillDmg[skillName] / 100
             mult *= (1 + bonus)
             mult *= avgCritLuck
             return base * mult
@@ -598,7 +626,7 @@ export function DpsSimulator() {
                 flat = 600 * numAttacks
             }
 
-            let dmg = calcHit(mv, flat, skill.type, tcStacks, sfActive, vsActive, skill.element)
+            let dmg = calcHit(mv, flat, skill.type, tcStacks, sfActive, vsActive, skill.element, skill.name)
 
             // Divine Sickle: guaranteed crit + talent damage multiplier
             if (key === "DivineSickle") {
@@ -659,7 +687,7 @@ export function DpsSimulator() {
 
             // Lightning Strike proc during Stormflash — triggered by Thundercut consuming BI
             if ((key === "Thundercut" || key === "Thundercleave") && sfActive) {
-                const lsDmg = calcHit(LS_MV, LS_FLAT, "Expertise", tcStacks, sfActive, vsActive)
+                const lsDmg = calcHit(LS_MV, LS_FLAT, "Expertise", tcStacks, sfActive, vsActive, "Thunder", "Lightning Strike")
                 totalDmg += lsDmg
                 addDmg("Lightning Strike", lsDmg)
             }
@@ -667,7 +695,7 @@ export function DpsSimulator() {
             // Storm Scythe talent proc — triggered on every Thundercut/Thundercleave cast while moonblades active
             // From parse: ~70 procs across 90s matching ~107 TC + ~7 Thundercleave casts
             if ((key === "Thundercut" || key === "Thundercleave") && mbActive) {
-                const ssDmg = calcHit(SS_MV, SS_FLAT, "Expertise", tcStacks, sfActive, vsActive)
+                const ssDmg = calcHit(SS_MV, SS_FLAT, "Expertise", tcStacks, sfActive, vsActive, "Thunder", "Storm Scythe")
                 totalDmg += ssDmg
                 addDmg("Storm Scythe", ssDmg)
                 ssCount++
@@ -695,12 +723,12 @@ export function DpsSimulator() {
 
             // Moonstrike: triggers Moonblade Whirl damage (210% +600 per active moonblade)
             if (key === "Moonstrike" && mbActive) {
-                const whirlDmg = calcHit(MW_MV * moonbladeCount, MW_FLAT * moonbladeCount, "Special", tcStacks, sfActive, vsActive)
+                const whirlDmg = calcHit(MW_MV * moonbladeCount, MW_FLAT * moonbladeCount, "Special", tcStacks, sfActive, vsActive, "Thunder", "Moonblade Whirl")
                 totalDmg += whirlDmg
                 addDmg("Moonblade Whirl", whirlDmg)
             }
             if (key === "ChaosBreaker" && mbActive) {
-                const whirlDmg = calcHit(MW_MV * moonbladeCount, MW_FLAT * moonbladeCount, "Special", tcStacks, sfActive, vsActive)
+                const whirlDmg = calcHit(MW_MV * moonbladeCount, MW_FLAT * moonbladeCount, "Special", tcStacks, sfActive, vsActive, "Thunder", "Moonblade Whirl")
                 totalDmg += whirlDmg
                 addDmg("Moonblade Whirl", whirlDmg)
             }
@@ -713,7 +741,7 @@ export function DpsSimulator() {
             if (mbActive) {
                 mbTimer += ct
                 while (mbTimer >= MB_INTERVAL) {
-                    const mbDmg = calcHit(MB_MV * moonbladeCount, MB_FLAT * moonbladeCount, "Basic", tcStacks, sfActive, vsActive)
+                    const mbDmg = calcHit(MB_MV * moonbladeCount, MB_FLAT * moonbladeCount, "Basic", tcStacks, sfActive, vsActive, "Thunder", "Moonblades")
                     totalDmg += mbDmg
                     addDmg("Moonblades", mbDmg)
                     mbTimer -= MB_INTERVAL
@@ -721,7 +749,7 @@ export function DpsSimulator() {
                     // Thunderstrike procs from moonblade lucky strikes (talent)
                     if (t.touchOfThunderSoul && luckRate > 0) {
                         const tsChance = 0.6 * luckRate
-                        const tsDmgBase = calcHit(TS_MV, TS_FLAT, "Special", tcStacks, sfActive, vsActive)
+                const tsDmgBase = calcHit(TS_MV, TS_FLAT, "Special", tcStacks, sfActive, vsActive, "Thunder", "Thunderstrike")
                         let tsScale = 1.0
                         if (t.enhancedThunderstrike) tsScale = 1.2 + luckRate
                         const tsDmg = tsDmgBase * tsChance * tsScale
@@ -737,7 +765,7 @@ export function DpsSimulator() {
                 const tcTotalHits = key === "Thundercut" ? 2 * (1 + getTcBonusAttacks()) : skill.hits
                 const procChance = 0.10 * tcTotalHits
                 const pSkill = MS_SKILLS.PiercingSlash
-                const pDmg = calcHit(pSkill.mv, pSkill.flat, pSkill.type, tcStacks, sfActive, vsActive) * procChance
+                const pDmg = calcHit(pSkill.mv, pSkill.flat, pSkill.type, tcStacks, sfActive, vsActive, "Thunder", "Piercing Slash") * procChance
                 totalDmg += pDmg
                 addDmg("Piercing Slash", pDmg)
                 if (procChance > 0 && vsActive) sigils = maxSigils
@@ -748,7 +776,8 @@ export function DpsSimulator() {
             // Lucky Strike (Tachi) — weapon type bonus on every lucky strike
             // Each hit has luckRate chance to proc, dealing ~100% ATK +440 extra damage
             if (dmg > 0 && luckRate > 0) {
-                const atkNow = vsActive ? effAtk * 1.10 + 80 : effAtk
+                const vsAtkMult = vsActive ? 0.10 + psyConditionalAtkPct : 0
+                const atkNow = vsActive ? effAtk * (1 + vsAtkMult) + 80 : effAtk
                 const tachiPerProc = atkNow * (TACHI_MV / 100) + TACHI_FLAT
                 // TC at ≥50%: 3 attacks × 2 hits = 6 total hits for proc chances
                 const skillHits = (key === "Thundercut") ? 2 * (1 + getTcBonusAttacks()) : skill.hits
@@ -761,10 +790,11 @@ export function DpsSimulator() {
             // Fantasia Impact — periodic high-damage proc (~8s ICD)
             // Doesn't crit/luck, only scales with mastery  
             while (fiTimer >= FI_ICD) {
-                const atkNow = vsActive ? effAtk * 1.10 + 80 : effAtk
+                const vsAtkMult = vsActive ? 0.10 + psyConditionalAtkPct : 0
+                const atkNow = vsActive ? effAtk * (1 + vsAtkMult) + 80 : effAtk
                 const fiBase = atkNow * (FI_MV / 100) + FI_FLAT
                 const mastNow = mastPct + (im1Timer > 0 ? 0.13 : 0)
-                const fiDmg = fiBase * (1 + versPct) * (1 + mastNow) * (1 + dmgBoss + meleeDmg)
+                const fiDmg = fiBase * (1 + versPct) * (1 + mastNow) * (1 + dmgBoss + meleeDmg + psyDreamDmg)
                 totalDmg += fiDmg
                 addDmg("Fantasia Impact", fiDmg)
                 fiTimer -= FI_ICD
@@ -901,8 +931,9 @@ export function DpsSimulator() {
         if (!statsResult) return null
         const versPct = getStatPercentCombat("Versatility", statsResult.total.Versatility) / 100
         const mastPct = getStatPercentCombat("Mastery", statsResult.total.Mastery) / 100
-        const critRate = Math.min(getStatPercentCombat("Crit", statsResult.total.Crit) / 100, 1)
-        const luckRate = Math.min(getStatPercentCombat("Luck", statsResult.total.Luck) / 100, 1)
+        // Include purple stat % bonuses
+        const critRate = Math.min((getStatPercentCombat("Crit", statsResult.total.Crit) + (statsResult.purpleStats?.["Crit (%)"] ?? 0)) / 100, 1)
+        const luckRate = Math.min((getStatPercentCombat("Luck", statsResult.total.Luck) + (statsResult.purpleStats?.["Luck (%)"] ?? 0)) / 100, 1)
         const hastePct = getStatPercentCombat("Haste", statsResult.total.Haste)
         const aspd = statsResult.aspd / 100
         const baseCritDmg = 0.50
@@ -928,6 +959,7 @@ export function DpsSimulator() {
             dmgBoss, meleeDmg, weaponAtkPct,
             physDmgPct, dmgStackPct,
             raid2pc: statsResult.raid2pcBonus, raid4pc: statsResult.raid4pcBonus,
+            psyEffects: statsResult.psychoscopeEffects,
         }
     }
 
@@ -938,7 +970,7 @@ export function DpsSimulator() {
         return selectedSetIds.map((id, idx) => {
             const gearSet = gearSets.find(s => s.id === id)
             if (!gearSet) return null
-            const statsResult = calculateStatsFromGearSet(gearSet, spec, base, ext)
+            const statsResult = calculateStatsFromGearSet(gearSet, spec, base, ext, psychoscopeConfig)
             const combatStats = deriveCombatFromStats(statsResult)
             if (!combatStats) return null
             // Run a simplified simulation using the same logic but with gearSet's talents
@@ -984,11 +1016,26 @@ export function DpsSimulator() {
             versPct, mastPct, critRate, luckRate, hastePct, aspd, avgCritLuck,
             dmgBoss, meleeDmg, weaponAtkPct,
             critMult, luckMult, physDmgPct, dmgStackPct,
-            raid2pc, raid4pc,
+            raid2pc, raid4pc, psyEffects,
         } = combatStats
 
         const actualAspd = manualAspd > 0 ? manualAspd / 100 : aspd
         let effAtk = manualAtk * (1 + weaponAtkPct)
+
+        // Psychoscope: ATK from stat scaling (same as main sim)
+        const psyAtkFromStatPct = psyEffects?.atkFromStat && psyEffects.atkFromStat.target !== "CritDMG"
+            ? getStatPercentCombat(psyEffects.atkFromStat.stat, stats?.total[psyEffects.atkFromStat.stat] ?? 0) * psyEffects.atkFromStat.ratio / 100
+            : 0
+        effAtk *= (1 + psyAtkFromStatPct)
+
+        // Psychoscope DPS bonuses (as decimals)
+        const psyDreamDmg = (psyEffects?.dreamDmgPct ?? 0) / 100
+        const psySpecialDmg = (psyEffects?.specialDmgPct ?? 0) / 100
+        const psyExpertiseDmg = (psyEffects?.expertiseDmgPct ?? 0) / 100
+        const psyConditionalAtkPct = (psyEffects?.conditionalAtkPct ?? 0) / 100
+        const psyConditionalElementDmg = (psyEffects?.conditionalElementDmg ?? 0) / 100
+        const psySkillDmg = psyEffects?.skillDmg ?? {}
+        const psyAllElementFlat = psyEffects?.allElementFlat ?? 0
 
         const t = {
             thunderCurse: talents?.includes("thunder_curse"),
@@ -1033,9 +1080,11 @@ export function DpsSimulator() {
             else if (lPct >= 28) { dsTrigger = 14; dsDmgMult = 2.0 }
         }
 
-        const calcHit = (mv: number, flat: number, type: string, tcStacks: number, sfActive: boolean, vsActive: boolean, im1Timer: number, im2Timer: number): number => {
-            const atkNow = vsActive ? effAtk * 1.10 + 80 : effAtk
-            const base = atkNow * (mv / 100) + flat
+        const calcHit = (mv: number, flat: number, type: string, tcStacks: number, sfActive: boolean, vsActive: boolean, im1Timer: number, im2Timer: number, element?: string, skillName?: string): number => {
+            // Volt Surge ATK buff: +10% ATK +80; Psychoscope conditionalAtkPct stacks additively
+            const vsAtkMult = vsActive ? 0.10 + psyConditionalAtkPct : 0
+            const atkNow = vsActive ? effAtk * (1 + vsAtkMult) + 80 : effAtk
+            const base = atkNow * (mv / 100) + flat + psyAllElementFlat
             if (base <= 0) return 0
             let mult = 1 + versPct
             const mastNow = mastPct + (im1Timer > 0 ? 0.13 : 0)
@@ -1044,6 +1093,14 @@ export function DpsSimulator() {
             let bonus = dmgBoss + meleeDmg
             if (t.thunderCurse) bonus += tcStacks * 0.02
             bonus += physDmgPct + dmgStackPct
+            // Psychoscope Dream DMG bonuses
+            bonus += psyDreamDmg
+            if (type === "Special") bonus += psySpecialDmg
+            if (type === "Expertise") bonus += psyExpertiseDmg
+            // Psychoscope: Element DMG during class buff
+            if (vsActive && element === "Thunder") bonus += psyConditionalElementDmg
+            // Psychoscope: Skill-specific Dream DMG bonuses
+            if (skillName && psySkillDmg[skillName]) bonus += psySkillDmg[skillName] / 100
             mult *= (1 + bonus)
             mult *= avgCritLuck
             return base * mult
@@ -1107,7 +1164,7 @@ export function DpsSimulator() {
                 flat = 600 * numAttacks
             }
 
-            let dmg = calcHit(mv, flat, skill.type, tcStacks, sfActive, vsActive, im1Timer, im2Timer)
+            let dmg = calcHit(mv, flat, skill.type, tcStacks, sfActive, vsActive, im1Timer, im2Timer, skill.element, skill.name)
 
             if (key === "DivineSickle") {
                 const dsBase = dmg / avgCritLuck
@@ -1141,10 +1198,10 @@ export function DpsSimulator() {
             if (key === "Imagine2") im2Timer = 20
 
             if ((key === "Thundercut" || key === "Thundercleave") && sfActive) {
-                totalDmg += calcHit(LS_MV, LS_FLAT, "Expertise", tcStacks, sfActive, vsActive, im1Timer, im2Timer)
+                totalDmg += calcHit(LS_MV, LS_FLAT, "Expertise", tcStacks, sfActive, vsActive, im1Timer, im2Timer, "Thunder", "Lightning Strike")
             }
             if ((key === "Thundercut" || key === "Thundercleave") && mbActive) {
-                const ssDmg = calcHit(SS_MV, SS_FLAT, "Expertise", tcStacks, sfActive, vsActive, im1Timer, im2Timer)
+                const ssDmg = calcHit(SS_MV, SS_FLAT, "Expertise", tcStacks, sfActive, vsActive, im1Timer, im2Timer, "Thunder", "Storm Scythe")
                 totalDmg += ssDmg
                 ssCount++
                 if (t.thunderMight2 && sfActive) { totalDmg += ssDmg; ssCount++ }
@@ -1162,10 +1219,10 @@ export function DpsSimulator() {
             }
 
             if (key === "Moonstrike" && mbActive) {
-                totalDmg += calcHit(MW_MV * moonbladeCount, MW_FLAT * moonbladeCount, "Special", tcStacks, sfActive, vsActive, im1Timer, im2Timer)
+                totalDmg += calcHit(MW_MV * moonbladeCount, MW_FLAT * moonbladeCount, "Special", tcStacks, sfActive, vsActive, im1Timer, im2Timer, "Thunder", "Moonblade Whirl")
             }
             if (key === "ChaosBreaker" && mbActive) {
-                totalDmg += calcHit(MW_MV * moonbladeCount, MW_FLAT * moonbladeCount, "Special", tcStacks, sfActive, vsActive, im1Timer, im2Timer)
+                totalDmg += calcHit(MW_MV * moonbladeCount, MW_FLAT * moonbladeCount, "Special", tcStacks, sfActive, vsActive, im1Timer, im2Timer, "Thunder", "Moonblade Whirl")
             }
 
             const prev = time; time += ct
@@ -1174,11 +1231,11 @@ export function DpsSimulator() {
             if (mbActive) {
                 mbTimer += ct
                 while (mbTimer >= MB_INTERVAL) {
-                    totalDmg += calcHit(MB_MV * moonbladeCount, MB_FLAT * moonbladeCount, "Basic", tcStacks, sfActive, vsActive, im1Timer, im2Timer)
+                    totalDmg += calcHit(MB_MV * moonbladeCount, MB_FLAT * moonbladeCount, "Basic", tcStacks, sfActive, vsActive, im1Timer, im2Timer, "Thunder", "Moonblades")
                     mbTimer -= MB_INTERVAL
                     if (t.touchOfThunderSoul && luckRate > 0) {
                         const tsChance = 0.6 * luckRate
-                        const tsDmgBase = calcHit(TS_MV, TS_FLAT, "Special", tcStacks, sfActive, vsActive, im1Timer, im2Timer)
+                        const tsDmgBase = calcHit(TS_MV, TS_FLAT, "Special", tcStacks, sfActive, vsActive, im1Timer, im2Timer, "Thunder", "Thunderstrike")
                         let tsScale = 1.0
                         if (t.enhancedThunderstrike) tsScale = 1.2 + luckRate
                         totalDmg += tsDmgBase * tsChance * tsScale
@@ -1190,22 +1247,24 @@ export function DpsSimulator() {
                 const tcTotalHits = key === "Thundercut" ? 2 * (1 + getTcBonusAttacks(im2Timer)) : skill.hits
                 const procChance = 0.10 * tcTotalHits
                 const pSkill = MS_SKILLS.PiercingSlash
-                totalDmg += calcHit(pSkill.mv, pSkill.flat, pSkill.type, tcStacks, sfActive, vsActive, im1Timer, im2Timer) * procChance
+                totalDmg += calcHit(pSkill.mv, pSkill.flat, pSkill.type, tcStacks, sfActive, vsActive, im1Timer, im2Timer, "Thunder", "Piercing Slash") * procChance
                 psCd = 1.0
             }
 
             if (dmg > 0 && luckRate > 0) {
-                const atkNow = vsActive ? effAtk * 1.10 + 80 : effAtk
+                const vsAtkMult = vsActive ? 0.10 + psyConditionalAtkPct : 0
+                const atkNow = vsActive ? effAtk * (1 + vsAtkMult) + 80 : effAtk
                 const tachiPerProc = atkNow * (TACHI_MV / 100) + TACHI_FLAT
                 const skillHits = (key === "Thundercut") ? 2 * (1 + getTcBonusAttacks(im2Timer)) : skill.hits
                 totalDmg += tachiPerProc * luckRate * skillHits
             }
 
             while (fiTimer >= FI_ICD) {
-                const atkNow = vsActive ? effAtk * 1.10 + 80 : effAtk
+                const vsAtkMult = vsActive ? 0.10 + psyConditionalAtkPct : 0
+                const atkNow = vsActive ? effAtk * (1 + vsAtkMult) + 80 : effAtk
                 const fiBase = atkNow * (FI_MV / 100) + FI_FLAT
                 const mastNow = mastPct + (im1Timer > 0 ? 0.13 : 0)
-                totalDmg += fiBase * (1 + versPct) * (1 + mastNow) * (1 + dmgBoss + meleeDmg)
+                totalDmg += fiBase * (1 + versPct) * (1 + mastNow) * (1 + dmgBoss + meleeDmg + psyDreamDmg)
                 fiTimer -= FI_ICD
             }
 
@@ -1325,7 +1384,7 @@ export function DpsSimulator() {
                             <span className="text-[9px] text-[#555]">Effective ATK: <span className="text-white font-bold">{sim.effAtk.toLocaleString()}</span></span>
                         </div>
                         <div className="flex flex-col gap-1.5">
-                            <label className="text-[10px] text-[#888] uppercase tracking-wider font-bold">Attack Speed % (entity inspector)</label>
+                            <label className="text-[10px] text-[#888] uppercase tracking-wider font-bold">Attack Speed %</label>
                             <input
                                 type="number" value={manualAspd} min={0} max={200}
                                 onChange={e => setManualAspd(Math.max(0, Math.min(200, parseInt(e.target.value) || 0)))}

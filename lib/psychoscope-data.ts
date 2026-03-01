@@ -82,8 +82,8 @@ export const MIND_PROJECTIONS: MindProjection[] = [
       { name: "Unbreaking Might",      icon: ni("s2talent05_04"), type: "skill", branch: "left" },
       { name: "Godspeed",             icon: ni("s2talent05_05"), type: "skill", branch: "right" },
       { name: "General ATK",           type: "phantom_factor", factorType: "General ATK" },
-      { name: "General DEF",           type: "phantom_factor", factorType: "General DEF" },
-      { name: "Class DEF",            type: "phantom_factor", factorType: "Class DEF" },
+      { name: "General DEF",           type: "phantom_factor", factorType: "General DEF", branch: "left" },
+      { name: "Class DEF",            type: "phantom_factor", factorType: "Class DEF", branch: "right" },
       { name: "Class-Exclusive",       type: "phantom_factor", factorType: "Class-Exclusive" },
       { name: "Conserve",             icon: ni("s2talent05_06"), type: "skill", branch: "left" },
       { name: "Beauty of Refinement",  icon: ni("s2talent03_06"), type: "skill", branch: "right" },
@@ -111,8 +111,8 @@ export const MIND_PROJECTIONS: MindProjection[] = [
       { name: "Judgment - Sharp",          icon: ni("s2talent07_03"), type: "skill", branch: "left" },
       { name: "Judgment - Break",          icon: ni("s2talent07_04"), type: "skill", branch: "right" },
       { name: "General ATK",               type: "phantom_factor", factorType: "General ATK" },
-      { name: "General DEF",               type: "phantom_factor", factorType: "General DEF" },
-      { name: "Class DEF",                 type: "phantom_factor", factorType: "Class DEF" },
+      { name: "General DEF",               type: "phantom_factor", factorType: "General DEF", branch: "left" },
+      { name: "Class DEF",                 type: "phantom_factor", factorType: "Class DEF", branch: "right" },
       { name: "Class-Exclusive",           type: "phantom_factor", factorType: "Class-Exclusive" },
       { name: "Stasis Recovery",           icon: ni("s2talent07_05"), type: "skill", branch: "left" },
       { name: "Judgment - Heal",           icon: ni("s2talent07_06"), type: "skill", branch: "middle" },
@@ -142,8 +142,8 @@ export const MIND_PROJECTIONS: MindProjection[] = [
       { name: "Swiftflow",                 icon: ni("s2talent08_04"), type: "skill", branch: "left" },
       { name: "Resurge",                   icon: ni("s2talent08_05"), type: "skill", branch: "right" },
       { name: "General ATK",               type: "phantom_factor", factorType: "General ATK" },
-      { name: "General DEF",               type: "phantom_factor", factorType: "General DEF" },
-      { name: "Class DEF",                 type: "phantom_factor", factorType: "Class DEF" },
+      { name: "General DEF",               type: "phantom_factor", factorType: "General DEF", branch: "left" },
+      { name: "Class DEF",                 type: "phantom_factor", factorType: "Class DEF", branch: "right" },
       { name: "Class-Exclusive",           type: "phantom_factor", factorType: "Class-Exclusive" },
       { name: "Still-Continuum",           icon: ni("s2talent08_06"), type: "skill", branch: "left" },
       { name: "Split Brilliance",          icon: ni("s2talent08_07"), type: "skill", branch: "right" },
@@ -172,8 +172,8 @@ export const MIND_PROJECTIONS: MindProjection[] = [
       { name: "Chrono Elixir",              icon: ni("s2talent01_08"), type: "skill", branch: "left" },
       { name: "Limit Extension",            icon: ni("s2talent06_04"), type: "skill", branch: "right" },
       { name: "General ATK",                type: "phantom_factor", factorType: "General ATK" },
-      { name: "General DEF",                type: "phantom_factor", factorType: "General DEF" },
-      { name: "Class DEF",                  type: "phantom_factor", factorType: "Class DEF" },
+      { name: "General DEF",                type: "phantom_factor", factorType: "General DEF", branch: "left" },
+      { name: "Class DEF",                  type: "phantom_factor", factorType: "Class DEF", branch: "right" },
       { name: "Class-Exclusive",            type: "phantom_factor", factorType: "Class-Exclusive" },
       { name: "Harmony Grace",              icon: ni("s2talent06_05"), type: "skill", branch: "left" },
       { name: "Tuning",                     icon: ni("s2talent06_06"), type: "skill", branch: "right" },
@@ -202,13 +202,13 @@ export const MIND_PROJECTIONS: MindProjection[] = [
       { name: "Time-Step",                  icon: ni("s2talent01_04"), type: "skill", branch: "left" },
       { name: "Multi-Phasic Strike",        icon: ni("s2talent01_05"), type: "skill", branch: "right" },
       { name: "General ATK",                type: "phantom_factor", factorType: "General ATK" },
-      { name: "General DEF",                type: "phantom_factor", factorType: "General DEF" },
-      { name: "Class DEF",                  type: "phantom_factor", factorType: "Class DEF" },
+      { name: "General DEF",                type: "phantom_factor", factorType: "General DEF", branch: "left" },
+      { name: "Class DEF",                  type: "phantom_factor", factorType: "Class DEF", branch: "right" },
       { name: "Class-Exclusive",            type: "phantom_factor", factorType: "Class-Exclusive" },
       { name: "Ripple of Fate",             icon: ni("s2talent01_06"), type: "skill", branch: "left" },
       { name: "Dual",                       icon: ni("s2talent01_07"), type: "skill", branch: "right" },
-      { name: "Class-Exclusive",            type: "phantom_factor", factorType: "Class-Exclusive" },
-      { name: "General ATK",                type: "phantom_factor", factorType: "General ATK" },
+      { name: "Class-Exclusive",            type: "phantom_factor", factorType: "Class-Exclusive", branch: "left" },
+      { name: "General ATK",                type: "phantom_factor", factorType: "General ATK", branch: "right" },
       { name: "General DEF",                type: "phantom_factor", factorType: "General DEF" },
       { name: "Chrono Elixir",              icon: ni("s2talent01_08"), type: "skill", branch: "left" },
       { name: "Blink Breath",               icon: ni("s2talent01_09"), type: "skill", branch: "right" },
@@ -232,8 +232,8 @@ export const MIND_PROJECTIONS: MindProjection[] = [
       { name: "Time-Slit",                   icon: ni("s2talent02_04"), type: "skill", branch: "left" },
       { name: "Instant",                     icon: ni("s2talent02_05"), type: "skill", branch: "right" },
       { name: "General ATK",                 type: "phantom_factor", factorType: "General ATK" },
-      { name: "General DEF",                 type: "phantom_factor", factorType: "General DEF" },
-      { name: "Class DEF",                   type: "phantom_factor", factorType: "Class DEF" },
+      { name: "General DEF",                 type: "phantom_factor", factorType: "General DEF", branch: "left" },
+      { name: "Class DEF",                   type: "phantom_factor", factorType: "Class DEF", branch: "right" },
       { name: "Class-Exclusive",             type: "phantom_factor", factorType: "Class-Exclusive" },
       { name: "Nirvana Leap",                icon: ni("s2talent02_06"), type: "skill", branch: "left" },
       { name: "Cinder of Reverie",           icon: ni("s2talent02_07"), type: "skill", branch: "right" },
@@ -262,8 +262,8 @@ export const MIND_PROJECTIONS: MindProjection[] = [
       { name: "Mirage Shot",                 icon: ni("s2talent03_04"), type: "skill", branch: "left" },
       { name: "Eightfold Skyflow",            icon: ni("s2talent03_05"), type: "skill", branch: "right" },
       { name: "General ATK",                 type: "phantom_factor", factorType: "General ATK" },
-      { name: "General DEF",                 type: "phantom_factor", factorType: "General DEF" },
-      { name: "Class DEF",                   type: "phantom_factor", factorType: "Class DEF" },
+      { name: "General DEF",                 type: "phantom_factor", factorType: "General DEF", branch: "left" },
+      { name: "Class DEF",                   type: "phantom_factor", factorType: "Class DEF", branch: "right" },
       { name: "Class-Exclusive",             type: "phantom_factor", factorType: "Class-Exclusive" },
       { name: "Beauty of Refinement",        icon: ni("s2talent03_06"), type: "skill", branch: "left" },
       { name: "Phantom Pierce",              icon: ni("s2talent03_07"), type: "skill", branch: "right" },
@@ -292,8 +292,8 @@ export const MIND_PROJECTIONS: MindProjection[] = [
       { name: "Cross the Mirage",            icon: ni("s2talent04_04"), type: "skill", branch: "left" },
       { name: "Rapid Assault Stacks",        icon: ni("s2talent04_05"), type: "skill", branch: "right" },
       { name: "General ATK",                 type: "phantom_factor", factorType: "General ATK" },
-      { name: "General DEF",                 type: "phantom_factor", factorType: "General DEF" },
-      { name: "Class DEF",                   type: "phantom_factor", factorType: "Class DEF" },
+      { name: "General DEF",                 type: "phantom_factor", factorType: "General DEF", branch: "left" },
+      { name: "Class DEF",                   type: "phantom_factor", factorType: "Class DEF", branch: "right" },
       { name: "Class-Exclusive",             type: "phantom_factor", factorType: "Class-Exclusive" },
       { name: "Decimate",                    icon: ni("s2talent04_06"), type: "skill", branch: "left" },
       { name: "Beauty of Refinement",        icon: ni("s2talent03_06"), type: "skill", branch: "right" },
@@ -604,9 +604,19 @@ export function parseNodeTree(nodes: PsychoscopeNode[]): TreeRow[] {
         i++
       }
     } else if (n.type === "phantom_factor") {
-      // Each phantom factor gets its own row (vertically stacked)
-      rows.push({ type: "factors", nodes: [n] })
-      i++
+      if (n.branch) {
+        // Branched factor pair: collect all consecutive branched phantom_factors into one row
+        const branchedNodes: PsychoscopeNode[] = [n]
+        i++
+        while (i < nodes.length && nodes[i]?.type === "phantom_factor" && nodes[i]?.branch) {
+          branchedNodes.push(nodes[i])
+          i++
+        }
+        rows.push({ type: "factors", nodes: branchedNodes })
+      } else {
+        rows.push({ type: "factors", nodes: [n] })
+        i++
+      }
     } else {
       i++
     }
@@ -622,15 +632,19 @@ export interface FactorSlotConfig {
 }
 
 export interface PsychoscopeConfig {
+  enabled: boolean    // master toggle — when false, all psychoscope effects are disabled
   projectionId: string
   branches: ("left" | "right" | "none")[]
   factorSlots: FactorSlotConfig[]
+  bondLevel: number  // 0-35
 }
 
 export const DEFAULT_PSYCHOSCOPE_CONFIG: PsychoscopeConfig = {
-  projectionId: "dreamforce",
+  enabled: true,
+  projectionId: "fantasia-impact",
   branches: ["none", "none", "none", "none"],
   factorSlots: Array.from({ length: 10 }, () => ({ factorName: "", grade: 1 })),
+  bondLevel: 35,
 }
 
 // ── Spec-Recommended Builds ──
@@ -645,22 +659,29 @@ export interface SpecPriority {
 export const SPEC_PRIORITIES: Record<string, SpecPriority> = {
   // ─── Real data ───
   "Moonstrike": {
-    projectionId: "dreamforce",
-    branches: ["left", "right", "left", "left"],
+    projectionId: "fantasia-impact",
+    branches: ["left", "right", "right", "right"],
     factors: [
-      // Row 0 (3 slots): General ATK, General DEF, Class-Exclusive
-      { factorName: "Polarity X5", grade: 10 },
-      { factorName: "Stasis X3", grade: 10 },
-      { factorName: "Stormblade X6", grade: 10 },
-      // Row 1 (4 slots): General ATK, General DEF, Class DEF, Class-Exclusive
-      { factorName: "Polarity X4", grade: 10 },
-      { factorName: "Stasis X4", grade: 10 },
-      { factorName: "Stormblade Stasis X1", grade: 10 },
-      { factorName: "Stormblade X11", grade: 10 },
-      // Row 2 (3 slots): General ATK, Class-Exclusive, General DEF
-      { factorName: "Polarity X9", grade: 10 },
-      { factorName: "Stormblade X4", grade: 10 },
-      { factorName: "Stasis X2", grade: 10 },
+      // Slot 0: General ATK (non-branched)
+      { factorName: "Polarity X1", grade: 7 },
+      // Slot 1: General DEF (non-branched)
+      { factorName: "Stasis X5", grade: 7 },
+      // Slot 2: Class-Exclusive (non-branched)
+      { factorName: "Stormblade X10", grade: 5 },
+      // Slot 3: General ATK (non-branched)
+      { factorName: "Polarity X4", grade: 5 },
+      // Slot 4: General DEF — left side of branched pair (chosen)
+      { factorName: "Stasis X6", grade: 7 },
+      // Slot 5: Class DEF — right side of branched pair (not chosen)
+      { factorName: "", grade: 1 },
+      // Slot 6: Class-Exclusive (non-branched)
+      { factorName: "Stormblade X7", grade: 10 },
+      // Slot 7: Class-Exclusive — left side of branched pair (chosen)
+      { factorName: "", grade: 5 },
+      // Slot 8: General ATK — right side of branched pair (not chosen)
+      { factorName: "Polarity X8", grade: 1 },
+      // Slot 9: General DEF (non-branched)
+      { factorName: "Stasis X4", grade: 1 },
     ],
     note: "Crit-focused DPS. Polarity X5 for +10% Crit, Stormblade X6 for 1% Crit → 0.5% ATK.",
   },
@@ -721,3 +742,319 @@ export function findFactor(name: string, className: string): Factor | undefined 
 
 // ── All class names (for tab rendering) ──
 export const PSYCHOSCOPE_CLASSES = CLASS_FACTORS.map(c => c.className)
+
+// ══════════════════════════════════════════════════════════════════════
+// PSYCHOSCOPE EFFECTS ENGINE — computes stat & DPS bonuses from config
+// ══════════════════════════════════════════════════════════════════════
+
+export interface PsychoscopeEffects {
+  // Flat raw stat additions
+  flatStats: Record<string, number>     // e.g. { Agility: 75, Versatility: 600 }
+  // Percentage bonuses on main stats (e.g., Agility +2%)
+  pctStats: Record<string, number>      // e.g. { "Agility": 2 } meaning +2%
+  // Gain multipliers on total raw combat stats (additive %)
+  // e.g. { Crit: 10, Mastery: -6 } → Crit *= 1.10, Mastery *= 0.94
+  gainMult: Record<string, number>
+  // DPS bonuses
+  allElementFlat: number               // Polarity X1: All Element +212
+  specialDmgPct: number                // Polarity X9: Special attack Dream DMG %
+  expertiseDmgPct: number              // Polarity X10: Expertise Skill Dream DMG %
+  dreamDmgPct: number                  // General Dream DMG % (bond exclusive)
+  // Class-specific DPS
+  atkFromStat: { stat: string; ratio: number; target: "ATK" | "MATK" | "CritDMG" } | null
+  conditionalAtkPct: number            // ATK% during class buff (e.g. Volt Surge)
+  conditionalElementDmg: number        // Element DMG% during class buff
+  skillDmg: Record<string, number>     // Skill-specific Dream DMG bonuses (percent)
+  // Bond exclusive extras
+  bondCritPct: number                  // flat Crit% from bond exclusive
+  bondLuckPct: number                  // flat Luck% from bond exclusive
+  bondMainStatFlat: number             // e.g. Endless Mind: +100 to current main stats
+  // Bond general highest stat bonus (total flat)
+  bondHighestStatFlat: number          // +300 per applicable bond tier (levels 12, 25)
+  bondIlluStrength: number
+  bondEndurance: number                // Total Endurance from bond generals
+  // Active effect descriptions for display
+  activeEffects: string[]
+}
+
+// ── Factor Effects at G10 (all numeric values scale linearly with grade/10) ──
+
+interface FactorEffectDef {
+  flat?: Record<string, number>           // Flat stat additions
+  pct?: Record<string, number>            // Percentage multipliers on stats
+  gainMult?: Record<string, number>       // "Gained in any way" multipliers
+  allElement?: number                     // All Element flat
+  specialDmg?: number                     // Special attack Dream DMG %
+  expertiseDmg?: number                   // Expertise Skill Dream DMG %
+  conditionalVers?: number                // Average conditional Versatility
+  atkFromStat?: { stat: string; ratio: number; target: "ATK" | "MATK" | "CritDMG" }
+  conditionalAtkPct?: number              // ATK% during class buff
+  conditionalElementDmg?: number          // Element DMG% during class buff
+  skillDmg?: Record<string, number>       // Skill-specific Dream DMG %
+}
+
+const FACTOR_EFFECTS_G10: Record<string, FactorEffectDef> = {
+  // ── Offensive (Polarity) ──
+  "Polarity X1":  { allElement: 212 },
+  "Polarity X2":  { flat: { Strength: 75 }, pct: { Strength: 2 } },
+  "Polarity X3":  { flat: { Intellect: 75 }, pct: { Intellect: 2 } },
+  "Polarity X4":  { flat: { Agility: 75 }, pct: { Agility: 2 } },
+  "Polarity X5":  { gainMult: { Crit: 10, Mastery: -6 } },
+  "Polarity X6":  { gainMult: { Luck: 10, Haste: -6 } },
+  "Polarity X7":  { gainMult: { Mastery: 10, Luck: -6 } },
+  "Polarity X8":  { gainMult: { Haste: 10, Crit: -6 } },
+  "Polarity X9":  { specialDmg: 6.5 },
+  "Polarity X10": { expertiseDmg: 7 },
+  "Polarity X11": { conditionalVers: 600 },  // 120 × 5 stacks average in combat
+
+  // ── Stormblade ──
+  "Stormblade X1":  { skillDmg: { "Overdrive": 40 } },
+  "Stormblade X2":  { skillDmg: { "Volt Surge": 16 } },
+  "Stormblade X3":  { skillDmg: { "Piercing Slash": 25 } },
+  "Stormblade X4":  { conditionalElementDmg: 8 },
+  "Stormblade X5":  { skillDmg: { "Basic Attack": 37.5 } },
+  "Stormblade X6":  { atkFromStat: { stat: "Crit", ratio: 0.5, target: "ATK" } },
+  "Stormblade X7":  { skillDmg: { "Divine Sickle": 60 } },
+  "Stormblade X8":  { skillDmg: { "Shadow Blade": 24 } },
+  // Stormblade X10: Thunder Sigil conversion bonus +20% — mechanical (extra sigil value), not a simple DMG% factor
+  "Stormblade X9":  { skillDmg: { "Flash Strike": 30 } },
+  "Stormblade X11": { conditionalAtkPct: 12 },
+
+  // ── Shield Knight ──
+  "Shield Knight X1":  { skillDmg: { "Valor Bash": 40 } },
+  "Shield Knight X3":  { skillDmg: { "Judgment": 25 } },
+  "Shield Knight X4":  { conditionalElementDmg: 8 },
+  "Shield Knight X5":  { skillDmg: { "Basic Attack": 37.5 } },
+  "Shield Knight X6":  { atkFromStat: { stat: "Mastery", ratio: 0.5, target: "ATK" } },
+  "Shield Knight X7":  { skillDmg: { "Vanguard Strike": 60 } },
+  "Shield Knight X9":  { skillDmg: { "Zeal Crusade": 30 } },
+  "Shield Knight X11": { conditionalAtkPct: 12 },
+
+  // ── Heavy Guardian ──
+  "Heavy Guardian X1":  { skillDmg: { "Shield Bash": 40 } },
+  "Heavy Guardian X3":  { skillDmg: { "Sandshroud": 25 } },
+  "Heavy Guardian X4":  { conditionalElementDmg: 8 },
+  "Heavy Guardian X5":  { skillDmg: { "Basic Attack": 37.5 } },
+  "Heavy Guardian X6":  { atkFromStat: { stat: "Mastery", ratio: 0.5, target: "ATK" } },
+  "Heavy Guardian X7":  { skillDmg: { "Rock Guard": 60 } },
+  "Heavy Guardian X9":  { skillDmg: { "Rock Counter": 30 } },
+  "Heavy Guardian X11": { conditionalAtkPct: 12 },
+
+  // ── Wind Knight ──
+  "Wind Knight X1":  { skillDmg: { "Vortex Strike": 40 } },
+  "Wind Knight X3":  { skillDmg: { "Skyfall": 25 } },
+  "Wind Knight X4":  { conditionalElementDmg: 8 },
+  "Wind Knight X5":  { skillDmg: { "Basic Attack": 37.5 } },
+  "Wind Knight X6":  { atkFromStat: { stat: "Haste", ratio: 0.5, target: "ATK" } },
+  "Wind Knight X7":  { skillDmg: { "Courage": 60 } },
+  "Wind Knight X9":  { skillDmg: { "Wind Lance": 30 } },
+  "Wind Knight X11": { conditionalAtkPct: 12 },
+
+  // ── Marksman ──
+  "Marksman X1":  { skillDmg: { "Storm Arrow": 40 } },
+  "Marksman X3":  { skillDmg: { "Radiance Barrage": 25, "Piercing Arrow": 25 } },
+  "Marksman X4":  { conditionalElementDmg: 8 },
+  "Marksman X5":  { skillDmg: { "Basic Attack": 37.5 } },
+  "Marksman X6":  { atkFromStat: { stat: "Mastery", ratio: 0.3, target: "CritDMG" } },
+  "Marksman X7":  { skillDmg: { "Barrage": 60, "Multi-Shot": 60 } },
+  "Marksman X9":  { skillDmg: { "Rapid Fire": 30 } },
+  "Marksman X11": { conditionalAtkPct: 12 },
+
+  // ── Frost Mage ──
+  "Frost Mage X1":  { skillDmg: { "Frost Lance": 40 } },
+  "Frost Mage X3":  { skillDmg: { "Meteor Storm": 25, "Ice Arrow": 25 } },
+  "Frost Mage X4":  { conditionalElementDmg: 8 },
+  "Frost Mage X5":  { skillDmg: { "Basic Attack": 37.5 } },
+  "Frost Mage X6":  { atkFromStat: { stat: "Crit", ratio: 0.5, target: "MATK" } },
+  "Frost Mage X7":  { skillDmg: { "Tidepool": 60, "Frost Explosion": 60 } },
+  "Frost Mage X9":  { skillDmg: { "Frost Nova": 30 } },
+  "Frost Mage X11": { conditionalAtkPct: 12 },
+
+  // ── Verdant Oracle ──
+  "Verdant Oracle X1":  { skillDmg: { "Feral Seed": 40 } },
+  "Verdant Oracle X3":  { skillDmg: { "Healing Light": 25, "Rejuvenation": 25 } },
+  "Verdant Oracle X4":  { conditionalElementDmg: 8 },
+  "Verdant Oracle X5":  { skillDmg: { "Basic Attack": 37.5 } },
+  "Verdant Oracle X6":  { atkFromStat: { stat: "Luck", ratio: 0.5, target: "MATK" } },
+  "Verdant Oracle X7":  { skillDmg: { "Vine Lash": 60, "Earth Pulse": 60 } },
+  "Verdant Oracle X9":  { skillDmg: { "Nature's Wrath": 30 } },
+  "Verdant Oracle X11": { conditionalAtkPct: 12 },
+
+  // ── Beat Performer ──
+  "Beat Performer X1":  { skillDmg: { "Amplified Beat": 40 } },
+  "Beat Performer X3":  { skillDmg: { "Healing Melody": 25, "Healing Beat": 25 } },
+  "Beat Performer X4":  { conditionalElementDmg: 8 },
+  "Beat Performer X5":  { skillDmg: { "Basic Attack": 37.5 } },
+  "Beat Performer X6":  { atkFromStat: { stat: "Haste", ratio: 0.5, target: "MATK" } },
+  "Beat Performer X7":  { skillDmg: { "Fivefold Crescendo": 60, "Power Chord": 60 } },
+  "Beat Performer X9":  { skillDmg: { "Rhythm Burst": 30 } },
+  "Beat Performer X11": { conditionalAtkPct: 12 },
+}
+
+/** Compute all stat and DPS bonuses from the current psychoscope configuration */
+export function computePsychoscopeEffects(
+  config: PsychoscopeConfig,
+  className: string | null,
+): PsychoscopeEffects {
+  const effects: PsychoscopeEffects = {
+    flatStats: {},
+    pctStats: {},
+    gainMult: {},
+    allElementFlat: 0,
+    specialDmgPct: 0,
+    expertiseDmgPct: 0,
+    dreamDmgPct: 0,
+    atkFromStat: null,
+    conditionalAtkPct: 0,
+    conditionalElementDmg: 0,
+    skillDmg: {},
+    bondCritPct: 0,
+    bondLuckPct: 0,
+    bondMainStatFlat: 0,
+    bondHighestStatFlat: 0,
+    bondIlluStrength: 0,
+    bondEndurance: 0,
+    activeEffects: [],
+  }
+
+  if (!config.projectionId || config.enabled === false) return effects
+
+  // ── Process equipped factors (branch-aware) ──
+  const projection = [...MIND_PROJECTIONS, ...SLUMBERING_PROJECTIONS].find(p => p.id === config.projectionId)
+  if (!projection) return effects
+
+  // Use parseNodeTree to correctly handle branched factor pairs
+  const rows = parseNodeTree(projection.nodes)
+
+  // Pre-compute slot starts for each factor row (no branch indices needed)
+  let si = 0
+  const factorRowMeta: { slotStart: number }[] = []
+  for (const row of rows) {
+    if (row.type === "factors") {
+      factorRowMeta.push({ slotStart: si })
+      si += row.nodes.length
+    }
+  }
+
+  // Apply each factor row, skipping the inactive side of branched pairs
+  let factorRowIdx = 0
+  for (const row of rows) {
+    if (row.type !== "factors") continue
+    const { slotStart } = factorRowMeta[factorRowIdx++]
+    const isPair = row.nodes.length > 1
+
+    row.nodes.forEach((node, ni) => {
+      const slotI = slotStart + ni
+      const slot = config.factorSlots[slotI]
+      if (!slot || !slot.factorName) return
+
+      // For a branched factor pair, active side = whichever slot has a factor (left wins if both)
+      if (isPair) {
+        const leftSlot = config.factorSlots[slotStart]
+        const rightSlot = config.factorSlots[slotStart + 1]
+        const pairChoice = leftSlot?.factorName ? "left" : rightSlot?.factorName ? "right" : "none"
+        const side = node.branch as "left" | "right"
+        if (pairChoice !== side) return  // skip inactive branch side
+      }
+
+      const gScale = slot.grade / 10  // G1=0.1, G10=1.0
+      const def = FACTOR_EFFECTS_G10[slot.factorName]
+      if (!def) return
+
+      // Flat stat additions
+      if (def.flat) {
+        for (const [stat, val] of Object.entries(def.flat)) {
+          effects.flatStats[stat] = (effects.flatStats[stat] ?? 0) + val * gScale
+        }
+      }
+
+      // Percentage stat bonuses
+      if (def.pct) {
+        for (const [stat, val] of Object.entries(def.pct)) {
+          effects.pctStats[stat] = (effects.pctStats[stat] ?? 0) + val * gScale
+        }
+      }
+
+      // Gain multipliers — these "gained in any way" effects (Polarity X5-X8)
+      // provide the FULL percentage regardless of grade. Grade does NOT scale them.
+      // Verified via in-game testing: Polarity X8 G1 gives full +10% Haste / -6% Crit.
+      if (def.gainMult) {
+        for (const [stat, val] of Object.entries(def.gainMult)) {
+          effects.gainMult[stat] = (effects.gainMult[stat] ?? 0) + val
+        }
+      }
+
+      // DPS bonuses
+      if (def.allElement) effects.allElementFlat += def.allElement * gScale
+      if (def.specialDmg) effects.specialDmgPct += def.specialDmg * gScale
+      if (def.expertiseDmg) effects.expertiseDmgPct += def.expertiseDmg * gScale
+      if (def.conditionalVers) {
+        effects.flatStats["Versatility"] = (effects.flatStats["Versatility"] ?? 0) + def.conditionalVers * gScale
+      }
+
+      // Class-specific
+      if (def.atkFromStat) {
+        effects.atkFromStat = {
+          stat: def.atkFromStat.stat,
+          ratio: def.atkFromStat.ratio * gScale,
+          target: def.atkFromStat.target,
+        }
+      }
+      if (def.conditionalAtkPct) effects.conditionalAtkPct += def.conditionalAtkPct * gScale
+      if (def.conditionalElementDmg) effects.conditionalElementDmg += def.conditionalElementDmg * gScale
+      if (def.skillDmg) {
+        for (const [skill, val] of Object.entries(def.skillDmg)) {
+          effects.skillDmg[skill] = (effects.skillDmg[skill] ?? 0) + val * gScale
+        }
+      }
+
+      // Track for display
+      const factor = findFactor(slot.factorName, className ?? "")
+      if (factor) {
+        effects.activeEffects.push(`${factor.name} (G${slot.grade}): ${factor.description}`)
+      }
+    })
+  }
+
+  // ── Process Bond General Effects ──
+  const bl = config.bondLevel
+  // Bond level 2: Illusion Strength +100, Endurance +500
+  if (bl >= 2) { effects.bondIlluStrength += 100; effects.bondEndurance += 500 }
+  // Bond level 5: Illusion Strength +100, Endurance +500
+  if (bl >= 5) { effects.bondIlluStrength += 100; effects.bondEndurance += 500 }
+  // Bond level 12: Highest stat +300, Endurance +500
+  if (bl >= 12) { effects.bondHighestStatFlat += 300; effects.bondEndurance += 500 }
+  // Bond level 20: Illusion Strength +100, Endurance +500
+  if (bl >= 20) { effects.bondIlluStrength += 100; effects.bondEndurance += 500 }
+  // Bond level 25: Highest stat +300, Endurance +500
+  if (bl >= 25) { effects.bondHighestStatFlat += 300; effects.bondEndurance += 500 }
+
+  // ── Process Bond Exclusive (unlocks at 35) ──
+  if (bl >= (projection.bondExclusiveUnlock || 35) && projection.bondExclusive) {
+    const excl = projection.bondExclusive
+    effects.activeEffects.push(`Bond Exclusive: ${excl}`)
+
+    // Parse known bond exclusive effects
+    const dreamDmgMatch = excl.match(/Dream DMG \+(\d+(?:\.\d+)?)%/i)
+    if (dreamDmgMatch) effects.dreamDmgPct += parseFloat(dreamDmgMatch[1])
+
+    const critMatch = excl.match(/(?<!DMG )Crit \+(\d+(?:\.\d+)?)%/i)
+    if (critMatch) effects.bondCritPct += parseFloat(critMatch[1])
+
+    const luckMatch = excl.match(/Luck \+(\d+(?:\.\d+)?)%/i)
+    if (luckMatch) effects.bondLuckPct += parseFloat(luckMatch[1])
+
+    // "Current main stats +100" (Endless Mind)
+    const mainStatMatch = excl.match(/Current main stats? \+(\d+)/i)
+    if (mainStatMatch) effects.bondMainStatFlat += parseInt(mainStatMatch[1])
+
+    // "Attacks vs Oblivion Dream targets: Crit +2%, Luck +2%"
+    const oblivionMatch = excl.match(/Crit \+(\d+(?:\.\d+)?)%, Luck \+(\d+(?:\.\d+)?)%/i)
+    if (oblivionMatch) {
+      effects.bondCritPct += parseFloat(oblivionMatch[1])
+      effects.bondLuckPct += parseFloat(oblivionMatch[2])
+    }
+  }
+
+  return effects
+}

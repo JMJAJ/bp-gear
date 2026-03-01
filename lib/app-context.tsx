@@ -6,7 +6,7 @@ import {
   getSlotType, getTierData, getDefaultTier,
 } from "@/lib/game-data"
 import { TALENT_DATA } from "@/lib/talent-data"
-import { type PsychoscopeConfig, DEFAULT_PSYCHOSCOPE_CONFIG } from "@/lib/psychoscope-data"
+import { type PsychoscopeConfig, DEFAULT_PSYCHOSCOPE_CONFIG, computePsychoscopeEffects } from "@/lib/psychoscope-data"
 
 export type { GearSlot, StatsResult, Build, GearLibItem }
 
@@ -106,7 +106,8 @@ export function calculateStats(
   ext: ExtBuffs,
   legendaryTypes: string[],
   legendaryVals: number[],
-  talentFlags?: { swift?: boolean; aspd?: number; selectedIds?: string[] }
+  talentFlags?: { swift?: boolean; aspd?: number; selectedIds?: string[] },
+  psychoscopeConfig?: PsychoscopeConfig
 ): StatsResult {
   const total: Record<string, number> = { Versatility: 0, Mastery: 0, Haste: 0, Crit: 0, Luck: 0 }
   const purpleStats: Record<string, number> = {}
@@ -212,9 +213,17 @@ export function calculateStats(
   // baseAgi (user-input character agility), moduleAgility (from power core modules),
   // sigilAgility (from sigil bonuses like Blackfire Foxen, Goblin Axeman, etc.)
   const sigilAgility = extraStats["Agility"] ?? 0
-  const rawAgility = baseAgi + moduleAgility + sigilAgility
-  // Apply Agility (%) from purple/legendary stats on armor
-  const agiPctBonus = purpleStats["Agility (%)"] ?? 0
+
+  // Compute psychoscope effects (skip when disabled)
+  const psyEffects = (psychoscopeConfig && psychoscopeConfig.enabled !== false)
+    ? computePsychoscopeEffects(psychoscopeConfig, className)
+    : null
+
+  // Add psychoscope flat Agility (e.g., Polarity X4: Agility +75)
+  const psyAgility = psyEffects?.flatStats["Agility"] ?? 0
+  const rawAgility = baseAgi + moduleAgility + sigilAgility + psyAgility
+  // Apply Agility (%) from purple/legendary stats + psychoscope (e.g., Polarity X4: +2%)
+  const agiPctBonus = (purpleStats["Agility (%)"] ?? 0) + (psyEffects?.pctStats["Agility"] ?? 0)
   const totalAgility = rawAgility * (1 + agiPctBonus / 100)
   total.Haste += totalAgility * 0.45
 
@@ -357,6 +366,104 @@ export function calculateStats(
     }
   }
 
+  // ══ Apply Psychoscope Effects ══
+  if (psyEffects) {
+    // Add flat Versatility from Polarity X11 (conditional average: 120 × 5 stacks)
+    const psyVers = psyEffects.flatStats["Versatility"] ?? 0
+    if (psyVers > 0) total.Versatility += psyVers
+
+    // Apply "gained in any way" multipliers (X5-X8 type effects)
+    // These multiply the total raw stat AFTER all other additions
+    for (const [stat, pct] of Object.entries(psyEffects.gainMult)) {
+      if (total[stat] !== undefined && pct !== 0) {
+        total[stat] *= (1 + pct / 100)
+      }
+    }
+
+    // Bond general: add highest stat bonus (+300 per bond tier at levels 12, 25)
+    if (psyEffects.bondHighestStatFlat > 0) {
+      const combatStats = ["Crit", "Haste", "Luck", "Mastery", "Versatility"]
+      let highestStat = combatStats[0]
+      let highestVal = total[combatStats[0]] ?? 0
+      for (const s of combatStats) {
+        if ((total[s] ?? 0) > highestVal) {
+          highestVal = total[s] ?? 0
+          highestStat = s
+        }
+      }
+      total[highestStat] += psyEffects.bondHighestStatFlat
+    }
+
+    // Bond exclusive: flat Crit% / Luck% bonuses
+    if (psyEffects.bondCritPct > 0) {
+      purpleStats["Crit (%)"] = (purpleStats["Crit (%)"] ?? 0) + psyEffects.bondCritPct
+    }
+    if (psyEffects.bondLuckPct > 0) {
+      purpleStats["Luck (%)"] = (purpleStats["Luck (%)"] ?? 0) + psyEffects.bondLuckPct
+    }
+
+    // Bond exclusive: Endless Mind "Current main stats +100"
+    if (psyEffects.bondMainStatFlat > 0 && className) {
+      const mainStat = GAME_DATA.CLASSES[className]?.main
+      // Main stat affects Agility → Haste conversion (already computed above),
+      // so add the Haste equivalent for Agility
+      if (mainStat === "Agility") {
+        total.Haste += psyEffects.bondMainStatFlat * 0.45
+      }
+      // For display, track as extra stat
+      extraStats[`${mainStat} (Psychoscope)`] = (extraStats[`${mainStat} (Psychoscope)`] ?? 0) + psyEffects.bondMainStatFlat
+    }
+
+    // ATK from stat scaling (e.g., Stormblade X6: 1% Crit → 0.5% ATK)
+    // Track computed bonus for DPS sim to read
+    if (psyEffects.atkFromStat) {
+      const { stat, ratio, target } = psyEffects.atkFromStat
+      const statPct = getStatPercentCombat(stat, total[stat] ?? 0)
+      const bonusPct = statPct * ratio
+      if (target === "CritDMG") {
+        extraStats["Crit DMG (%)"] = (extraStats["Crit DMG (%)"] ?? 0) + bonusPct
+      } else {
+        extraStats[`${target} from ${stat} (%)`] = bonusPct
+      }
+    }
+
+    // Dream DMG % from bond exclusive
+    if (psyEffects.dreamDmgPct > 0) {
+      extraStats["Dream DMG (%)"] = (extraStats["Dream DMG (%)"] ?? 0) + psyEffects.dreamDmgPct
+    }
+
+    // Special/Expertise Dream DMG from offensive factors
+    if (psyEffects.specialDmgPct > 0) {
+      extraStats["Special Dream DMG (%)"] = (extraStats["Special Dream DMG (%)"] ?? 0) + psyEffects.specialDmgPct
+    }
+    if (psyEffects.expertiseDmgPct > 0) {
+      extraStats["Expertise Dream DMG (%)"] = (extraStats["Expertise Dream DMG (%)"] ?? 0) + psyEffects.expertiseDmgPct
+    }
+
+    // Conditional ATK/Element DMG
+    if (psyEffects.conditionalAtkPct > 0) {
+      extraStats["ATK during buff (%)"] = psyEffects.conditionalAtkPct
+    }
+    if (psyEffects.conditionalElementDmg > 0) {
+      extraStats["Element DMG during buff (%)"] = psyEffects.conditionalElementDmg
+    }
+
+    // Illusion Strength from bond
+    if (psyEffects.bondIlluStrength > 0) {
+      extraStats["Illusion Strength (Bond)"] = psyEffects.bondIlluStrength
+    }
+
+    // All Element flat bonus (Polarity X1)
+    if (psyEffects.allElementFlat > 0) {
+      extraStats["All Element (Psychoscope)"] = Number(psyEffects.allElementFlat.toFixed(1))
+    }
+
+    // Endurance from bond generals
+    if (psyEffects.bondEndurance > 0) {
+      extraStats["Endurance (Bond)"] = psyEffects.bondEndurance
+    }
+  }
+
   const hastePct = getStatPercentCombat("Haste", total.Haste) + ext.haste
   const aspdRatio = talentFlags?.swift ? ratios.aspd + 1.0 : ratios.aspd
   const talentAspdVal = talentFlags?.aspd ?? 0
@@ -373,7 +480,7 @@ export function calculateStats(
   return {
     total, purpleStats, extraStats, moduleStats, powerCorePoints, appliedBonus, weaponEffects, aspd, cspd, talentAspd: talentAspdVal, ext: {
       crit: ext.crit, luck: ext.luck, haste: ext.haste, mast: ext.mast, vers: ext.vers, aspd: ext.aspd, cspd: ext.cspd, illu: ext.illu
-    }, raidArmorCount, raid2pcBonus, raid4pcBonus, set4pcHaste
+    }, raidArmorCount, raid2pcBonus, raid4pcBonus, set4pcHaste, psychoscopeEffects: psyEffects
   }
 }
 
@@ -382,11 +489,12 @@ export function calculateStatsFromGearSet(
   gearSet: GearSet,
   spec: string,
   base: BaseStats,
-  ext: ExtBuffs
+  ext: ExtBuffs,
+  psychoscopeConfig?: PsychoscopeConfig
 ): StatsResult {
   const className = getClassForSpec(spec)
   const talentFlags = { swift: className === "Stormblade" && gearSet.selectedTalents.includes("swift"), aspd: gearSet.talentAspd, selectedIds: gearSet.selectedTalents }
-  return calculateStats(gearSet.gear, gearSet.imagines, gearSet.modules, spec, base, ext, gearSet.legendaryTypes, gearSet.legendaryVals, talentFlags)
+  return calculateStats(gearSet.gear, gearSet.imagines, gearSet.modules, spec, base, ext, gearSet.legendaryTypes, gearSet.legendaryVals, talentFlags, psychoscopeConfig)
 }
 
 // ── Context ───────────────────────────────────────────────
@@ -600,9 +708,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const recalculate = useCallback(() => {
     const className = getClassForSpec(spec)
     const talentFlags = { swift: className === "Stormblade" && selectedTalents.includes("swift"), aspd: talentAspd, selectedIds: selectedTalents }
-    const result = calculateStats(gear, imagines, modules, spec, base, ext, legendaryTypes, legendaryVals, talentFlags)
+    const result = calculateStats(gear, imagines, modules, spec, base, ext, legendaryTypes, legendaryVals, talentFlags, psychoscopeConfig)
     setStats(result)
-  }, [gear, imagines, modules, spec, base, ext, talentAspd, legendaryTypes, legendaryVals, selectedTalents])
+  }, [gear, imagines, modules, spec, base, ext, talentAspd, legendaryTypes, legendaryVals, selectedTalents, psychoscopeConfig])
 
   // Auto-recalculate when any dependency changes
   useEffect(() => {
@@ -659,7 +767,13 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       if (saved.selectedTalents && Array.isArray(saved.selectedTalents)) setSelectedTalents(saved.selectedTalents)
       if (typeof saved.talentAspd === "number") setTalentAspd(saved.talentAspd)
       if (saved.gearSets && Array.isArray(saved.gearSets)) setGearSets(saved.gearSets)
-      if (saved.psychoscopeConfig?.projectionId) setPsychoscopeConfig(saved.psychoscopeConfig)
+      if (saved.psychoscopeConfig?.projectionId) {
+        // Migrate: add bondLevel and enabled if missing from old saves
+        const cfg = { ...DEFAULT_PSYCHOSCOPE_CONFIG, ...saved.psychoscopeConfig }
+        if (typeof cfg.bondLevel !== "number") cfg.bondLevel = 0
+        if (typeof cfg.enabled !== "boolean") cfg.enabled = true
+        setPsychoscopeConfig(cfg)
+      }
     } catch (e) {
       console.error('[BPSR] Load failed:', e)
     }

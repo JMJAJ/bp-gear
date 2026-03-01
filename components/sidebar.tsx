@@ -47,7 +47,7 @@ export function Sidebar({ mobile }: { mobile?: boolean }) {
           className="text-[10px] font-light tracking-[1px] mt-0.5"
           style={{ color: accentColor }}
         >
-          GEAR BUILDER v0.3.1-beta
+          GEAR BUILDER v0.4.0-alpha-final
         </div>
       </div>
 

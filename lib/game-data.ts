@@ -262,43 +262,56 @@ export const GAME_DATA = {
 }
 
 export const SIGIL_DB = [
-  { n: "Basilisk", s: ["Weapon"], d: { 1: { "All Element Attack": 40 }, 2: { "All Element Attack": 45 }, 3: { "All Element Attack": 50 } } },
-  { n: "Bluespine Lizard", s: ["Weapon"], d: { 1: { "All Element Attack": 20 }, 2: { "All Element Attack": 25 }, 3: { "All Element Attack": 30 } } },
-  { n: "Emerald Caprahorn", s: ["Weapon", "Earrings", "Necklace", "Ring"], d: { 1: { Endurance: 80, Strength: 25 }, 2: { Endurance: 90, Strength: 30 }, 3: { Endurance: 100, Strength: 35 } } },
-  { n: "Blackstone Commander", s: ["Weapon", "Earrings", "Necklace", "Ring"], d: { 1: { Endurance: 80, Intellect: 25 }, 2: { Endurance: 90, Intellect: 30 }, 3: { Endurance: 100, Intellect: 35 } } },
-  { n: "Blackfire Foxen", s: ["Weapon", "Earrings", "Necklace", "Ring"], d: { 1: { Endurance: 80, Agility: 25 }, 2: { Endurance: 90, Agility: 30 }, 3: { Endurance: 100, Agility: 35 } } },
-  { n: "Erosion Bloom", s: ["Weapon", "Earrings", "Necklace", "Ring"], d: { 1: { Endurance: 80, Agility: 25 }, 2: { Endurance: 90, Agility: 30 }, 3: { Endurance: 100, Agility: 35 } } },
-  { n: "Flamehorn", s: ["Helmet", "Chest", "Gloves", "Boots"], d: { 1: { Versatility: 500 }, 2: { Versatility: 560 }, 3: { Versatility: 600 } } },
-  { n: "Blackstone Captain", s: ["Helmet", "Chest", "Gloves", "Boots"], d: { 1: { Mastery: 500 }, 2: { Mastery: 560 }, 3: { Mastery: 600 } } },
-  { n: "Cabbage Kingpin", s: ["Helmet", "Chest", "Gloves", "Boots"], d: { 1: { Luck: 500 }, 2: { Luck: 560 }, 3: { Luck: 600 } } },
-  { n: "Crimson Foxen", s: ["Helmet", "Chest", "Gloves", "Boots"], d: { 1: { Haste: 500 }, 2: { Haste: 560 }, 3: { Haste: 600 } } },
-  { n: "Goblin Chief", s: ["Helmet", "Chest", "Gloves", "Boots"], d: { 1: { Crit: 500 }, 2: { Crit: 560 }, 3: { Crit: 600 } } },
-  { n: "Cabbage Blaster", s: ["Helmet", "Chest", "Gloves", "Boots"], d: { 1: { Versatility: 200 }, 2: { Versatility: 250 }, 3: { Versatility: 300 } } },
-  { n: "Glimmer Caprahorn", s: ["Helmet", "Chest", "Gloves", "Boots"], d: { 1: { Mastery: 200 }, 2: { Mastery: 250 }, 3: { Mastery: 300 } } },
-  { n: "Cabbage Tough Guy", s: ["Helmet", "Chest", "Gloves", "Boots"], d: { 1: { Luck: 200 }, 2: { Luck: 250 }, 3: { Luck: 300 } } },
-  { n: "Wasteland Foxen", s: ["Helmet", "Chest", "Gloves", "Boots"], d: { 1: { Haste: 200 }, 2: { Haste: 250 }, 3: { Haste: 300 } } },
-  { n: "Cabbage Killer", s: ["Helmet", "Chest", "Gloves", "Boots"], d: { 1: { Crit: 200 }, 2: { Crit: 250 }, 3: { Crit: 300 } } },
-  { n: "Foxen", s: ["Earrings", "Necklace", "Ring"], d: { 1: { Endurance: 50, Agility: 15 }, 2: { Endurance: 60, Agility: 20 }, 3: { Endurance: 80, Agility: 25 } } },
-  { n: "Cabbage Hunter", s: ["Earrings", "Necklace", "Ring"], d: { 1: { Endurance: 50, Intellect: 15 }, 2: { Endurance: 60, Intellect: 20 }, 3: { Endurance: 80, Intellect: 25 } } },
-  { n: "Nether Caprahorn", s: ["Earrings", "Necklace", "Ring"], d: { 1: { Endurance: 50, Strength: 15 }, 2: { Endurance: 60, Strength: 20 }, 3: { Endurance: 80, Strength: 25 } } },
-  { n: "Blackstone Vanguard", s: ["Bracelet (L)", "Bracelet (R)", "Charm"], d: { 1: { Haste: 300 }, 2: { Haste: 360 }, 3: { Haste: 420 } } },
-  { n: "Ruthless Cabbage", s: ["Bracelet (L)", "Bracelet (R)", "Charm"], d: { 1: { Luck: 300 }, 2: { Luck: 360 }, 3: { Luck: 420 } } },
-  { n: "Gloomy Cabbage", s: ["Bracelet (L)", "Bracelet (R)", "Charm"], d: { 1: { Crit: 300 }, 2: { Crit: 360 }, 3: { Crit: 420 } } },
-  { n: "Goblin Shaman", s: ["Bracelet (L)", "Bracelet (R)", "Charm"], d: { 1: { Versatility: 300 }, 2: { Versatility: 360 }, 3: { Versatility: 420 } } },
-  { n: "Goblin Trickster", s: ["Bracelet (L)", "Bracelet (R)", "Charm"], d: { 1: { Mastery: 300 }, 2: { Mastery: 360 }, 3: { Mastery: 420 } } },
-  { n: "Frost Lizard", s: ["Bracelet (L)", "Bracelet (R)", "Charm"], d: { 1: { Strength: 12, Crit: 140 }, 2: { Strength: 16, Crit: 175 }, 3: { Strength: 20, Crit: 210 } } },
-  { n: "Magma Lizard", s: ["Bracelet (L)", "Bracelet (R)", "Charm"], d: { 1: { Strength: 12, Haste: 140 }, 2: { Strength: 16, Haste: 175 }, 3: { Strength: 20, Haste: 210 } } },
-  { n: "Gale Lizard", s: ["Bracelet (L)", "Bracelet (R)", "Charm"], d: { 1: { Strength: 12, Luck: 140 }, 2: { Strength: 16, Luck: 175 }, 3: { Strength: 20, Luck: 210 } } },
-  { n: "Lightning Lizard", s: ["Bracelet (L)", "Bracelet (R)", "Charm"], d: { 1: { Strength: 12, Mastery: 140 }, 2: { Strength: 16, Mastery: 175 }, 3: { Strength: 20, Mastery: 210 } } },
-  { n: "Blackstone Marksman", s: ["Bracelet (L)", "Bracelet (R)", "Charm"], d: { 1: { Intellect: 12, Crit: 140 }, 2: { Intellect: 16, Crit: 175 }, 3: { Intellect: 20, Crit: 210 } } },
-  { n: "Blackstone Guard", s: ["Bracelet (L)", "Bracelet (R)", "Charm"], d: { 1: { Intellect: 12, Haste: 140 }, 2: { Intellect: 16, Haste: 175 }, 3: { Intellect: 20, Haste: 210 } } },
-  { n: "Blackstone Warrior", s: ["Bracelet (L)", "Bracelet (R)", "Charm"], d: { 1: { Intellect: 12, Luck: 140 }, 2: { Intellect: 16, Luck: 175 }, 3: { Intellect: 20, Luck: 210 } } },
-  { n: "Blackstone Assaulter", s: ["Bracelet (L)", "Bracelet (R)", "Charm"], d: { 1: { Intellect: 12, Mastery: 140 }, 2: { Intellect: 16, Mastery: 175 }, 3: { Intellect: 20, Mastery: 210 } } },
-  { n: "Goblin Warrior", s: ["Bracelet (L)", "Bracelet (R)", "Charm"], d: { 1: { Agility: 12, Crit: 140 }, 2: { Agility: 16, Crit: 175 }, 3: { Agility: 20, Crit: 210 } } },
-  { n: "Goblin Axeman", s: ["Bracelet (L)", "Bracelet (R)", "Charm"], d: { 1: { Agility: 12, Haste: 140 }, 2: { Agility: 16, Haste: 175 }, 3: { Agility: 20, Haste: 210 } } },
-  { n: "Goblin Priest", s: ["Bracelet (L)", "Bracelet (R)", "Charm"], d: { 1: { Agility: 12, Luck: 140 }, 2: { Agility: 16, Luck: 175 }, 3: { Agility: 20, Luck: 210 } } },
-  { n: "Goblin Guard", s: ["Bracelet (L)", "Bracelet (R)", "Charm"], d: { 1: { Agility: 12, Mastery: 140 }, 2: { Agility: 16, Mastery: 175 }, 3: { Agility: 20, Mastery: 210 } } },
-] as Array<{ n: string; s: string[]; d: Record<number, Record<string, number>> }>
+  // Legendary (Weapon)
+  { n: "Basilisk", s: ["Weapon"], icon: "item_icons_enchantformula30.webp", d: { 1: { "All Element Attack": 40 }, 2: { "All Element Attack": 45 }, 3: { "All Element Attack": 50 } } },
+  // Epic (Weapon)
+  { n: "Bluespine Lizard", s: ["Weapon"], icon: "item_icons_enchantformula21.webp", d: { 1: { "All Element Attack": 20 }, 2: { "All Element Attack": 25 }, 3: { "All Element Attack": 30 } } },
+  { n: "Emerald Caprahorn", s: ["Weapon", "Earrings", "Necklace", "Ring"], icon: "item_icons_enchantformula29.webp", d: { 1: { Endurance: 80, Strength: 25 }, 2: { Endurance: 90, Strength: 30 }, 3: { Endurance: 100, Strength: 35 } } },
+  { n: "Blackstone Commander", s: ["Weapon", "Earrings", "Necklace", "Ring"], icon: "item_icons_enchantformula26.webp", d: { 1: { Endurance: 80, Intellect: 25 }, 2: { Endurance: 90, Intellect: 30 }, 3: { Endurance: 100, Intellect: 35 } } },
+  { n: "Blackfire Foxen", s: ["Weapon", "Earrings", "Necklace", "Ring"], icon: "item_icons_enchantformula28.webp", d: { 1: { Endurance: 80, Agility: 25 }, 2: { Endurance: 90, Agility: 30 }, 3: { Endurance: 100, Agility: 35 } } },
+  { n: "Erosion Bloom", s: ["Weapon"], icon: "item_icons_enchantformula38.webp", d: { 1: { Endurance: 80, Agility: 25 }, 2: { Endurance: 90, Agility: 30 }, 3: { Endurance: 100, Agility: 35 } } },
+  // Legendary (Armor)
+  { n: "Flamehorn", s: ["Helmet", "Chest", "Gloves", "Boots"], icon: "item_icons_enchantformula35.webp", d: { 1: { Versatility: 500 }, 2: { Versatility: 560 }, 3: { Versatility: 600 } } },
+  { n: "Blackstone Captain", s: ["Helmet", "Chest", "Gloves", "Boots"], icon: "item_icons_enchantformula33.webp", d: { 1: { Mastery: 500 }, 2: { Mastery: 560 }, 3: { Mastery: 600 } } },
+  { n: "Cabbage Kingpin", s: ["Helmet", "Chest", "Gloves", "Boots"], icon: "item_icons_enchantformula32.webp", d: { 1: { Luck: 500 }, 2: { Luck: 560 }, 3: { Luck: 600 } } },
+  { n: "Crimson Foxen", s: ["Helmet", "Chest", "Gloves", "Boots"], icon: "item_icons_enchantformula34.webp", d: { 1: { Haste: 500 }, 2: { Haste: 560 }, 3: { Haste: 600 } } },
+  { n: "Goblin Chief", s: ["Helmet", "Chest", "Gloves", "Boots"], icon: "item_icons_enchantformula31.webp", d: { 1: { Crit: 500 }, 2: { Crit: 560 }, 3: { Crit: 600 } } },
+  // Rare (Armor)
+  { n: "Cabbage Blaster", s: ["Helmet", "Chest", "Gloves", "Boots"], icon: "item_icons_enchantformula12.webp", d: { 1: { Versatility: 200 }, 2: { Versatility: 250 }, 3: { Versatility: 300 } } },
+  { n: "Glimmer Caprahorn", s: ["Helmet", "Chest", "Gloves", "Boots"], icon: "item_icons_enchantformula20.webp", d: { 1: { Mastery: 200 }, 2: { Mastery: 250 }, 3: { Mastery: 300 } } },
+  { n: "Cabbage Tough Guy", s: ["Helmet", "Chest", "Gloves", "Boots"], icon: "item_icons_enchantformula11.webp", d: { 1: { Luck: 200 }, 2: { Luck: 250 }, 3: { Luck: 300 } } },
+  { n: "Wasteland Foxen", s: ["Helmet", "Chest", "Gloves", "Boots"], icon: "item_icons_enchantformula18.webp", d: { 1: { Haste: 200 }, 2: { Haste: 250 }, 3: { Haste: 300 } } },
+  { n: "Cabbage Killer", s: ["Helmet", "Chest", "Gloves", "Boots"], icon: "item_icons_enchantformula09.webp", d: { 1: { Crit: 200 }, 2: { Crit: 250 }, 3: { Crit: 300 } } },
+  // Rare (Accessories)
+  { n: "Foxen", s: ["Earrings", "Necklace", "Ring"], icon: "item_icons_enchantformula17.webp", d: { 1: { Endurance: 50, Agility: 15 }, 2: { Endurance: 60, Agility: 20 }, 3: { Endurance: 80, Agility: 25 } } },
+  { n: "Cabbage Hunter", s: ["Earrings", "Necklace", "Ring"], icon: "item_icons_enchantformula10.webp", d: { 1: { Endurance: 50, Intellect: 15 }, 2: { Endurance: 60, Intellect: 20 }, 3: { Endurance: 80, Intellect: 25 } } },
+  { n: "Nether Caprahorn", s: ["Earrings", "Necklace", "Ring"], icon: "item_icons_enchantformula19.webp", d: { 1: { Endurance: 50, Strength: 15 }, 2: { Endurance: 60, Strength: 20 }, 3: { Endurance: 80, Strength: 25 } } },
+  // Epic (Bracelet/Charm)
+  { n: "Blackstone Vanguard", s: ["Bracelet (L)", "Bracelet (R)", "Charm"], icon: "item_icons_enchantformula27.webp", d: { 1: { Haste: 300 }, 2: { Haste: 360 }, 3: { Haste: 420 } } },
+  { n: "Ruthless Cabbage", s: ["Bracelet (L)", "Bracelet (R)", "Charm"], icon: "item_icons_enchantformula25.webp", d: { 1: { Luck: 300 }, 2: { Luck: 360 }, 3: { Luck: 420 } } },
+  { n: "Gloomy Cabbage", s: ["Bracelet (L)", "Bracelet (R)", "Charm"], icon: "item_icons_enchantformula24.webp", d: { 1: { Crit: 300 }, 2: { Crit: 360 }, 3: { Crit: 420 } } },
+  { n: "Goblin Shaman", s: ["Bracelet (L)", "Bracelet (R)", "Charm"], icon: "item_icons_enchantformula23.webp", d: { 1: { Versatility: 300 }, 2: { Versatility: 360 }, 3: { Versatility: 420 } } },
+  { n: "Goblin Trickster", s: ["Bracelet (L)", "Bracelet (R)", "Charm"], icon: "item_icons_enchantformula22.webp", d: { 1: { Mastery: 300 }, 2: { Mastery: 360 }, 3: { Mastery: 420 } } },
+  // Rare (Bracelet/Charm)
+  { n: "Frost Lizard", s: ["Bracelet (L)", "Bracelet (R)", "Charm"], icon: "item_icons_enchantformula01.webp", d: { 1: { Strength: 12, Crit: 140 }, 2: { Strength: 16, Crit: 175 }, 3: { Strength: 20, Crit: 210 } } },
+  { n: "Magma Lizard", s: ["Bracelet (L)", "Bracelet (R)", "Charm"], icon: "item_icons_enchantformula02.webp", d: { 1: { Strength: 12, Haste: 140 }, 2: { Strength: 16, Haste: 175 }, 3: { Strength: 20, Haste: 210 } } },
+  { n: "Gale Lizard", s: ["Bracelet (L)", "Bracelet (R)", "Charm"], icon: "item_icons_enchantformula03.webp", d: { 1: { Strength: 12, Luck: 140 }, 2: { Strength: 16, Luck: 175 }, 3: { Strength: 20, Luck: 210 } } },
+  { n: "Lightning Lizard", s: ["Bracelet (L)", "Bracelet (R)", "Charm"], icon: "item_icons_enchantformula04.webp", d: { 1: { Strength: 12, Mastery: 140 }, 2: { Strength: 16, Mastery: 175 }, 3: { Strength: 20, Mastery: 210 } } },
+  { n: "Blackstone Marksman", s: ["Bracelet (L)", "Bracelet (R)", "Charm"], icon: "item_icons_enchantformula13.webp", d: { 1: { Intellect: 12, Crit: 140 }, 2: { Intellect: 16, Crit: 175 }, 3: { Intellect: 20, Crit: 210 } } },
+  { n: "Blackstone Guard", s: ["Bracelet (L)", "Bracelet (R)", "Charm"], icon: "item_icons_enchantformula14.webp", d: { 1: { Intellect: 12, Haste: 140 }, 2: { Intellect: 16, Haste: 175 }, 3: { Intellect: 20, Haste: 210 } } },
+  { n: "Blackstone Warrior", s: ["Bracelet (L)", "Bracelet (R)", "Charm"], icon: "item_icons_enchantformula15.webp", d: { 1: { Intellect: 12, Luck: 140 }, 2: { Intellect: 16, Luck: 175 }, 3: { Intellect: 20, Luck: 210 } } },
+  { n: "Blackstone Assaulter", s: ["Bracelet (L)", "Bracelet (R)", "Charm"], icon: "item_icons_enchantformula16.webp", d: { 1: { Intellect: 12, Mastery: 140 }, 2: { Intellect: 16, Mastery: 175 }, 3: { Intellect: 20, Mastery: 210 } } },
+  { n: "Goblin Warrior", s: ["Bracelet (L)", "Bracelet (R)", "Charm"], icon: "item_icons_enchantformula05.webp", d: { 1: { Agility: 12, Crit: 140 }, 2: { Agility: 16, Crit: 175 }, 3: { Agility: 20, Crit: 210 } } },
+  { n: "Goblin Axeman", s: ["Bracelet (L)", "Bracelet (R)", "Charm"], icon: "item_icons_enchantformula06.webp", d: { 1: { Agility: 12, Haste: 140 }, 2: { Agility: 16, Haste: 175 }, 3: { Agility: 20, Haste: 210 } } },
+  { n: "Goblin Priest", s: ["Bracelet (L)", "Bracelet (R)", "Charm"], icon: "item_icons_enchantformula07.webp", d: { 1: { Agility: 12, Luck: 140 }, 2: { Agility: 16, Luck: 175 }, 3: { Agility: 20, Luck: 210 } } },
+  { n: "Goblin Guard", s: ["Bracelet (L)", "Bracelet (R)", "Charm"], icon: "item_icons_enchantformula08.webp", d: { 1: { Agility: 12, Mastery: 140 }, 2: { Agility: 16, Mastery: 175 }, 3: { Agility: 20, Mastery: 210 } } },
+  // Mythic
+  { n: "Caprahorn - Bloom & Steel", s: ["Weapon", "Earrings", "Necklace", "Ring"], icon: "item_icons_enchantformula36.webp", d: { 1: { Endurance: 100, Strength: 40 }, 2: { Endurance: 110, Strength: 50 }, 3: { Endurance: 120, Strength: 60 } } },
+  { n: "Withered Bloomshard", s: ["Weapon", "Earrings", "Necklace", "Ring"], icon: "item_icons_enchantformula37.webp", d: { 1: { Endurance: 100, Intellect: 40 }, 2: { Endurance: 110, Intellect: 50 }, 3: { Endurance: 120, Intellect: 60 } } },
+  { n: "Erosion Bloom Afterimage", s: ["Weapon", "Earrings", "Necklace", "Ring"], icon: "item_icons_enchantformula38.webp", d: { 1: { "All Element Attack": 40, Agility: 50 }, 2: { "All Element Attack": 45, Agility: 60 }, 3: { "All Element Attack": 50, Agility: 70 } } },
+] as Array<{ n: string; s: string[]; icon?: string; d: Record<number, Record<string, number>> }>
+
+export const SIGIL_ICONS_BASE = "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/items/gems/"
 
 export const SIGIL_MAP: Record<string, typeof SIGIL_DB> = {}
   ; (GAME_DATA.SLOTS as readonly string[]).forEach(slot => {
@@ -544,4 +557,5 @@ export interface StatsResult {
   raid2pcBonus: { l: string; v: number; t: "aspd" | "cspd" | "stat_pct" | "mastery_crit" | "aspd_cond" | "armor_ignore" | "text"; note?: string } | null
   raid4pcBonus: { l: string; v: number; t: "aspd" | "cspd" | "stat_pct" | "mastery_crit" | "aspd_cond" | "armor_ignore" | "text" | "crit_dmg" | "haste_pct" | "main_stat_pct"; note?: string } | null
   set4pcHaste: number
+  psychoscopeEffects: import("@/lib/psychoscope-data").PsychoscopeEffects | null
 }
