@@ -777,7 +777,10 @@ export interface PsychoscopeEffects {
   activeEffects: string[]
 }
 
-// ── Factor Effects at G10 (all numeric values scale linearly with grade/10) ──
+// ── Factor Grade Scaling ──
+// All factor effects scale LINEARLY between G1 and G10 values:
+//   value(G) = G1 + (G10 - G1) × (G - 1) / 9
+// Source: datamine DATA-Factors sheet (verified against G1, G4, G10 data).
 
 interface FactorEffectDef {
   flat?: Record<string, number>           // Flat stat additions
@@ -791,6 +794,36 @@ interface FactorEffectDef {
   conditionalAtkPct?: number              // ATK% during class buff
   conditionalElementDmg?: number          // Element DMG% during class buff
   skillDmg?: Record<string, number>       // Skill-specific Dream DMG %
+}
+
+/** Linear interpolation between G1 and G10 values.
+ *  When g1 is undefined (no datamine G1 data), falls back to g10 × grade/10. */
+function gradeScale(g10: number, grade: number, g1?: number): number {
+  if (grade >= 10) return g10
+  if (g1 !== undefined) {
+    return g1 + (g10 - g1) * (grade - 1) / 9
+  }
+  // Fallback for factors without G1 data (class-specific skill DMG)
+  return g10 * grade / 10
+}
+
+// G1 (Grade 1) values — from datamine DATA-Factors sheet.
+// Only factors that affect stat calculations need G1 data.
+// Class-specific skill DMG factors use fallback (grade/10) since datamine
+// G10 values don't match our displayed values.
+const FACTOR_EFFECTS_G1: Record<string, FactorEffectDef> = {
+  // ── Polarity (datamine verified: G1, G4, G10 all match linear formula) ──
+  "Polarity X1":  { allElement: 50 },
+  "Polarity X2":  { flat: { Strength: 30 }, pct: { Strength: 0.6 } },
+  "Polarity X3":  { flat: { Intellect: 30 }, pct: { Intellect: 0.6 } },
+  "Polarity X4":  { flat: { Agility: 30 }, pct: { Agility: 0.6 } },
+  "Polarity X5":  { gainMult: { Crit: 3.5, Mastery: -2.1 } },
+  "Polarity X6":  { gainMult: { Luck: 3.5, Haste: -2.1 } },
+  "Polarity X7":  { gainMult: { Mastery: 3.5, Luck: -2.1 } },
+  "Polarity X8":  { gainMult: { Haste: 3.5, Crit: -2.1 } },
+  "Polarity X9":  { specialDmg: 1.0 },
+  "Polarity X10": { expertiseDmg: 1.2 },
+  "Polarity X11": { conditionalVers: 300 },  // 60 per stack × 5 stacks
 }
 
 const FACTOR_EFFECTS_G10: Record<string, FactorEffectDef> = {
@@ -957,54 +990,58 @@ export function computePsychoscopeEffects(
         if (pairChoice !== side) return  // skip inactive branch side
       }
 
-      const gScale = slot.grade / 10  // G1=0.1, G10=1.0
+      const grade = slot.grade
       const def = FACTOR_EFFECTS_G10[slot.factorName]
       if (!def) return
+      const g1 = FACTOR_EFFECTS_G1[slot.factorName]  // may be undefined
+
+      // Helper: scale a value using linear interpolation G1↔G10
+      const sv = (g10Val: number, g1Val?: number) => gradeScale(g10Val, grade, g1Val)
 
       // Flat stat additions
       if (def.flat) {
         for (const [stat, val] of Object.entries(def.flat)) {
-          effects.flatStats[stat] = (effects.flatStats[stat] ?? 0) + val * gScale
+          effects.flatStats[stat] = (effects.flatStats[stat] ?? 0) + sv(val, g1?.flat?.[stat])
         }
       }
 
       // Percentage stat bonuses
       if (def.pct) {
         for (const [stat, val] of Object.entries(def.pct)) {
-          effects.pctStats[stat] = (effects.pctStats[stat] ?? 0) + val * gScale
+          effects.pctStats[stat] = (effects.pctStats[stat] ?? 0) + sv(val, g1?.pct?.[stat])
         }
       }
 
-      // Gain multipliers — these "gained in any way" effects (Polarity X5-X8)
-      // provide the FULL percentage regardless of grade. Grade does NOT scale them.
-      // Verified via in-game testing: Polarity X8 G1 gives full +10% Haste / -6% Crit.
+      // Gain multipliers — "gained in any way" effects (Polarity X5-X8)
+      // These DO scale with grade (G1=3.5%/−2.1%, G10=10%/−6%) via linear interpolation.
+      // Datamine verified: value(G) = G1 + (G10−G1) × (G−1)/9
       if (def.gainMult) {
         for (const [stat, val] of Object.entries(def.gainMult)) {
-          effects.gainMult[stat] = (effects.gainMult[stat] ?? 0) + val
+          effects.gainMult[stat] = (effects.gainMult[stat] ?? 0) + sv(val, g1?.gainMult?.[stat])
         }
       }
 
       // DPS bonuses
-      if (def.allElement) effects.allElementFlat += def.allElement * gScale
-      if (def.specialDmg) effects.specialDmgPct += def.specialDmg * gScale
-      if (def.expertiseDmg) effects.expertiseDmgPct += def.expertiseDmg * gScale
+      if (def.allElement) effects.allElementFlat += sv(def.allElement, g1?.allElement)
+      if (def.specialDmg) effects.specialDmgPct += sv(def.specialDmg, g1?.specialDmg)
+      if (def.expertiseDmg) effects.expertiseDmgPct += sv(def.expertiseDmg, g1?.expertiseDmg)
       if (def.conditionalVers) {
-        effects.flatStats["Versatility"] = (effects.flatStats["Versatility"] ?? 0) + def.conditionalVers * gScale
+        effects.flatStats["Versatility"] = (effects.flatStats["Versatility"] ?? 0) + sv(def.conditionalVers, g1?.conditionalVers)
       }
 
       // Class-specific
       if (def.atkFromStat) {
         effects.atkFromStat = {
           stat: def.atkFromStat.stat,
-          ratio: def.atkFromStat.ratio * gScale,
+          ratio: sv(def.atkFromStat.ratio, g1?.atkFromStat?.ratio),
           target: def.atkFromStat.target,
         }
       }
-      if (def.conditionalAtkPct) effects.conditionalAtkPct += def.conditionalAtkPct * gScale
-      if (def.conditionalElementDmg) effects.conditionalElementDmg += def.conditionalElementDmg * gScale
+      if (def.conditionalAtkPct) effects.conditionalAtkPct += sv(def.conditionalAtkPct, g1?.conditionalAtkPct)
+      if (def.conditionalElementDmg) effects.conditionalElementDmg += sv(def.conditionalElementDmg, g1?.conditionalElementDmg)
       if (def.skillDmg) {
         for (const [skill, val] of Object.entries(def.skillDmg)) {
-          effects.skillDmg[skill] = (effects.skillDmg[skill] ?? 0) + val * gScale
+          effects.skillDmg[skill] = (effects.skillDmg[skill] ?? 0) + sv(val, g1?.skillDmg?.[skill])
         }
       }
 
@@ -1018,16 +1055,16 @@ export function computePsychoscopeEffects(
 
   // ── Process Bond General Effects ──
   const bl = config.bondLevel
-  // Bond level 2: Illusion Strength +100, Endurance +500
+  // General 1 (bond level 2): Illusion Strength +100, Endurance +500
   if (bl >= 2) { effects.bondIlluStrength += 100; effects.bondEndurance += 500 }
-  // Bond level 5: Illusion Strength +100, Endurance +500
+  // General 2 (bond level 5): Illusion Strength +100, Endurance +500
   if (bl >= 5) { effects.bondIlluStrength += 100; effects.bondEndurance += 500 }
-  // Bond level 12: Highest stat +300, Endurance +500
+  // General 3 (bond level 12): Highest stat +300, Endurance +500
   if (bl >= 12) { effects.bondHighestStatFlat += 300; effects.bondEndurance += 500 }
-  // Bond level 20: Illusion Strength +100, Endurance +500
+  // General 4 (bond level 20): Illusion Strength +100, Endurance +500
   if (bl >= 20) { effects.bondIlluStrength += 100; effects.bondEndurance += 500 }
-  // Bond level 25: Highest stat +300, Endurance +500
-  if (bl >= 25) { effects.bondHighestStatFlat += 300; effects.bondEndurance += 500 }
+  // General 5 (bond level 25): Highest stat +500, Endurance +500
+  if (bl >= 25) { effects.bondHighestStatFlat += 500; effects.bondEndurance += 500 }
 
   // ── Process Bond Exclusive (unlocks at 35) ──
   if (bl >= (projection.bondExclusiveUnlock || 35) && projection.bondExclusive) {

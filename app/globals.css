@@ -132,22 +132,6 @@
   border-bottom: 1px dotted #555;
 }
 .game-tooltip::after {
-  content: attr(data-tip);
-  position: absolute;
-  bottom: 125%;
-  left: 50%;
-  transform: translateX(-50%);
-  background: #1a1a1a;
-  border: 1px solid #333;
-  color: #fff;
-  padding: 6px 10px;
-  font-size: 0.72rem;
-  white-space: normal;
-  max-width: 260px;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.15s;
-  z-index: 50;
-  line-height: 1.4;
+  position: fixed;
 }
 .game-tooltip:hover::after { opacity: 1; }

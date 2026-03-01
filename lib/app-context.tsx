@@ -3,7 +3,7 @@ import { createContext, useContext, useState, useCallback, useEffect, useRef } f
 import {
   GAME_DATA, SIGIL_DB, MODULE_DB, MODULE_THRESHOLDS,
   type GearSlot, type StatsResult, type Build, type GearLibItem,
-  getSlotType, getTierData, getDefaultTier,
+  getSlotType, getTierData, getDefaultTier, applyPerfection,
 } from "@/lib/game-data"
 import { TALENT_DATA } from "@/lib/talent-data"
 import { type PsychoscopeConfig, DEFAULT_PSYCHOSCOPE_CONFIG, computePsychoscopeEffects } from "@/lib/psychoscope-data"
@@ -137,6 +137,10 @@ export function calculateStats(
       const V = GAME_DATA.VALUES
       const isWep = i === 0
       vals = g.raid ? (isWep ? V.W_RAID : V.A_RAID) : (isWep ? V.W_STD : V.A_STD)
+    }
+    // Apply perfection scaling (0–100). Default 100 = no change.
+    if (g.perfection !== undefined && g.perfection < 100) {
+      vals = applyPerfection(vals, Math.max(0, Math.min(100, g.perfection)))
     }
     if (g.p && g.p !== "-") total[g.p] = (total[g.p] ?? 0) + vals.p
     if (g.s && g.s !== "-") total[g.s] = (total[g.s] ?? 0) + vals.s

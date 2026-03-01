@@ -1,7 +1,7 @@
 "use client"
-import { useState } from "react"
+import { useEffect, useState, useMemo } from "react"
 import { useApp, getClassForSpec, getStatPercentCombat } from "@/lib/app-context"
-import { GAME_DATA, SIGIL_DB, SIGIL_ICONS_BASE, getTierData, getSlotType } from "@/lib/game-data"
+import { GAME_DATA, SIGIL_DB, SIGIL_ICONS_BASE, getTierData, getSlotType, applyPerfection, getBasicAttrs } from "@/lib/game-data"
 import type { GearSlot } from "@/lib/game-data"
 
 const ICON_BASE = "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons"
@@ -53,249 +53,249 @@ interface TooltipProps {
   slot: string
   slotIdx: number
   g: GearSlot
-  legType: string
-  legVal: number
-  align?: "left" | "center" | "right"  // which way the tooltip opens to avoid clipping
+  legType?: string
+  legVal?: number
+  align?: "left" | "center" | "right"
+  anchorRect?: DOMRect | null
 }
 
-function GearTooltip({ slot, slotIdx, g, legType, legVal, align = "center" }: TooltipProps) {
+function GearTooltip({ slot, slotIdx, g, legType = "-", legVal = 0, anchorRect }: TooltipProps) {
   const slotType = getSlotType(slotIdx)
-  const tierData = g.tier ? getTierData(slotType, g.tier) : null
+  const rawTierData = g.tier ? getTierData(slotType, g.tier) : null
   const color = rarityColor(g.tier ?? "")
 
   const sigil = g.sigName ? SIGIL_DB.find(s => s.n === g.sigName) : null
   const sigilLvl = parseInt(g.sigLvl) || 1
   const sigilData = sigil?.d[sigilLvl] ?? sigil?.d[1]
 
-  // Horizontal placement - always center the tooltip to keep it in viewport
-  const hPos: React.CSSProperties = { left: "50%", transform: "translateX(-50%)" }
+  const perfection = g.perfection ?? 100
 
-  // Attribute row for Basic/Advanced sections
-  const attrRow = (icon: string | undefined, label: string, value: string | number, variant: "normal" | "quality" | "recast" = "normal", keySuffix?: string) => {
-    const displayValue = typeof value === "number" ? value : value
-    
-    return (
-      <div key={`${label}-${variant}${keySuffix ? `-${keySuffix}` : ''}`} style={{ 
-        display: "flex", alignItems: "center", gap: 6, 
-        padding: "4px 0",
-      }}>
-        {icon ? (
-          variant === "quality" ? (
-            <div style={{ position: "relative", width: 18, height: 18, flexShrink: 0 }}>
-              <img src={icon} width={18} height={18} style={{ objectFit: "contain" }} />
-              <div style={{
-                position: "absolute", inset: 0,
-                background: "rgb(138, 109, 193)",
-                mixBlendMode: "color",
-                maskImage: `url(${icon})`,
-                WebkitMaskImage: `url(${icon})`,
-                maskSize: "contain",
-                WebkitMaskSize: "contain",
-              }} />
-            </div>
-          ) : (
-            <img src={icon} width={18} height={18} style={{ objectFit: "contain", flexShrink: 0, opacity: variant === "recast" ? 0.6 : 1 }} />
-          )
-        ) : (
-          <div style={{ width: 18, height: 18, flexShrink: 0 }} />
-        )}
-        <span style={{ 
-          flex: 1, fontSize: 12, 
-          color: variant === "quality" ? "#c4b5fd" : variant === "recast" ? "#888" : "#bbb" 
-        }}>
-          {label}
-        </span>
-        <span style={{ 
-          fontSize: 12, fontWeight: 600, fontVariantNumeric: "tabular-nums", 
-          color: variant === "quality" ? "#c4b5fd" : variant === "recast" ? "#888" : "white" 
-        }}>
-          {displayValue}
-        </span>
-      </div>
-    )
-  }
+  // Apply perfection scaling to get the real in-game values shown in tooltip
+  const tierData = rawTierData
+    ? (perfection < 100 ? applyPerfection(rawTierData, perfection) : rawTierData)
+    : null
 
-  const hasContent = tierData || (legType && legType !== "-" && legVal > 0) || sigil
+  // Basic attribute lookup (user-filled data)
+  const basicAttrs = g.tier ? getBasicAttrs(g.tier, slotType) : null
 
-  const isCompletelyRed = g.tier && (g.tier.includes("90") || g.tier.includes("110") || g.tier.includes("130") || g.tier.includes("150") || g.tier.includes("170"))
-  const headerBg = isCompletelyRed
-    ? `linear-gradient(rgba(255,0,0,0) 0%, rgba(255,0,0,0.4) 50%, ${color}99 100%)`
-    : `linear-gradient(rgba(172,153,89,0) 0%, rgba(176,152,87,0.4) 50%, ${color}99 100%)`
+  // ── Tooltip positioning ────────────────────────────────────────────────
+  // Compute position synchronously from anchorRect so there's no flash.
+  const pos = useMemo(() => {
+    if (!anchorRect) return null
+    const W = 300
+    const MARGIN = 10
+    const GAP = 8
+    const vw = window.innerWidth
+    const vh = window.innerHeight
 
-  // Extract level from tier string (e.g., "Lv140 Gold" -> 140)
+    // Horizontal: prefer right side of slot, fall back to left
+    let left = anchorRect.right + GAP
+    if (left + W > vw - MARGIN) left = anchorRect.left - W - GAP
+    left = Math.max(MARGIN, Math.min(vw - W - MARGIN, left))
+
+    // Vertical: align top with slot, clamp to viewport
+    let top = anchorRect.top
+    top = Math.max(MARGIN, Math.min(vh - MARGIN - 100, top)) // 100 = minimum visible
+
+    return { left, top }
+  }, [anchorRect])
+
+  if (!pos) return null
+
+  // ── Helpers ────────────────────────────────────────────────────────────
+  const sectionTitle = (label: string) => (
+    <div style={{
+      fontSize: 10, fontWeight: 700, color: "#555", letterSpacing: "0.08em",
+      textTransform: "uppercase", padding: "6px 0 3px",
+      borderBottom: "1px solid #1e1e1e", marginBottom: 3,
+    }}>{label}</div>
+  )
+
+  const attrRow = (
+    icon: string | undefined,
+    label: string,
+    value: string | number,
+    variant: "normal" | "quality" | "reforge" = "normal"
+  ) => (
+    <div style={{ display: "flex", alignItems: "center", gap: 7, padding: "2.5px 0" }}>
+      {icon
+        ? <img src={icon} width={16} height={16} style={{ objectFit: "contain", flexShrink: 0, opacity: variant === "reforge" ? 0.5 : 1 }} />
+        : <div style={{ width: 16, flexShrink: 0 }} />
+      }
+      <span style={{
+        flex: 1, fontSize: 12,
+        color: variant === "quality" ? "#c4b5fd" : variant === "reforge" ? "#666" : "#aaa",
+      }}>{label}</span>
+      <span style={{
+        fontSize: 12, fontWeight: 600, fontVariantNumeric: "tabular-nums",
+        color: variant === "quality" ? "#c4b5fd" : variant === "reforge" ? "#666" : "#fff",
+      }}>{value}</span>
+    </div>
+  )
+
   const levelMatch = g.tier?.match(/Lv(\d+)/)
   const itemLevel = levelMatch ? parseInt(levelMatch[1]) : 0
-  
-  // Determine wearing level based on item level
   const wearingLevel = itemLevel >= 140 ? 60 : itemLevel >= 120 ? 50 : itemLevel >= 80 ? 40 : itemLevel >= 60 ? 30 : 0
+  const isRaid = rawTierData?.raid ?? g.raid
+  const perfPct = perfection
+
+  const isCompletelyRed = g.tier && (g.tier.includes("90") || g.tier.includes("110") || g.tier.includes("130") || g.tier.includes("150") || g.tier.includes("170"))
+  const headerGrad = isCompletelyRed
+    ? `linear-gradient(rgba(180,0,0,0) 0%, rgba(180,0,0,0.35) 100%)`
+    : `linear-gradient(rgba(172,153,89,0) 0%, rgba(172,153,89,0.3) 100%)`
+
+  // Determine which icon to use for primary/secondary/reforge stats
+  const statIcon = (name: string) =>
+    ATTR_ICONS[name] ?? `${ICON_BASE}/attributes/fight/common_attrmastery.webp`
 
   return (
-    <div style={{
-      position: "absolute",
-      bottom: "calc(100% + 8px)",
-      zIndex: 100,
-      width: 300,
-      left: "50%",
-      transform: "translateX(-50%)",
-      background: "#0d0d0d",
-      border: `1px solid ${color}88`,
-      boxShadow: `0 0 20px ${color}33, 0 8px 24px rgba(0,0,0,0.9)`,
-      pointerEvents: "none",
-    }}>
-      {/* Header with title background */}
+    <div
+      style={{
+        position: "fixed", zIndex: 1000,
+        width: 300, maxHeight: "calc(100vh - 20px)",
+        left: pos.left, top: pos.top,
+        background: "#0d0d0d",
+        border: `1px solid ${color}55`,
+        boxShadow: `0 0 24px ${color}22, 0 8px 32px rgba(0,0,0,0.95)`,
+        pointerEvents: "none",
+        overflow: "hidden",
+      }}
+    >
+      {/* ── Title bar ──────────────────────────────────────────────────── */}
       <div style={{
-        backgroundImage: "url('https://assets-ng.maxroll.gg/sr-tools/assets/db/assets/tooltip/title-bkg.webp')",
-        backgroundSize: "cover",
-        padding: "8px 12px",
-      }}>
-        <div style={{ fontSize: 13, fontWeight: 700, color, lineHeight: 1.3 }}>{g.tier || "Empty Slot"}</div>
-      </div>
-      
-      {/* Header inner with gradient */}
-      <div style={{
-        background: headerBg,
+        background: headerGrad,
+        borderBottom: `1px solid ${color}33`,
         padding: "10px 12px",
-        display: "flex",
-        alignItems: "flex-start",
-        gap: 12,
+        display: "flex", alignItems: "flex-start", gap: 10,
       }}>
-        {/* Left: Stats */}
-        <div style={{ flex: 1 }}>
-          <div style={{ display: "flex", gap: 8, marginBottom: 6, fontSize: 11, color: "#888" }}>
-            <span style={{ color: "#aaa" }}>{slot}</span>
-            {wearingLevel > 0 && <span>Wearing Level: {wearingLevel}</span>}
-            {itemLevel > 0 && <span>Lv. {itemLevel}</span>}
+        <div style={{ flex: 1, minWidth: 0 }}>
+          {/* Slot type + level badges */}
+          <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 5 }}>
+            <span style={{ fontSize: 10, color: "#555", letterSpacing: "0.05em", textTransform: "uppercase" }}>{slot}</span>
+            {itemLevel > 0 && (
+              <span style={{ fontSize: 10, color: color + "cc", fontWeight: 700 }}>Lv.{itemLevel}</span>
+            )}
+            {isRaid && (
+              <span style={{ fontSize: 9, color: "#e84545", border: "1px solid #e8454533", padding: "0 4px", letterSpacing: "0.08em" }}>RAID</span>
+            )}
+            {wearingLevel > 0 && (
+              <span style={{ fontSize: 10, color: "#555" }}>Req {wearingLevel}</span>
+            )}
+          </div>
+          {/* Tier name */}
+          <div style={{ fontSize: 14, fontWeight: 700, color, lineHeight: 1.2, marginBottom: 8 }}>
+            {g.tier || "Empty Slot"}
           </div>
           {/* Perfection bar */}
-          <div style={{ fontSize: 10, color: "#888", marginBottom: 4 }}>Perfection: 100/100</div>
-          <div style={{ 
-            position: "relative", height: 6, 
-            background: "#1a1a1a", borderRadius: 3,
-            overflow: "hidden" 
-          }}>
-            <div style={{ 
-              position: "absolute", left: 0, top: 0, bottom: 0, 
-              width: "100%", 
-              background: `linear-gradient(90deg, ${color}88, ${color})` 
-            }} />
-            <svg style={{ position: "absolute", right: -2, top: -3, color: "#666" }} width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 2C9.243 2 7 4.243 7 7v3H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-1V7c0-2.757-2.243-5-5-5zM9 7c0-1.654 1.346-3 3-3s3 1.346 3 3v3H9V7zm4 10.723V20h-2v-2.277a1.993 1.993 0 0 1 .567-3.677A2.001 2.001 0 0 1 14 16a1.99 1.99 0 0 1-1 1.723z"/>
-            </svg>
+          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <div style={{ flex: 1, height: 4, background: "#1a1a1a", borderRadius: 2, overflow: "hidden" }}>
+              <div style={{
+                height: "100%", borderRadius: 2,
+                width: `${perfPct}%`,
+                background: perfPct >= 100
+                  ? `linear-gradient(90deg, ${color}88, ${color})`
+                  : `linear-gradient(90deg, #e5c22988, #e5c229)`,
+              }} />
+            </div>
+            <span style={{
+              fontSize: 10, fontWeight: 700, fontVariantNumeric: "tabular-nums",
+              color: perfPct >= 100 ? color : "#e5c229",
+              flexShrink: 0,
+            }}>{perfPct}/100</span>
           </div>
         </div>
-        {/* Right: Icon */}
-        <img src={SLOT_ICONS[slot]} width={48} height={48} style={{ objectFit: "contain", flexShrink: 0 }} />
+        <img
+          src={SLOT_ICONS[slot]} width={52} height={52}
+          style={{ objectFit: "contain", flexShrink: 0, marginTop: 2 }}
+        />
       </div>
 
-      {/* Content */}
-      <div style={{ padding: "8px 12px 12px" }}>
+      {/* ── Body ────────────────────────────────────────────────────────── */}
+      <div style={{ padding: "6px 12px 12px" }}>
+
         {/* Basic Attributes */}
-        {tierData && (
-          <div style={{ marginBottom: 8 }}>
-            <div style={{ 
-              fontSize: 11, fontWeight: 600, color: "#888", 
-              padding: "4px 0", borderBottom: "1px solid #222", marginBottom: 4 
-            }}>
-              Basic Attributes
+        {basicAttrs && (slotType === "armor"
+          ? (basicAttrs as { atk: number; mainStat: number; hp: number; armor: number })
+          : (basicAttrs as { atk: number; mainStat: number; endurance?: number })
+        ) && (() => {
+          const ba = basicAttrs as any
+          const hasAny = ba.atk > 0 || ba.mainStat > 0 || (ba.hp ?? 0) > 0 || (ba.armor ?? 0) > 0 || (ba.endurance ?? 0) > 0
+          if (!hasAny) return null
+          return (
+            <div style={{ marginBottom: 4 }}>
+              {sectionTitle("Basic Attributes")}
+              {tierData && tierData.illu > 0 && attrRow(ATTR_ICONS["Illusion Strength"], "Illusion Strength", tierData.illu)}
+              {ba.atk > 0 && attrRow(ATTR_ICONS["ATK"], "ATK / MATK", ba.atk)}
+              {ba.mainStat > 0 && attrRow(ATTR_ICONS["Agility"], "Main Stat", ba.mainStat)}
+              {(ba.hp ?? 0) > 0 && attrRow(undefined, "Max HP", ba.hp)}
+              {(ba.armor ?? 0) > 0 && attrRow(undefined, "Armor", ba.armor)}
+              {(ba.endurance ?? 0) > 0 && attrRow(ATTR_ICONS["Endurance"], "Endurance", ba.endurance)}
             </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-              {tierData.illu > 0 && attrRow(ATTR_ICONS["Illusion Strength"], "Illusion Strength", tierData.illu)}
-              {attrRow(ATTR_ICONS["ATK"], "ATK", tierData.p)}
-              {attrRow(ATTR_ICONS["Agility"], "Agility", tierData.s)}
-              {attrRow(ATTR_ICONS["Endurance"], "Endurance", tierData.r > 0 ? tierData.r * 2 : 0)}
-            </div>
+          )
+        })()}
+
+        {/* Illusion Strength (no basic attrs but has illu) */}
+        {(!basicAttrs || !(() => { const ba = basicAttrs as any; return ba.atk > 0 || ba.mainStat > 0 })()) &&
+          tierData && tierData.illu > 0 && (
+          <div style={{ marginBottom: 4 }}>
+            {sectionTitle("Basic Attributes")}
+            {attrRow(ATTR_ICONS["Illusion Strength"], "Illusion Strength", tierData.illu)}
           </div>
         )}
 
         {/* Advanced Attributes */}
-        {(legType && legType !== "-" && legVal > 0) || (tierData && tierData.r > 0) ? (
-          <div style={{ marginBottom: 8 }}>
-            <div style={{ 
-              fontSize: 11, fontWeight: 600, color: "#888", 
-              padding: "4px 0", borderBottom: "1px solid #222", marginBottom: 4 
-            }}>
-              Advanced Attributes
-            </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-              {/* Purple stat (quality) */}
-              {legType && legType !== "-" && legVal > 0 && (
-                attrRow(ATTR_ICONS["ATK"], legType, 
-                  legType.includes("%") ? `+${legVal}%` : legVal, "quality", "purple")
-              )}
-              {/* Secondary stat */}
-              {tierData && tierData.s > 0 && g.s && g.s !== "-" && (
-                attrRow(ATTR_ICONS[g.s] || ATTR_ICONS["Luck"], g.s, tierData.s, "normal", "secondary")
-              )}
-              {/* Tertiary stat */}
-              {tierData && tierData.r > 0 && g.r && g.r !== "-" && (
-                attrRow(ATTR_ICONS[g.r] || ATTR_ICONS["Haste"], g.r, tierData.r, "recast", "tertiary")
-              )}
-            </div>
-          </div>
-        ) : null}
-
-        {/* Refining effect */}
-        {tierData && tierData.r > 0 && (
-          <div style={{ marginBottom: 8 }}>
-            <div style={{ 
-              fontSize: 11, fontWeight: 600, color: "#888", 
-              padding: "4px 0", borderBottom: "1px solid #222", marginBottom: 4 
-            }}>
-              Refining effect
-            </div>
-            <div style={{ fontSize: 12, color: "#ddd" }}>
-              Refined ATK {Math.floor(tierData.r / 4)}
-            </div>
-          </div>
-        )}
-
-        {/* Bonus effect */}
-        {tierData && itemLevel >= 60 && (
-          <div style={{ marginBottom: 8 }}>
-            <div style={{ 
-              fontSize: 11, fontWeight: 600, color: "#888", 
-              padding: "4px 0", borderBottom: "1px solid #222", marginBottom: 4 
-            }}>
-              Bonus effect
-            </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-              <div style={{ fontSize: 11, color: "#aaa" }}>Refine Lv.5: Refined ATK 12</div>
-              <div style={{ fontSize: 11, color: "#aaa" }}>Refine Lv.10: Refined ATK 12</div>
-              <div style={{ fontSize: 11, color: "#aaa" }}>Refine Lv.15: Refined ATK 12</div>
-              <div style={{ fontSize: 11, color: "#aaa" }}>Refine Lv.20: Refined ATK 12</div>
-              <div style={{ fontSize: 11, color: "#aaa" }}>Refine Lv.25: Refined ATK 18</div>
-            </div>
+        {tierData && (g.p && g.p !== "-" || g.s && g.s !== "-" || g.r && g.r !== "-" || (legType && legType !== "-" && legVal > 0)) && (
+          <div style={{ marginBottom: 4 }}>
+            {sectionTitle("Advanced Attributes")}
+            {/* Purple stat — quality accent */}
+            {legType && legType !== "-" && legVal > 0 && (
+              attrRow(
+                ATTR_ICONS["ATK"],
+                legType,
+                legType.includes("%") ? `+${legVal}%` : `+${legVal}`,
+                "quality"
+              )
+            )}
+            {/* Primary advanced stat */}
+            {g.p && g.p !== "-" && tierData.p > 0 && (
+              attrRow(statIcon(g.p), g.p, `+${tierData.p}`)
+            )}
+            {/* Secondary advanced stat */}
+            {g.s && g.s !== "-" && tierData.s > 0 && (
+              attrRow(statIcon(g.s), g.s, `+${tierData.s}`)
+            )}
+            {/* Reforge stat (dimmed) */}
+            {g.r && g.r !== "-" && tierData.r > 0 && (
+              attrRow(statIcon(g.r), `${g.r} (Reforge)`, `+${tierData.r}`, "reforge")
+            )}
           </div>
         )}
 
         {/* Sigil/Effects */}
         {sigil && sigilData && (
           <div>
-            <div style={{ 
-              display: "flex", alignItems: "center", gap: 8,
-              padding: "4px 0", borderBottom: "1px solid #222", marginBottom: 4 
-            }}>
-              <span style={{ fontSize: 11, fontWeight: 600, color: "#888" }}>Effects</span>
-              <img 
-                src={sigil.icon ? `${SIGIL_ICONS_BASE}${sigil.icon}` : `${ICON_BASE}/items/gems/item_icons_enchantformula30.webp`} 
-                alt={sigil.n} width={24} height={24} 
-                style={{ objectFit: "contain" }} 
-              />
-              <span style={{ fontSize: 12, fontWeight: 600, color: "#e5c229" }}>{sigil.n}</span>
+            <div style={{ marginTop: 4 }}>
+              {sectionTitle("Effects")}
             </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 5 }}>
+              <img
+                src={sigil.icon ? `${SIGIL_ICONS_BASE}${sigil.icon}` : `${ICON_BASE}/items/gems/item_icons_enchantformula30.webp`}
+                alt={sigil.n} width={20} height={20}
+                style={{ objectFit: "contain" }}
+              />
+              <span style={{ fontSize: 12, fontWeight: 700, color: "#e5c229" }}>{sigil.n}</span>
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
               {Object.entries(sigilData).map(([stat, val]) => (
-                <div key={stat} style={{ display: "flex", justifyContent: "space-between", fontSize: 12, color: "#bbb" }}>
-                  <span>{stat}</span>
-                  <span style={{ color: "white", fontWeight: 600 }}>+{val}</span>
-                </div>
+                attrRow(ATTR_ICONS[stat], stat, `+${val}`)
               ))}
             </div>
           </div>
         )}
 
-        {!hasContent && (
-          <div style={{ fontSize: 11, color: "#444", textAlign: "center", padding: "12px 0" }}>No gear data</div>
+        {/* Empty state */}
+        {!tierData && !sigil && (
+          <div style={{ fontSize: 11, color: "#444", textAlign: "center", padding: "10px 0" }}>No gear configured</div>
         )}
       </div>
     </div>
@@ -306,6 +306,7 @@ function GearTooltip({ slot, slotIdx, g, legType, legVal, align = "center" }: To
 
 function SlotButton({ slot, slotIdx, g, legType, legVal, align = "center" }: TooltipProps) {
   const [hovered, setHovered] = useState(false)
+  const [anchorRect, setAnchorRect] = useState<DOMRect | null>(null)
   const color = rarityColor(g.tier ?? "")
   const isEmpty = !g.tier || ((!g.p || g.p === "-") && (!g.s || g.s === "-"))
 
@@ -317,9 +318,16 @@ function SlotButton({ slot, slotIdx, g, legType, legVal, align = "center" }: Too
       : `linear-gradient(rgba(172,153,89,0) 0%, rgba(176,152,87,0.3) 50%, ${color}55 100%)`
 
   return (
-    <div style={{ position: "relative", display: "inline-block" }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+    <div
+      style={{ position: "relative", display: "inline-block" }}
+      onMouseEnter={(e) => {
+        setHovered(true)
+        setAnchorRect((e.currentTarget as HTMLDivElement).getBoundingClientRect())
+      }}
+      onMouseLeave={() => {
+        setHovered(false)
+        setAnchorRect(null)
+      }}
     >
       <div style={{
         width: SZ, height: SZ,
@@ -344,7 +352,7 @@ function SlotButton({ slot, slotIdx, g, legType, legVal, align = "center" }: Too
           {slot}
         </div>
       </div>
-      {hovered && <GearTooltip slot={slot} slotIdx={slotIdx} g={g} legType={legType} legVal={legVal} align={align} />}
+      {hovered && <GearTooltip slot={slot} slotIdx={slotIdx} g={g} legType={legType} legVal={legVal} align={align} anchorRect={anchorRect} />}
     </div>
   )
 }

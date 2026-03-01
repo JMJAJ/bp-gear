@@ -259,6 +259,108 @@ export const GAME_DATA = {
     "Dissonance": { l: "4pc: Amplified Beat has +1 hit count", v: 0, t: "text", note: "Amplified Beat has +1 hit count." },
     "Concerto": { l: "4pc: After Healing Beat +8% heal (5s); after Fivefold Crescendo +16% heal (8s)", v: 0, t: "text", note: "Within 5s after casting Healing Beat, the final healing of Healing Melody is increased by 8%. Within 8s after casting Fivefold Crescendo, the final healing of Healing Melody is increased by 16%." },
   } as Record<string, { l: string; v: number; t: "aspd" | "cspd" | "stat_pct" | "mastery_crit" | "aspd_cond" | "armor_ignore" | "text" | "crit_dmg" | "haste_pct" | "main_stat_pct"; note?: string } | null>,
+
+  // ── Basic Attributes ──────────────────────────────────────────────────────
+  // These are the physical item stats shown in the tooltip's "Basic Attributes" section.
+  // Each entry is keyed by tier string (e.g. "Lv140 Gold") and contains per-slot-type values
+  // at 100/100 perfection. Perfection scaling uses the same applyPerfection formula.
+  // Fill in actual values from datamining.  All zeroes = not yet filled in.
+  BASIC_ATTRS: {
+    // ── Lv40 ──
+    "Lv40 Gold": {
+      weapon:    { atk: 0, mainStat: 0 },
+      armor:     { atk: 0, mainStat: 0, hp: 0, armor: 0 },
+      accessory: { atk: 0, mainStat: 0, endurance: 0 },
+    },
+    // ── Lv60 ──
+    "Lv60 Gold": {
+      weapon:    { atk: 0, mainStat: 0 },
+      armor:     { atk: 0, mainStat: 0, hp: 0, armor: 0 },
+      accessory: { atk: 0, mainStat: 0, endurance: 0 },
+    },
+    "Lv60 Raid": {
+      weapon:    { atk: 0, mainStat: 0 },
+      armor:     { atk: 0, mainStat: 0, hp: 0, armor: 0 },
+      accessory: { atk: 0, mainStat: 0, endurance: 0 },
+    },
+    // ── Lv80 ──
+    "Lv80 Gold": {
+      weapon:    { atk: 0, mainStat: 0 },
+      armor:     { atk: 0, mainStat: 0, hp: 0, armor: 0 },
+      accessory: { atk: 0, mainStat: 0, endurance: 0 },
+    },
+    "Lv80 Raid": {
+      weapon:    { atk: 0, mainStat: 0 },
+      armor:     { atk: 0, mainStat: 0, hp: 0, armor: 0 },
+      accessory: { atk: 0, mainStat: 0, endurance: 0 },
+    },
+    // ── Lv90 ──
+    "Lv90 Raid": {
+      weapon:    { atk: 0, mainStat: 0 },
+    },
+    // ── Lv100 ──
+    "Lv100 Far Sea": {
+      weapon:    { atk: 0, mainStat: 0 },
+      armor:     { atk: 0, mainStat: 0, hp: 0, armor: 0 },
+      accessory: { atk: 0, mainStat: 0, endurance: 0 },
+    },
+    // ── Lv120 ──
+    "Lv120 Gold": {
+      weapon:    { atk: 0, mainStat: 0 },
+      armor:     { atk: 0, mainStat: 0, hp: 0, armor: 0 },
+      accessory: { atk: 0, mainStat: 0, endurance: 0 },
+    },
+    // ── Lv140 ──
+    "Lv140 Gold": {
+      weapon:    { atk: 0, mainStat: 0 },
+      armor:     { atk: 0, mainStat: 0, hp: 0, armor: 0 },
+      accessory: { atk: 0, mainStat: 0, endurance: 0 },
+    },
+    "Lv140 Raid": {
+      weapon:    { atk: 0, mainStat: 0 },
+      armor:     { atk: 0, mainStat: 0, hp: 0, armor: 0 },
+      accessory: { atk: 0, mainStat: 0, endurance: 0 },
+    },
+    "Lv140 Far Sea": {
+      weapon:    { atk: 0, mainStat: 0 },
+      armor:     { atk: 0, mainStat: 0, hp: 0, armor: 0 },
+      accessory: { atk: 0, mainStat: 0, endurance: 0 },
+    },
+    // ── Lv150 ──
+    "Lv150 Raid": {
+      weapon:    { atk: 0, mainStat: 0 },
+      armor:     { atk: 0, mainStat: 0, hp: 0, armor: 0 },
+      accessory: { atk: 0, mainStat: 0, endurance: 0 },
+    },
+    // ── Lv160 ──
+    "Lv160 Gold": {
+      weapon:    { atk: 0, mainStat: 0 },
+      armor:     { atk: 0, mainStat: 0, hp: 0, armor: 0 },
+      accessory: { atk: 0, mainStat: 0, endurance: 0 },
+    },
+    "Lv160 Raid": {
+      weapon:    { atk: 0, mainStat: 0 },
+      armor:     { atk: 0, mainStat: 0, hp: 0, armor: 0 },
+      accessory: { atk: 0, mainStat: 0, endurance: 0 },
+    },
+    "Lv160 Far Sea": {
+      weapon:    { atk: 0, mainStat: 0 },
+    },
+    // ── Lv170 ──
+    "Lv170 Raid": {
+      weapon:    { atk: 0, mainStat: 0 },
+      armor:     { atk: 0, mainStat: 0, hp: 0, armor: 0 },
+      accessory: { atk: 0, mainStat: 0, endurance: 0 },
+    },
+    // ── Lv180 ──
+    "Lv170 Far Sea": {
+      weapon:    { atk: 0, mainStat: 0 },
+    },
+  } as Record<string, {
+    weapon?:    { atk: number; mainStat: number }
+    armor?:     { atk: number; mainStat: number; hp: number; armor: number }
+    accessory?: { atk: number; mainStat: number; endurance: number }
+  }>,
 }
 
 export const SIGIL_DB = [
@@ -368,6 +470,7 @@ export interface GearSlot {
   r: string
   sigName: string
   sigLvl: string
+  perfection?: number   // 0–100; default 100 means no scaling
   locked?: boolean
 }
 
@@ -400,6 +503,36 @@ export function getTierOptions(slotType: "weapon" | "armor" | "accessory", slotN
   }
 
   return base
+}
+
+/** Look up the basic attribute values for a given tier and slot type. */
+export function getBasicAttrs(tier: string, slotType: "weapon" | "armor" | "accessory") {
+  return GAME_DATA.BASIC_ATTRS[tier]?.[slotType] ?? null
+}
+
+/**
+ * Scale tier stat values by perfection (0–100).
+ * Derived from Lv140 datamined examples. Formula holds for all tiers because
+ * it is applied proportionally to each stat's own max value.
+ *
+ *   factor = (229 + 149 * perfection / 100) / 378
+ *   primary   = Math.round(p_max * factor)          [round]
+ *   secondary = Math.floor(s_max * factor)           [floor, raid: s_max==p_max]
+ *   reforge   = Math.floor(r_max * factor)           [floor]
+ *
+ * At perfection=100 the factor is exactly 1, returning the original values.
+ */
+export function applyPerfection<T extends { p: number; s: number; r: number }>(
+  vals: T,
+  perfection: number
+): T {
+  if (perfection >= 100) return vals
+  const factor = (229 + 149 * perfection / 100) / 378
+  const scaledP = Math.round(vals.p * factor)
+  // Raid gear has s_max == p_max; scale the same way (round) so secondary stays equal to primary
+  const scaledS = vals.s === vals.p ? scaledP : Math.floor(vals.s * factor)
+  const scaledR = vals.r > 0 ? Math.floor(vals.r * factor) : 0
+  return { ...vals, p: scaledP, s: scaledS, r: scaledR }
 }
 
 /** Look up the stat values for a tier. Returns null if tier not found. */

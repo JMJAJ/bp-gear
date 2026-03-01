@@ -4,6 +4,7 @@ import { useApp } from "@/lib/app-context"
 import { GAME_DATA, SIGIL_MAP, getSlotType, getTierData, getDefaultTier, getPurpleValOptions, getArmorPurpleForBuild, findRaidTier, findGoldTier, getUniqueTierLevels, getTierForLevel, levelHasBothVariants } from "@/lib/game-data"
 import type { Build, GearSlot } from "@/lib/app-context"
 import { useRef } from "react"
+import { Tip } from "@/components/TooltipText"
 
 const BUILD_OPTIONS: { id: Build; label: string }[] = [
   { id: "Strength", label: "STR" },
@@ -174,6 +175,20 @@ function GearRow({ index }: { index: number }) {
         ) : (
           <GSelect value={g.s} options={allowedSecondary} onChange={v => updateGearSlot(index, { s: v })} />
         )}
+      </td>
+      <td className="px-1 py-1.5 w-14">
+        <input
+          type="number"
+          min={0}
+          max={100}
+          value={g.perfection ?? 100}
+          onChange={e => {
+            const v = Math.max(0, Math.min(100, parseInt(e.target.value) || 0))
+            updateGearSlot(index, { perfection: v })
+          }}
+          className="w-full text-[11px] px-1.5 py-1 border border-[#1a1a1a] bg-[#0a0a0a] text-white focus:border-[#444] outline-none text-center"
+          style={{ color: (g.perfection ?? 100) < 100 ? "#e5c229" : "#666" }}
+        />
       </td>
       <td className="px-1 py-1.5 w-28">
         {hasReforge ? (
@@ -524,14 +539,18 @@ export function PlannerSection() {
       </div>
 
       {/* Gear table */}
-      <div className="overflow-x-auto">
+      <div className="overflow-x-hidden">
         <table className="w-full border-collapse">
           <thead>
             <tr className="border-b border-[#222]">
               {[
-                "Slot", "Raid", "Tier", "Primary", "Secondary", "Reforge", "Sigil", "Lv",
-                <span key="purple" className="game-tooltip" data-tip="Purple stat — class-filtered. Weapon/accessories get % stats, armor gets flat stats." style={{ color: "#b888ff" }}>Purple</span>,
-                <span key="val" className="game-tooltip" data-tip="% value for percent stats (Attack Speed, Armor %, etc.). Raw number for flat stats (Armor, Max HP, Resistance).">Val</span>,
+                "Slot", "Raid", "Tier", "Primary", "Secondary",
+                <Tip key="perf" text="Perfection (0–100). Scales primary, secondary and reforge stats proportionally. Default 100 = max stats.">Perf</Tip>,
+                "Reforge", "Sigil", "Lv",
+                <Tip key="purple" text="Purple stat — class-filtered. Weapon/accessories get % stats, armor gets flat stats.">
+                  <span style={{ color: "#b888ff" }}>Purple</span>
+                </Tip>,
+                <Tip key="val" text="% value for percent stats (Attack Speed, Armor %, etc.). Raw number for flat stats (Armor, Max HP, Resistance).">Val</Tip>,
               ].map((h, i) => (
                 <th key={i} className="text-left text-[9px] uppercase tracking-[1px] text-[#444] font-semibold px-2 py-2">
                   {h}
