@@ -34,6 +34,7 @@ export interface MindProjection {
   nodes: PsychoscopeNode[]
   bondExclusive: string
   bondExclusiveUnlock: number
+  treeBonus?: Record<string, number>  // Stat % bonuses granted by tree nodes (e.g., { "Luck": 1 })
 }
 
 export interface BondGeneral {
@@ -61,7 +62,7 @@ export const BOND_GENERALS: BondGeneral[] = [
   { level: 5,  effect: "Illusion Strength +100; Endurance +500" },
   { level: 12, effect: "Highest stat among Crit/Haste/Luck/Mastery/Versatility +300; Endurance +500" },
   { level: 20, effect: "Illusion Strength +100; Endurance +500" },
-  { level: 25, effect: "Highest stat among Crit/Haste/Luck/Mastery/Versatility +300; Endurance +500" },
+  { level: 25, effect: "Highest stat among Crit/Haste/Luck/Mastery/Versatility +500; Endurance +500" },
 ]
 
 // ── Deep-Slumber Mind Projections ──
@@ -216,6 +217,7 @@ export const MIND_PROJECTIONS: MindProjection[] = [
     ],
     bondExclusive: "Luck +1%",
     bondExclusiveUnlock: 35,
+    treeBonus: { "Luck": 1 },  // Fantasia Impact tree grants +1% Luck
   },
   {
     id: "phantom-execution",
@@ -770,9 +772,11 @@ export interface PsychoscopeEffects {
   bondLuckPct: number                  // flat Luck% from bond exclusive
   bondMainStatFlat: number             // e.g. Endless Mind: +100 to current main stats
   // Bond general highest stat bonus (total flat)
-  bondHighestStatFlat: number          // +300 per applicable bond tier (levels 12, 25)
+  bondHighestStatFlat: number          // +300 + +500 from bond tiers (levels 12, 25)
   bondIlluStrength: number
   bondEndurance: number                // Total Endurance from bond generals
+  // Tree passive stat % bonuses (e.g., Fantasia Impact skill nodes grant +1% Luck)
+  treeStatPct: Record<string, number>
   // Active effect descriptions for display
   activeEffects: string[]
 }
@@ -947,6 +951,7 @@ export function computePsychoscopeEffects(
     bondHighestStatFlat: 0,
     bondIlluStrength: 0,
     bondEndurance: 0,
+    treeStatPct: {},
     activeEffects: [],
   }
 
@@ -955,6 +960,14 @@ export function computePsychoscopeEffects(
   // ── Process equipped factors (branch-aware) ──
   const projection = [...MIND_PROJECTIONS, ...SLUMBERING_PROJECTIONS].find(p => p.id === config.projectionId)
   if (!projection) return effects
+
+  // ── Apply tree passive stat bonuses (e.g., Fantasia Impact: Luck +1%) ──
+  if (projection.treeBonus) {
+    for (const [stat, val] of Object.entries(projection.treeBonus)) {
+      effects.treeStatPct[stat] = (effects.treeStatPct[stat] ?? 0) + val
+      effects.activeEffects.push(`Tree: ${stat} +${val}%`)
+    }
+  }
 
   // Use parseNodeTree to correctly handle branched factor pairs
   const rows = parseNodeTree(projection.nodes)
@@ -1075,21 +1088,22 @@ export function computePsychoscopeEffects(
     const dreamDmgMatch = excl.match(/Dream DMG \+(\d+(?:\.\d+)?)%/i)
     if (dreamDmgMatch) effects.dreamDmgPct += parseFloat(dreamDmgMatch[1])
 
-    const critMatch = excl.match(/(?<!DMG )Crit \+(\d+(?:\.\d+)?)%/i)
-    if (critMatch) effects.bondCritPct += parseFloat(critMatch[1])
-
-    const luckMatch = excl.match(/Luck \+(\d+(?:\.\d+)?)%/i)
-    if (luckMatch) effects.bondLuckPct += parseFloat(luckMatch[1])
-
     // "Current main stats +100" (Endless Mind)
     const mainStatMatch = excl.match(/Current main stats? \+(\d+)/i)
     if (mainStatMatch) effects.bondMainStatFlat += parseInt(mainStatMatch[1])
 
-    // "Attacks vs Oblivion Dream targets: Crit +2%, Luck +2%"
+    // "Attacks vs Oblivion Dream targets: Crit +2%, Luck +2%" — compound match
     const oblivionMatch = excl.match(/Crit \+(\d+(?:\.\d+)?)%, Luck \+(\d+(?:\.\d+)?)%/i)
     if (oblivionMatch) {
       effects.bondCritPct += parseFloat(oblivionMatch[1])
       effects.bondLuckPct += parseFloat(oblivionMatch[2])
+    } else {
+      // Individual stat bonuses (only when not already matched by compound pattern)
+      const critMatch = excl.match(/(?<!DMG )Crit \+(\d+(?:\.\d+)?)%/i)
+      if (critMatch) effects.bondCritPct += parseFloat(critMatch[1])
+
+      const luckMatch = excl.match(/Luck \+(\d+(?:\.\d+)?)%/i)
+      if (luckMatch) effects.bondLuckPct += parseFloat(luckMatch[1])
     }
   }
 

@@ -35,6 +35,7 @@ const ATTR_ICONS: Record<string, string> = {
   "Strength": `${ICON_BASE}/attributes/fight/common_attrdexterity.webp`,
   "Intellect": `${ICON_BASE}/attributes/fight/common_attrdexterity.webp`,
   "Endurance": `${ICON_BASE}/attributes/fight/common_icon08.webp`,
+  "Armor": `${ICON_BASE}/attributes/fight/common_attrdefense.webp`,
 }
 
 // ── Rarity colour from tier string ────────────────────────────────────────
@@ -115,9 +116,10 @@ function GearTooltip({ slot, slotIdx, g, legType = "-", legVal = 0, anchorRect }
     icon: string | undefined,
     label: string,
     value: string | number,
-    variant: "normal" | "quality" | "reforge" = "normal"
+    variant: "normal" | "quality" | "reforge" = "normal",
+    keySuffix?: string
   ) => (
-    <div style={{ display: "flex", alignItems: "center", gap: 7, padding: "2.5px 0" }}>
+    <div key={`${label}-${variant}${keySuffix ? `-${keySuffix}` : ""}`} style={{ display: "flex", alignItems: "center", gap: 7, padding: "2.5px 0" }}>
       {icon
         ? <img src={icon} width={16} height={16} style={{ objectFit: "contain", flexShrink: 0, opacity: variant === "reforge" ? 0.5 : 1 }} />
         : <div style={{ width: 16, flexShrink: 0 }} />
@@ -214,22 +216,19 @@ function GearTooltip({ slot, slotIdx, g, legType = "-", legVal = 0, anchorRect }
       <div style={{ padding: "6px 12px 12px" }}>
 
         {/* Basic Attributes */}
-        {basicAttrs && (slotType === "armor"
-          ? (basicAttrs as { atk: number; mainStat: number; hp: number; armor: number })
-          : (basicAttrs as { atk: number; mainStat: number; endurance?: number })
-        ) && (() => {
+        {basicAttrs && (() => {
           const ba = basicAttrs as any
-          const hasAny = ba.atk > 0 || ba.mainStat > 0 || (ba.hp ?? 0) > 0 || (ba.armor ?? 0) > 0 || (ba.endurance ?? 0) > 0
+          const hasAny = (ba.atk ?? 0) > 0 || (ba.mainStat ?? 0) > 0 || (ba.hp ?? 0) > 0 || (ba.armor ?? 0) > 0 || (ba.endurance ?? 0) > 0
           if (!hasAny) return null
           return (
             <div style={{ marginBottom: 4 }}>
               {sectionTitle("Basic Attributes")}
-              {tierData && tierData.illu > 0 && attrRow(ATTR_ICONS["Illusion Strength"], "Illusion Strength", tierData.illu)}
-              {ba.atk > 0 && attrRow(ATTR_ICONS["ATK"], "ATK / MATK", ba.atk)}
-              {ba.mainStat > 0 && attrRow(ATTR_ICONS["Agility"], "Main Stat", ba.mainStat)}
-              {(ba.hp ?? 0) > 0 && attrRow(undefined, "Max HP", ba.hp)}
-              {(ba.armor ?? 0) > 0 && attrRow(undefined, "Armor", ba.armor)}
-              {(ba.endurance ?? 0) > 0 && attrRow(ATTR_ICONS["Endurance"], "Endurance", ba.endurance)}
+              {tierData && tierData.illu > 0 && attrRow(ATTR_ICONS["Illusion Strength"], "Illusion Strength", tierData.illu, "normal", "basic-illu")}
+              {(ba.atk ?? 0) > 0 && attrRow(ATTR_ICONS["ATK"], "ATK", ba.atk, "normal", "basic-atk")}
+              {(ba.armor ?? 0) > 0 && attrRow(ATTR_ICONS["Armor"], "Armor", ba.armor, "normal", "basic-armor")}
+              {(ba.mainStat ?? 0) > 0 && attrRow(ATTR_ICONS["Agility"], "Main Stat", ba.mainStat, "normal", "basic-main")}
+              {(ba.hp ?? 0) > 0 && attrRow(undefined, "Max HP", ba.hp, "normal", "basic-hp")}
+              {(ba.endurance ?? 0) > 0 && attrRow(ATTR_ICONS["Endurance"], "Endurance", ba.endurance, "normal", "basic-end")}
             </div>
           )
         })()}
@@ -239,7 +238,7 @@ function GearTooltip({ slot, slotIdx, g, legType = "-", legVal = 0, anchorRect }
           tierData && tierData.illu > 0 && (
           <div style={{ marginBottom: 4 }}>
             {sectionTitle("Basic Attributes")}
-            {attrRow(ATTR_ICONS["Illusion Strength"], "Illusion Strength", tierData.illu)}
+            {attrRow(ATTR_ICONS["Illusion Strength"], "Illusion Strength", tierData.illu, "normal", "illu-only")}
           </div>
         )}
 
@@ -253,20 +252,21 @@ function GearTooltip({ slot, slotIdx, g, legType = "-", legVal = 0, anchorRect }
                 ATTR_ICONS["ATK"],
                 legType,
                 legType.includes("%") ? `+${legVal}%` : `+${legVal}`,
-                "quality"
+                "quality",
+                "adv-purple"
               )
             )}
             {/* Primary advanced stat */}
             {g.p && g.p !== "-" && tierData.p > 0 && (
-              attrRow(statIcon(g.p), g.p, `+${tierData.p}`)
+              attrRow(statIcon(g.p), g.p, `+${tierData.p}`, "normal", "adv-primary")
             )}
             {/* Secondary advanced stat */}
             {g.s && g.s !== "-" && tierData.s > 0 && (
-              attrRow(statIcon(g.s), g.s, `+${tierData.s}`)
+              attrRow(statIcon(g.s), g.s, `+${tierData.s}`, "normal", "adv-secondary")
             )}
             {/* Reforge stat (dimmed) */}
             {g.r && g.r !== "-" && tierData.r > 0 && (
-              attrRow(statIcon(g.r), `${g.r} (Reforge)`, `+${tierData.r}`, "reforge")
+              attrRow(statIcon(g.r), `${g.r} (Reforge)`, `+${tierData.r}`, "reforge", "adv-reforge")
             )}
           </div>
         )}
@@ -287,7 +287,7 @@ function GearTooltip({ slot, slotIdx, g, legType = "-", legVal = 0, anchorRect }
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
               {Object.entries(sigilData).map(([stat, val]) => (
-                attrRow(ATTR_ICONS[stat], stat, `+${val}`)
+                attrRow(ATTR_ICONS[stat], stat, `+${val}`, "normal", `sigil-${stat}`)
               ))}
             </div>
           </div>

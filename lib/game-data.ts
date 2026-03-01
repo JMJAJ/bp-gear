@@ -261,105 +261,116 @@ export const GAME_DATA = {
   } as Record<string, { l: string; v: number; t: "aspd" | "cspd" | "stat_pct" | "mastery_crit" | "aspd_cond" | "armor_ignore" | "text" | "crit_dmg" | "haste_pct" | "main_stat_pct"; note?: string } | null>,
 
   // ── Basic Attributes ──────────────────────────────────────────────────────
-  // These are the physical item stats shown in the tooltip's "Basic Attributes" section.
-  // Each entry is keyed by tier string (e.g. "Lv140 Gold") and contains per-slot-type values
-  // at 100/100 perfection. Perfection scaling uses the same applyPerfection formula.
-  // Fill in actual values from datamining.  All zeroes = not yet filled in.
+  // Physical item stats shown in the tooltip "Basic Attributes" section.
+  // Keyed by tier string at 100/100 perfection; applyPerfection scales them.
+  //
+  // Confirmed Lv140 datamined values:
+  //   weapon (Gold):    ATK 151 · mainStat 268 · endurance 1209
+  //   armor  (Raid):    armor 336 · mainStat 268 · endurance 1209
+  //   accessory (Gold): mainStat 268 · endurance 1209
+  //
+  // All other tiers have zeroes — fill in when datamined.
   BASIC_ATTRS: {
     // ── Lv40 ──
     "Lv40 Gold": {
-      weapon:    { atk: 0, mainStat: 0 },
-      armor:     { atk: 0, mainStat: 0, hp: 0, armor: 0 },
-      accessory: { atk: 0, mainStat: 0, endurance: 0 },
+      weapon:    { atk: 0, mainStat: 0, endurance: 0 },
+      armor:     { armor: 0, mainStat: 0, endurance: 0, hp: 0 },
+      accessory: { mainStat: 0, endurance: 0 },
     },
     // ── Lv60 ──
     "Lv60 Gold": {
-      weapon:    { atk: 0, mainStat: 0 },
-      armor:     { atk: 0, mainStat: 0, hp: 0, armor: 0 },
-      accessory: { atk: 0, mainStat: 0, endurance: 0 },
+      weapon:    { atk: 0, mainStat: 0, endurance: 0 },
+      armor:     { armor: 0, mainStat: 0, endurance: 0, hp: 0 },
+      accessory: { mainStat: 0, endurance: 0 },
     },
     "Lv60 Raid": {
-      weapon:    { atk: 0, mainStat: 0 },
-      armor:     { atk: 0, mainStat: 0, hp: 0, armor: 0 },
-      accessory: { atk: 0, mainStat: 0, endurance: 0 },
+      weapon:    { atk: 0, mainStat: 0, endurance: 0 },
+      armor:     { armor: 0, mainStat: 0, endurance: 0, hp: 0 },
+      accessory: { mainStat: 0, endurance: 0 },
+    },
+    // ── Lv70 ──
+    "Lv70 Raid": {
+      weapon:    { atk: 0, mainStat: 0, endurance: 0 },
+      armor:     { armor: 0, mainStat: 0, endurance: 0, hp: 0 },
+      accessory: { mainStat: 0, endurance: 0 },
     },
     // ── Lv80 ──
     "Lv80 Gold": {
-      weapon:    { atk: 0, mainStat: 0 },
-      armor:     { atk: 0, mainStat: 0, hp: 0, armor: 0 },
-      accessory: { atk: 0, mainStat: 0, endurance: 0 },
+      weapon:    { atk: 0, mainStat: 0, endurance: 0 },
+      armor:     { armor: 0, mainStat: 0, endurance: 0, hp: 0 },
+      accessory: { mainStat: 0, endurance: 0 },
     },
     "Lv80 Raid": {
-      weapon:    { atk: 0, mainStat: 0 },
-      armor:     { atk: 0, mainStat: 0, hp: 0, armor: 0 },
-      accessory: { atk: 0, mainStat: 0, endurance: 0 },
+      weapon:    { atk: 0, mainStat: 0, endurance: 0 },
+      armor:     { armor: 0, mainStat: 0, endurance: 0, hp: 0 },
+      accessory: { mainStat: 0, endurance: 0 },
     },
     // ── Lv90 ──
     "Lv90 Raid": {
-      weapon:    { atk: 0, mainStat: 0 },
+      weapon:    { atk: 0, mainStat: 0, endurance: 0 },
+      armor:     { armor: 0, mainStat: 0, endurance: 0, hp: 0 },
+      accessory: { mainStat: 0, endurance: 0 },
     },
     // ── Lv100 ──
     "Lv100 Far Sea": {
-      weapon:    { atk: 0, mainStat: 0 },
-      armor:     { atk: 0, mainStat: 0, hp: 0, armor: 0 },
-      accessory: { atk: 0, mainStat: 0, endurance: 0 },
+      weapon:    { atk: 0, mainStat: 0, endurance: 0 },
+      armor:     { armor: 0, mainStat: 0, endurance: 0, hp: 0 },
+      accessory: { mainStat: 0, endurance: 0 },
     },
     // ── Lv120 ──
     "Lv120 Gold": {
-      weapon:    { atk: 0, mainStat: 0 },
-      armor:     { atk: 0, mainStat: 0, hp: 0, armor: 0 },
-      accessory: { atk: 0, mainStat: 0, endurance: 0 },
+      weapon:    { atk: 0, mainStat: 0, endurance: 0 },
+      armor:     { armor: 0, mainStat: 0, endurance: 0, hp: 0 },
+      accessory: { mainStat: 0, endurance: 0 },
     },
-    // ── Lv140 ──
+    // ── Lv140 ── (datamined 100/100)
     "Lv140 Gold": {
-      weapon:    { atk: 0, mainStat: 0 },
-      armor:     { atk: 0, mainStat: 0, hp: 0, armor: 0 },
-      accessory: { atk: 0, mainStat: 0, endurance: 0 },
+      weapon:    { atk: 151, mainStat: 268, endurance: 1209 },
+      armor:     { armor: 336, mainStat: 268, endurance: 1209, hp: 0 },
+      accessory: { mainStat: 268, endurance: 1209 },
     },
     "Lv140 Raid": {
-      weapon:    { atk: 0, mainStat: 0 },
-      armor:     { atk: 0, mainStat: 0, hp: 0, armor: 0 },
-      accessory: { atk: 0, mainStat: 0, endurance: 0 },
+      weapon:    { atk: 0, mainStat: 0, endurance: 0 },
+      armor:     { armor: 336, mainStat: 268, endurance: 1209, hp: 0 },
+      accessory: { mainStat: 0, endurance: 0 },
     },
     "Lv140 Far Sea": {
-      weapon:    { atk: 0, mainStat: 0 },
-      armor:     { atk: 0, mainStat: 0, hp: 0, armor: 0 },
-      accessory: { atk: 0, mainStat: 0, endurance: 0 },
+      weapon:    { atk: 0, mainStat: 0, endurance: 0 },
+      armor:     { armor: 0, mainStat: 0, endurance: 0, hp: 0 },
+      accessory: { mainStat: 0, endurance: 0 },
     },
     // ── Lv150 ──
     "Lv150 Raid": {
-      weapon:    { atk: 0, mainStat: 0 },
-      armor:     { atk: 0, mainStat: 0, hp: 0, armor: 0 },
-      accessory: { atk: 0, mainStat: 0, endurance: 0 },
+      weapon:    { atk: 0, mainStat: 0, endurance: 0 },
+      armor:     { armor: 0, mainStat: 0, endurance: 0, hp: 0 },
+      accessory: { mainStat: 0, endurance: 0 },
     },
     // ── Lv160 ──
     "Lv160 Gold": {
-      weapon:    { atk: 0, mainStat: 0 },
-      armor:     { atk: 0, mainStat: 0, hp: 0, armor: 0 },
-      accessory: { atk: 0, mainStat: 0, endurance: 0 },
+      weapon:    { atk: 0, mainStat: 0, endurance: 0 },
+      armor:     { armor: 0, mainStat: 0, endurance: 0, hp: 0 },
+      accessory: { mainStat: 0, endurance: 0 },
     },
     "Lv160 Raid": {
-      weapon:    { atk: 0, mainStat: 0 },
-      armor:     { atk: 0, mainStat: 0, hp: 0, armor: 0 },
-      accessory: { atk: 0, mainStat: 0, endurance: 0 },
+      weapon:    { atk: 0, mainStat: 0, endurance: 0 },
+      armor:     { armor: 0, mainStat: 0, endurance: 0, hp: 0 },
+      accessory: { mainStat: 0, endurance: 0 },
     },
     "Lv160 Far Sea": {
-      weapon:    { atk: 0, mainStat: 0 },
+      weapon:    { atk: 0, mainStat: 0, endurance: 0 },
+      armor:     { armor: 0, mainStat: 0, endurance: 0, hp: 0 },
+      accessory: { mainStat: 0, endurance: 0 },
     },
     // ── Lv170 ──
     "Lv170 Raid": {
-      weapon:    { atk: 0, mainStat: 0 },
-      armor:     { atk: 0, mainStat: 0, hp: 0, armor: 0 },
-      accessory: { atk: 0, mainStat: 0, endurance: 0 },
-    },
-    // ── Lv180 ──
-    "Lv170 Far Sea": {
-      weapon:    { atk: 0, mainStat: 0 },
+      weapon:    { atk: 0, mainStat: 0, endurance: 0 },
+      armor:     { armor: 0, mainStat: 0, endurance: 0, hp: 0 },
+      accessory: { mainStat: 0, endurance: 0 },
     },
   } as Record<string, {
-    weapon?:    { atk: number; mainStat: number }
-    armor?:     { atk: number; mainStat: number; hp: number; armor: number }
-    accessory?: { atk: number; mainStat: number; endurance: number }
+    weapon?:    { atk: number; mainStat: number; endurance: number }
+    armor?:     { armor: number; mainStat: number; endurance: number; hp: number }
+    accessory?: { mainStat: number; endurance: number }
   }>,
 }
 

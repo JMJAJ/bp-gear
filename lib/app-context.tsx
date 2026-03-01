@@ -406,6 +406,11 @@ export function calculateStats(
       purpleStats["Luck (%)"] = (purpleStats["Luck (%)"] ?? 0) + psyEffects.bondLuckPct
     }
 
+    // Tree passive stat % bonuses (e.g., Fantasia Impact grants +1% Luck from tree nodes)
+    for (const [stat, val] of Object.entries(psyEffects.treeStatPct)) {
+      purpleStats[`${stat} (%)`] = (purpleStats[`${stat} (%)`] ?? 0) + val
+    }
+
     // Bond exclusive: Endless Mind "Current main stats +100"
     if (psyEffects.bondMainStatFlat > 0 && className) {
       const mainStat = GAME_DATA.CLASSES[className]?.main
