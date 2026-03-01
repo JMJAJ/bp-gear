@@ -12,11 +12,13 @@ import { GuideSection } from "@/components/guide-section"
 import { TalentsSection } from "@/components/talents-section"
 import { ProfileSection } from "@/components/profile-section"
 import { DpsSimulator } from "@/components/dps-simulator"
+import { GearSetsSection } from "@/components/gear-sets-section"
 import { useState, useEffect } from "react"
 
 const SECTION_TITLES: Record<string, string> = {
   classes: "Classes",
   planner: "Gear Planner",
+  gear_sets: "Gear Sets",
   optimizer: "Auto-Optimizer",
   modules: "Power Core",
   curves: "Stat Curves",
@@ -129,6 +131,7 @@ function AppShell() {
             <div className="px-4 lg:px-6 xl:px-10 py-5 w-full">
               {section === "classes" && <ClassesSection />}
               {section === "planner" && <PlannerSection />}
+              {section === "gear_sets" && <GearSetsSection />}
               {section === "optimizer" && <OptimizerSection />}
               {section === "modules" && <ModulesSection />}
               {section === "curves" && <CurvesSection />}

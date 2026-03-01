@@ -5,6 +5,7 @@ import type { NavSection, AccentColor } from "@/lib/app-context"
 const NAV_ITEMS: { id: NavSection; label: string; icon: string }[] = [
   { id: "classes", label: "Classes", icon: "◆" },
   { id: "planner", label: "Planner", icon: "▦" },
+  { id: "gear_sets", label: "Gear Sets", icon: "◈" },
   { id: "optimizer", label: "Optimizer", icon: "⚡" },
   { id: "modules", label: "Modules", icon: "⚙" },
   { id: "talents", label: "Talents", icon: "★" },
@@ -12,7 +13,7 @@ const NAV_ITEMS: { id: NavSection; label: string; icon: string }[] = [
   { id: "curves", label: "Stat Curves", icon: "~" },
   { id: "database", label: "Database", icon: "▤" },
   { id: "guide", label: "Beginner Guide", icon: "?" },
-  { id: "guide_stormblade", label: "Moonstrike Guide", icon: "⚔" },
+  // { id: "guide_stormblade", label: "Moonstrike Guide", icon: "⚔" },
   { id: "dps_simulator", label: "DPS Simulator", icon: "📈" },
 ]
 

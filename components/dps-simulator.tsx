@@ -1,7 +1,7 @@
 "use client"
 import { useState, useMemo, useRef, useCallback, DragEvent } from "react"
-import { useApp, getStatPercent, getStatPercentCombat, getClassForSpec } from "@/lib/app-context"
-import { XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, AreaChart, Area, Line, BarChart, Bar, Cell, ScatterChart, Scatter, ZAxis } from "recharts"
+import { useApp, getStatPercent, getStatPercentCombat, getClassForSpec, calculateStatsFromGearSet, type GearSet, type StatsResult } from "@/lib/app-context"
+import { XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, AreaChart, Area, Line, LineChart, BarChart, Bar, Cell, ScatterChart, Scatter, ZAxis } from "recharts"
 
 // ═══════════════════════════════════════════════════════════
 // SKILL DATA — Real motion values from Lv.30/30 in-game tooltips
@@ -290,6 +290,11 @@ export function DpsSimulator() {
     const [useCustomRotation, setUseCustomRotation] = useState(true)
     const [dragOverIdx, setDragOverIdx] = useState<number | null>(null)
     const dragItemRef = useRef<{ key: string; fromIdx?: number } | null>(null)
+
+    // Comparison mode state
+    const [compareMode, setCompareMode] = useState(false)
+    const [selectedSetIds, setSelectedSetIds] = useState<string[]>([])
+    const { gearSets, base, ext } = useApp()
 
     // Drag handlers
     const onDragStartPalette = useCallback((e: DragEvent<HTMLDivElement>, key: string) => {
@@ -890,6 +895,387 @@ export function DpsSimulator() {
         }
     }, [combat, manualAtk, manualAspd, fightDuration, spec, selectedTalents, isMoonstrike, useCustomRotation, rotation, skills])
 
+    // ── Helper: derive combat stats from StatsResult (for comparison mode) ──
+    const deriveCombatFromStats = (statsResult: StatsResult | null) => {
+        if (!statsResult) return null
+        const versPct = getStatPercentCombat("Versatility", statsResult.total.Versatility) / 100
+        const mastPct = getStatPercentCombat("Mastery", statsResult.total.Mastery) / 100
+        const critRate = Math.min(getStatPercentCombat("Crit", statsResult.total.Crit) / 100, 1)
+        const luckRate = Math.min(getStatPercentCombat("Luck", statsResult.total.Luck) / 100, 1)
+        const hastePct = getStatPercentCombat("Haste", statsResult.total.Haste)
+        const aspd = statsResult.aspd / 100
+        const baseCritDmg = 0.50
+        const bonusCritDmg = (statsResult.extraStats?.["Crit DMG (%)"] ?? 0) / 100
+        const critMult = 1 + baseCritDmg + bonusCritDmg
+        const baseLuckDmg = 0.30
+        const bonusLuckDmg = (statsResult.extraStats?.["Lucky Strike DMG Multiplier (%)"] ?? 0) / 100
+        const luckMult = 1 + baseLuckDmg + bonusLuckDmg
+        const dmgBoss = (statsResult.purpleStats?.["DMG Bonus vs Bosses (%)"] ?? 0) / 100
+        const meleeDmg = (statsResult.purpleStats?.["Melee Damage Bonus (%)"] ?? 0) / 100
+        const weaponAtkPct = isMoonstrike ? 0.04 : 0
+        const physDmgPct = (statsResult.moduleStats?.["Physical DMG (%)"] ?? 0) / 100
+        const dmgPerStack = statsResult.moduleStats?.["DMG (%) / stack"] ?? 0
+        const dmgStackPct = dmgPerStack > 0 ? (dmgPerStack * 4) / 100 : 0
+        const avgCritLuck =
+            (1 - critRate) * (1 - luckRate) * 1.0 +
+            critRate * (1 - luckRate) * critMult +
+            (1 - critRate) * luckRate * luckMult +
+            critRate * luckRate * critMult * luckMult
+        return {
+            versPct, mastPct, critRate, luckRate, hastePct, aspd,
+            critMult, luckMult, avgCritLuck,
+            dmgBoss, meleeDmg, weaponAtkPct,
+            physDmgPct, dmgStackPct,
+            raid2pc: statsResult.raid2pcBonus, raid4pc: statsResult.raid4pcBonus,
+        }
+    }
+
+    // ── Comparison mode: run simulation for each selected gear set ──
+    const SET_COLORS = ["#f59e0b", "#ef4444", "#22c55e", "#3b82f6", "#8b5cf6", "#ec4899", "#06b6d4", "#84cc16"]
+    const comparisonResults = useMemo(() => {
+        if (!compareMode || selectedSetIds.length === 0) return []
+        return selectedSetIds.map((id, idx) => {
+            const gearSet = gearSets.find(s => s.id === id)
+            if (!gearSet) return null
+            const statsResult = calculateStatsFromGearSet(gearSet, spec, base, ext)
+            const combatStats = deriveCombatFromStats(statsResult)
+            if (!combatStats) return null
+            // Run a simplified simulation using the same logic but with gearSet's talents
+            const simResult = runSimulation(combatStats, gearSet.selectedTalents, gearSet.talentAspd, statsResult.aspd)
+            return {
+                id: gearSet.id,
+                name: gearSet.name,
+                color: SET_COLORS[idx % SET_COLORS.length],
+                data: simResult.data,
+                finalDps: simResult.finalDps,
+                finalDmg: simResult.finalDmg,
+                effAtk: simResult.effAtk,
+            }
+        }).filter(Boolean) as { id: string; name: string; color: string; data: { time: number; damage: number; dps: number }[]; finalDps: number; finalDmg: number; effAtk: number }[]
+    }, [compareMode, selectedSetIds, gearSets, spec, base, ext, manualAtk, fightDuration, useCustomRotation, rotation, skills])
+
+    // Merge comparison data for LineChart (needs single dataset with multiple keys)
+    // Resample all sets to common time intervals for proper alignment
+    const mergedComparisonData = useMemo(() => {
+        if (comparisonResults.length < 2) return []
+        // Create uniform time intervals (every 1 second)
+        const intervals: number[] = []
+        for (let t = 0; t <= fightDuration; t++) {
+            intervals.push(t)
+        }
+        // For each interval, find the closest DPS value from each set's data
+        return intervals.map(time => {
+            const merged: Record<string, number> = { time }
+            comparisonResults.forEach((result, idx) => {
+                // Find the data point with the closest time
+                const closest = result.data.reduce((prev, curr) => 
+                    Math.abs(curr.time - time) < Math.abs(prev.time - time) ? curr : prev
+                )
+                merged[`dps_${idx}`] = closest?.dps ?? 0
+            })
+            return merged
+        })
+    }, [comparisonResults, fightDuration])
+
+    // ── Simulation runner (extracted for reuse) ──
+    function runSimulation(combatStats: NonNullable<ReturnType<typeof deriveCombatFromStats>>, talents: string[], talentAspdVal: number, plannerAspd: number) {
+        const {
+            versPct, mastPct, critRate, luckRate, hastePct, aspd, avgCritLuck,
+            dmgBoss, meleeDmg, weaponAtkPct,
+            critMult, luckMult, physDmgPct, dmgStackPct,
+            raid2pc, raid4pc,
+        } = combatStats
+
+        const actualAspd = manualAspd > 0 ? manualAspd / 100 : aspd
+        let effAtk = manualAtk * (1 + weaponAtkPct)
+
+        const t = {
+            thunderCurse: talents?.includes("thunder_curse"),
+            chaosBreaker: talents?.includes("chaos_breaker"),
+            moonstrikDelay: talents?.includes("moonstrike_delay"),
+            divineSickle: talents?.includes("divine_sickle"),
+            phantomScytheI: talents?.includes("phantom_scythe_realm_i"),
+            phantomScytheII: talents?.includes("phantom_scythe_realm_ii"),
+            bladeIntentRare: talents?.includes("blade_intent_rare"),
+            thunderRuneMastery: talents?.includes("thunder_rune_mastery"),
+            thunderMight2: talents?.includes("thunder_might_2"),
+            touchOfThunderSoul: talents?.includes("touch_of_thunder_soul"),
+            enhancedThunderstrike: talents?.includes("enhanced_thunderstrike"),
+            overdriveRefinement: talents?.includes("overdrive_refinement"),
+            thunderSeed: talents?.includes("thunder_seed"),
+            vacuumSlash: talents?.includes("vacuum_slash"),
+            iaiThunderDance: talents?.includes("iai_thunder_dance"),
+            bladeIntent: talents?.includes("blade_intent"),
+            bladeIntentRecovery: talents?.includes("blade_intent_recovery"),
+        }
+
+        let maxBi = 100
+        if (t.bladeIntentRare) maxBi += 75
+        if (t.moonstrikDelay) maxBi += 25
+        if (t.thunderRuneMastery) maxBi *= 2
+        let maxSigils = 4
+        let moonbladeCount = MB_BASE_COUNT
+        if (t.phantomScytheI) moonbladeCount += 1
+
+        const getTcBonusAttacks = (im2Timer: number) => {
+            const effAspd = actualAspd + (im2Timer > 0 ? 0.13 : 0)
+            if (effAspd >= 0.80) return 3
+            if (effAspd >= 0.50) return 2
+            if (effAspd >= 0.25) return 1
+            return 0
+        }
+
+        let dsTrigger = 7, dsDmgMult = 1.0
+        if (t.divineSickle) {
+            const lPct = luckRate * 100
+            if (lPct >= 45) { dsTrigger = 21; dsDmgMult = 3.0 }
+            else if (lPct >= 28) { dsTrigger = 14; dsDmgMult = 2.0 }
+        }
+
+        const calcHit = (mv: number, flat: number, type: string, tcStacks: number, sfActive: boolean, vsActive: boolean, im1Timer: number, im2Timer: number): number => {
+            const atkNow = vsActive ? effAtk * 1.10 + 80 : effAtk
+            const base = atkNow * (mv / 100) + flat
+            if (base <= 0) return 0
+            let mult = 1 + versPct
+            const mastNow = mastPct + (im1Timer > 0 ? 0.13 : 0)
+            const mastScale = (type === "Expertise" || type === "Special" || type === "Ultimate" || type === "Imagine") ? 1 : 0.5
+            mult *= (1 + mastNow * mastScale)
+            let bonus = dmgBoss + meleeDmg
+            if (t.thunderCurse) bonus += tcStacks * 0.02
+            bonus += physDmgPct + dmgStackPct
+            mult *= (1 + bonus)
+            mult *= avgCritLuck
+            return base * mult
+        }
+
+        const castTime = (skill: SkillDef, im2Timer: number) => {
+            const effAspd = actualAspd + (im2Timer > 0 ? 0.13 : 0)
+            return skill.scalesWithAspd && effAspd > 0 ? skill.castTime / (1 + effAspd) : skill.castTime
+        }
+
+        let time = 0, totalDmg = 0
+        let bi = maxBi, sigils = 0, chargeSeeds = 0
+        let tcStacks = 0, tcTimer = 0
+        let sfActive = false, sfTimer = 0
+        let vsActive = false, vsTimer = 0
+        let consecutiveTc = 0, ssCount = 0
+        let mbTimer = 0, mbActive = false, mbLifeTimer = 0
+        let psCd = 0
+        let im1Timer = 0, im2Timer = 0
+        let fiTimer = FI_ICD * 0.5
+
+        const cds: Record<string, number> = {
+            OblivionCombo: 0, VoltSurge: 0, Stormflash: 0,
+            Imagine1: 0, Imagine2: 0, ChaosBreaker: 0,
+            Overdrive: 0, ScytheWheel: 0,
+        }
+
+        const data: { time: number; damage: number; dps: number }[] = []
+
+        const tickTimers = (dt: number) => {
+            for (const k in cds) { if (cds[k] > 0) cds[k] = Math.max(0, cds[k] - dt) }
+            if (psCd > 0) psCd = Math.max(0, psCd - dt)
+            if (tcTimer > 0) { tcTimer -= dt; if (tcTimer <= 0) tcStacks = 0 }
+            if (sfTimer > 0) { sfTimer -= dt; if (sfTimer <= 0) sfActive = false }
+            if (vsTimer > 0) { vsTimer -= dt; if (vsTimer <= 0) vsActive = false }
+            if (mbActive && mbLifeTimer > 0) { mbLifeTimer -= dt; if (mbLifeTimer <= 0) mbActive = false }
+            if (im1Timer > 0) im1Timer -= dt
+            if (im2Timer > 0) im2Timer -= dt
+            fiTimer += dt
+            const biRegenRate = t.bladeIntentRecovery ? 2 * (1 + hastePct / 100) : 2
+            bi = Math.min(maxBi, bi + biRegenRate * dt)
+            if (sfActive) {
+                const sfRegenRate = t.bladeIntentRecovery ? 20 * (1 + hastePct / 100) : 20
+                bi = Math.min(maxBi, bi + sfRegenRate * dt)
+            }
+        }
+
+        const cast = (key: string) => {
+            const skill = skills[key]
+            if (!skill) return
+            const ct = castTime(skill, im2Timer)
+            let cd = skill.cd
+            if (key === "Overdrive" && t.overdriveRefinement) cd *= 0.7
+            if (cds[key] !== undefined) cds[key] = cd
+
+            let mv = skill.mv, flat = skill.flat
+            if (key === "Thundercut") {
+                const tcBonusAttacks = getTcBonusAttacks(im2Timer)
+                const numAttacks = 1 + tcBonusAttacks
+                mv = 210 * numAttacks
+                flat = 600 * numAttacks
+            }
+
+            let dmg = calcHit(mv, flat, skill.type, tcStacks, sfActive, vsActive, im1Timer, im2Timer)
+
+            if (key === "DivineSickle") {
+                const dsBase = dmg / avgCritLuck
+                const dsAvg = dsBase * critMult * (1 + luckRate * (luckMult - 1))
+                dmg = dsAvg
+                if (t.divineSickle) dmg *= dsDmgMult
+            }
+
+            if (t.iaiThunderDance && skill.type === "Special" && sigils >= 3) dmg *= 2
+
+            if (dmg > 0) totalDmg += dmg
+
+            if (skill.grantsBladeIntent) bi = Math.min(maxBi, bi + skill.grantsBladeIntent)
+            if (t.bladeIntent && skill.type === "Expertise") bi = Math.min(maxBi, bi + 3)
+            if (skill.consumesBladeIntent) bi = Math.max(0, bi - skill.consumesBladeIntent)
+            if (skill.consumesSigils) sigils = Math.max(0, sigils - skill.consumesSigils)
+            if (skill.grantsSigils) {
+                if (vsActive) sigils = maxSigils
+                else sigils = Math.min(maxSigils, sigils + skill.grantsSigils)
+            }
+            if (skill.grantsChargeSeeds) chargeSeeds += skill.grantsChargeSeeds
+
+            if (t.thunderCurse && (skill.type === "Expertise" || skill.type === "Special" || skill.type === "Ultimate")) {
+                tcStacks = Math.min(4, tcStacks + 1); tcTimer = 10
+            }
+            if (key === "VoltSurge") { vsActive = true; vsTimer = 12 }
+            if (key === "Stormflash") { sfActive = true; sfTimer = 10 }
+            if (key === "OblivionCombo") sigils = maxSigils
+            if (key === "ScytheWheel") { mbActive = true; mbLifeTimer = 35 }
+            if (key === "Imagine1") im1Timer = 20
+            if (key === "Imagine2") im2Timer = 20
+
+            if ((key === "Thundercut" || key === "Thundercleave") && sfActive) {
+                totalDmg += calcHit(LS_MV, LS_FLAT, "Expertise", tcStacks, sfActive, vsActive, im1Timer, im2Timer)
+            }
+            if ((key === "Thundercut" || key === "Thundercleave") && mbActive) {
+                const ssDmg = calcHit(SS_MV, SS_FLAT, "Expertise", tcStacks, sfActive, vsActive, im1Timer, im2Timer)
+                totalDmg += ssDmg
+                ssCount++
+                if (t.thunderMight2 && sfActive) { totalDmg += ssDmg; ssCount++ }
+            }
+
+            if (key === "Thundercut") {
+                consecutiveTc++
+                if (t.phantomScytheII) {
+                    const luckPctDisplay = luckRate * 100
+                    bi = Math.min(maxBi, bi + 12 + Math.floor(luckPctDisplay * 10))
+                }
+                if (t.thunderSeed) chargeSeeds += 2
+            } else if (key !== "Thundercleave") {
+                consecutiveTc = 0
+            }
+
+            if (key === "Moonstrike" && mbActive) {
+                totalDmg += calcHit(MW_MV * moonbladeCount, MW_FLAT * moonbladeCount, "Special", tcStacks, sfActive, vsActive, im1Timer, im2Timer)
+            }
+            if (key === "ChaosBreaker" && mbActive) {
+                totalDmg += calcHit(MW_MV * moonbladeCount, MW_FLAT * moonbladeCount, "Special", tcStacks, sfActive, vsActive, im1Timer, im2Timer)
+            }
+
+            const prev = time; time += ct
+            tickTimers(ct)
+
+            if (mbActive) {
+                mbTimer += ct
+                while (mbTimer >= MB_INTERVAL) {
+                    totalDmg += calcHit(MB_MV * moonbladeCount, MB_FLAT * moonbladeCount, "Basic", tcStacks, sfActive, vsActive, im1Timer, im2Timer)
+                    mbTimer -= MB_INTERVAL
+                    if (t.touchOfThunderSoul && luckRate > 0) {
+                        const tsChance = 0.6 * luckRate
+                        const tsDmgBase = calcHit(TS_MV, TS_FLAT, "Special", tcStacks, sfActive, vsActive, im1Timer, im2Timer)
+                        let tsScale = 1.0
+                        if (t.enhancedThunderstrike) tsScale = 1.2 + luckRate
+                        totalDmg += tsDmgBase * tsChance * tsScale
+                    }
+                }
+            }
+
+            if ((key === "Thundercut" || key === "Thundercleave" || key === "BasicAttack") && psCd <= 0) {
+                const tcTotalHits = key === "Thundercut" ? 2 * (1 + getTcBonusAttacks(im2Timer)) : skill.hits
+                const procChance = 0.10 * tcTotalHits
+                const pSkill = MS_SKILLS.PiercingSlash
+                totalDmg += calcHit(pSkill.mv, pSkill.flat, pSkill.type, tcStacks, sfActive, vsActive, im1Timer, im2Timer) * procChance
+                psCd = 1.0
+            }
+
+            if (dmg > 0 && luckRate > 0) {
+                const atkNow = vsActive ? effAtk * 1.10 + 80 : effAtk
+                const tachiPerProc = atkNow * (TACHI_MV / 100) + TACHI_FLAT
+                const skillHits = (key === "Thundercut") ? 2 * (1 + getTcBonusAttacks(im2Timer)) : skill.hits
+                totalDmg += tachiPerProc * luckRate * skillHits
+            }
+
+            while (fiTimer >= FI_ICD) {
+                const atkNow = vsActive ? effAtk * 1.10 + 80 : effAtk
+                const fiBase = atkNow * (FI_MV / 100) + FI_FLAT
+                const mastNow = mastPct + (im1Timer > 0 ? 0.13 : 0)
+                totalDmg += fiBase * (1 + versPct) * (1 + mastNow) * (1 + dmgBoss + meleeDmg)
+                fiTimer -= FI_ICD
+            }
+
+            data.push({
+                time: parseFloat(time.toFixed(1)),
+                damage: Math.round(totalDmg),
+                dps: time > 0 ? Math.round(totalDmg / time) : 0,
+            })
+        }
+
+        // Execute rotation
+        if (useCustomRotation && rotation.length > 0) {
+            const flatRot: string[] = []
+            for (const item of rotation) {
+                for (let r = 0; r < item.repeat; r++) flatRot.push(item.key)
+            }
+            let rotIdx = 0
+            while (time < fightDuration) {
+                if (ssCount >= dsTrigger && t.divineSickle) { cast("DivineSickle"); ssCount = 0; continue }
+                if (consecutiveTc >= 5 && t.moonstrikDelay && bi >= 50) { cast("Thundercleave"); consecutiveTc = 0; continue }
+                const key = flatRot[rotIdx % flatRot.length]
+                const skill = skills[key]
+                const canCast = skill && (
+                    (cds[key] === undefined || cds[key] <= 0) &&
+                    (!skill.consumesBladeIntent || bi >= skill.consumesBladeIntent) &&
+                    (!skill.consumesSigils || sigils >= skill.consumesSigils)
+                )
+                if (canCast) {
+                    cast(key)
+                    rotIdx++
+                } else {
+                    if (bi < 50 && sigils >= 3) cast("Moonstrike")
+                    else if (bi < 50) cast("BasicAttack")
+                    else if (skill?.consumesSigils && sigils < skill.consumesSigils) {
+                        if (cds.Overdrive <= 0 && sigils < maxSigils) cast("Overdrive")
+                        else cast("BasicAttack")
+                    } else if (cds[key] > 0) {
+                        if (bi >= 50) cast("Thundercut")
+                        else if (sigils >= 3) cast("Moonstrike")
+                        else cast("BasicAttack")
+                    } else {
+                        cast("BasicAttack")
+                    }
+                }
+            }
+        } else {
+            cast("ScytheWheel")
+            cast("OblivionCombo")
+            cds.OblivionCombo = 60
+            while (time < fightDuration) {
+                if (ssCount >= dsTrigger && t.divineSickle) { cast("DivineSickle"); ssCount = 0; continue }
+                if (consecutiveTc >= 5 && t.moonstrikDelay && bi >= 50) { cast("Thundercleave"); consecutiveTc = 0; continue }
+                if (cds.VoltSurge <= 0) cast("VoltSurge")
+                else if (cds.Stormflash <= 0 && !sfActive) cast("Stormflash")
+                else if (cds.ScytheWheel <= 0 && !mbActive) cast("ScytheWheel")
+                else if (cds.Imagine1 <= 0) cast("Imagine1")
+                else if (cds.Imagine2 <= 0) cast("Imagine2")
+                else if (cds.Overdrive <= 0 && sigils < maxSigils) cast("Overdrive")
+                else if (sigils >= 3 && bi < 50) {
+                    if (sfActive && t.chaosBreaker && cds.ChaosBreaker <= 0) cast("ChaosBreaker")
+                    else cast("Moonstrike")
+                } else if (sfActive && t.chaosBreaker && cds.ChaosBreaker <= 0 && sigils >= 3) cast("ChaosBreaker")
+                else if (bi >= 50) cast("Thundercut")
+                else if (sigils >= 3) cast("Moonstrike")
+                else cast("BasicAttack")
+            }
+        }
+
+        return { data, finalDmg: totalDmg, finalDps: totalDmg / fightDuration, effAtk: Math.round(effAtk), actualAspd }
+    }
+
     // ── Not Moonstrike ──
     if (!isMoonstrike) {
         return (
@@ -980,6 +1366,79 @@ export function DpsSimulator() {
                         <StatRow label="Melee DMG Bonus" value={`+${((combat.meleeDmg) * 100).toFixed(1)}%`} />
                     </div>
                 </div>
+            </div>
+
+            {/* ══════════════ Comparison Mode Toggle ══════════════ */}
+            <div className="bg-[#111] border border-[#333] p-4 rounded-md">
+                <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-3">
+                        <h3 className="text-[10px] text-[#666] uppercase tracking-wider font-bold">Gear Set Comparison</h3>
+                        <button
+                            onClick={() => { setCompareMode(!compareMode); if (compareMode) setSelectedSetIds([]) }}
+                            className={`px-3 py-1 text-[9px] font-bold uppercase tracking-[1px] border rounded transition-all duration-200 ${compareMode
+                                ? "border-emerald-500/60 text-emerald-400 bg-emerald-500/10 shadow-[0_0_8px_rgba(16,185,129,0.15)]"
+                                : "border-[#444] text-[#666] hover:border-[#555] hover:text-[#888]"
+                                }`}
+                        >
+                            {compareMode ? "✓ Comparison Mode Active" : "Enable Comparison"}
+                        </button>
+                    </div>
+                    {compareMode && gearSets.length > 0 && (
+                        <span className="text-[9px] text-[#555]">Select 2+ sets to compare DPS curves</span>
+                    )}
+                </div>
+
+                {compareMode && (
+                    <div className="flex flex-col gap-3">
+                        {gearSets.length === 0 ? (
+                            <div className="text-center py-4">
+                                <p className="text-[#555] text-sm">No gear sets saved.</p>
+                                <p className="text-[#444] text-xs mt-1">Save gear sets in the Gear Sets section to compare them here.</p>
+                            </div>
+                        ) : (
+                            <div className="flex flex-wrap gap-2">
+                                {gearSets.map((set, idx) => {
+                                    const isSelected = selectedSetIds.includes(set.id)
+                                    const color = SET_COLORS[idx % SET_COLORS.length]
+                                    return (
+                                        <button
+                                            key={set.id}
+                                            onClick={() => {
+                                                if (isSelected) {
+                                                    setSelectedSetIds(prev => prev.filter(id => id !== set.id))
+                                                } else {
+                                                    setSelectedSetIds(prev => [...prev, set.id])
+                                                }
+                                            }}
+                                            className={`flex items-center gap-2 px-3 py-2 rounded border transition-all duration-200 ${isSelected
+                                                ? "border-[#555] bg-[#1a1a1a]"
+                                                : "border-[#333] bg-[#0a0a0a] hover:border-[#444]"
+                                                }`}
+                                            style={isSelected ? { borderColor: color } : {}}
+                                        >
+                                            <div
+                                                className="w-2.5 h-2.5 rounded-full"
+                                                style={{ backgroundColor: isSelected ? color : "#444" }}
+                                            />
+                                            <span className={`text-[11px] font-semibold ${isSelected ? "text-white" : "text-[#888]"}`}>
+                                                {set.name}
+                                            </span>
+                                            {isSelected && (
+                                                <span className="text-[9px] text-[#555]">✓</span>
+                                            )}
+                                        </button>
+                                    )
+                                })}
+                            </div>
+                        )}
+                        {selectedSetIds.length > 0 && (
+                            <div className="text-[9px] text-[#555]">
+                                {selectedSetIds.length} set{selectedSetIds.length > 1 ? "s" : ""} selected
+                                {selectedSetIds.length < 2 && " — select at least 2 for comparison"}
+                            </div>
+                        )}
+                    </div>
+                )}
             </div>
 
             {/* ══════════════ Rotation Builder ══════════════ */}
@@ -1189,8 +1648,57 @@ export function DpsSimulator() {
                     </span>
                 </div>
 
-                {/* Timeline Tab */}
-                {activeTab === "timeline" && (
+                {/* Timeline Tab - Comparison Mode */}
+                {activeTab === "timeline" && compareMode && comparisonResults.length >= 2 && (
+                    <div className="flex flex-col gap-3">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <h4 className="text-xs font-bold text-white">DPS Timeline Comparison</h4>
+                                <p className="text-[10px] text-[#555]">
+                                    Clean line comparison — easier to see differences
+                                </p>
+                            </div>
+                            <div className="flex flex-wrap gap-2">
+                                {comparisonResults.map(result => (
+                                    <div key={result.id} className="flex items-center gap-1.5 px-2 py-1 rounded bg-[#0a0a0a] border border-[#222]">
+                                        <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: result.color }} />
+                                        <span className="text-[10px] text-[#aaa]">{result.name}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                        <div className="h-[400px] w-full">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <LineChart data={mergedComparisonData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                                    <CartesianGrid strokeDasharray="3 3" stroke="#222" vertical={false} />
+                                    <XAxis dataKey="time" stroke="#666" tick={{ fill: "#666", fontSize: 12 }} tickFormatter={v => `${v}s`} />
+                                    <YAxis stroke="#666" tick={{ fill: "#666", fontSize: 12 }} tickFormatter={v => fmtK(v)} />
+                                    <Tooltip
+                                        contentStyle={{ backgroundColor: "#000", border: "1px solid #333", borderRadius: "4px" }}
+                                        itemStyle={{ color: "#fff" }}
+                                        labelFormatter={l => `Time: ${l}s`}
+                                        formatter={(value: any, name: string) => [`${Math.round(value).toLocaleString()} DPS`, name]}
+                                    />
+                                    <Legend wrapperStyle={{ paddingTop: "20px" }} />
+                                    {comparisonResults.map((result, idx) => (
+                                        <Line
+                                            key={result.id}
+                                            type="monotone"
+                                            dataKey={`dps_${idx}`}
+                                            stroke={result.color}
+                                            strokeWidth={2.5}
+                                            dot={false}
+                                            name={result.name}
+                                        />
+                                    ))}
+                                </LineChart>
+                            </ResponsiveContainer>
+                        </div>
+                    </div>
+                )}
+
+                {/* Timeline Tab - Normal Mode */}
+                {activeTab === "timeline" && !(compareMode && comparisonResults.length >= 2) && (
                     <div className="flex flex-col gap-3">
                         <div className="flex items-center justify-between">
                             <div>
@@ -1272,8 +1780,66 @@ export function DpsSimulator() {
                     </div>
                 )}
 
-                {/* Chart Tab */}
-                {activeTab === "chart" && (
+                {/* Comparison Chart Tab - shown when comparison mode is active with 2+ sets */}
+                {activeTab === "chart" && compareMode && comparisonResults.length >= 2 && (
+                    <div className="flex flex-col gap-4">
+                        {/* Comparison Summary - compact inline strip */}
+                        <div className="flex flex-wrap gap-2 pb-3 border-b border-[#222]">
+                            {comparisonResults.map((result, idx) => (
+                                <div key={result.id} className="flex items-center gap-2 px-2.5 py-1.5 rounded bg-[#0a0a0a] border border-[#333]">
+                                    <div className="w-2 h-2 rounded-full" style={{ backgroundColor: result.color }} />
+                                    <span className="text-[10px] font-bold text-white">{result.name}</span>
+                                    <span className="text-[11px] font-black" style={{ color: result.color }}>{Math.round(result.finalDps).toLocaleString()}</span>
+                                    <span className="text-[9px] text-[#555]">DPS</span>
+                                    {idx > 0 && (
+                                        <span className="text-[9px] font-bold" style={{ color: result.finalDps > comparisonResults[0].finalDps ? "#22c55e" : "#ef4444" }}>
+                                            {result.finalDps > comparisonResults[0].finalDps ? "+" : ""}{((result.finalDps - comparisonResults[0].finalDps) / comparisonResults[0].finalDps * 100).toFixed(1)}%
+                                        </span>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                        {/* Multi-line DPS Chart */}
+                        <div className="h-[400px] w-full">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <AreaChart data={mergedComparisonData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                                    <defs>
+                                        {comparisonResults.map((result, idx) => (
+                                            <linearGradient key={`grad-${idx}`} id={`colorComp-${idx}`} x1="0" y1="0" x2="0" y2="1">
+                                                <stop offset="5%" stopColor={result.color} stopOpacity={0.4} />
+                                                <stop offset="95%" stopColor={result.color} stopOpacity={0.05} />
+                                            </linearGradient>
+                                        ))}
+                                    </defs>
+                                    <CartesianGrid strokeDasharray="3 3" stroke="#222" vertical={false} />
+                                    <XAxis dataKey="time" stroke="#666" tick={{ fill: "#666", fontSize: 12 }} tickFormatter={v => `${v}s`} />
+                                    <YAxis stroke="#666" tick={{ fill: "#666", fontSize: 12 }} tickFormatter={v => fmtK(v)} />
+                                    <Tooltip
+                                        contentStyle={{ backgroundColor: "#000", border: "1px solid #333", borderRadius: "4px" }}
+                                        itemStyle={{ color: "#fff" }}
+                                        labelFormatter={l => `Time: ${l}s`}
+                                        formatter={(value: any, name: string) => [`${Math.round(value).toLocaleString()} DPS`, name]}
+                                    />
+                                    <Legend wrapperStyle={{ paddingTop: "20px" }} />
+                                    {comparisonResults.map((result, idx) => (
+                                        <Area
+                                            key={result.id}
+                                            type="monotone"
+                                            dataKey={`dps_${idx}`}
+                                            stroke={result.color}
+                                            strokeWidth={2}
+                                            fill={`url(#colorComp-${idx})`}
+                                            name={result.name}
+                                        />
+                                    ))}
+                                </AreaChart>
+                            </ResponsiveContainer>
+                        </div>
+                    </div>
+                )}
+
+                {/* Normal Chart Tab - shown when not in comparison mode */}
+                {activeTab === "chart" && !(compareMode && comparisonResults.length >= 2) && (
                     <div className="h-[400px] w-full">
                         <ResponsiveContainer width="100%" height="100%">
                             <AreaChart data={sim.data} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>

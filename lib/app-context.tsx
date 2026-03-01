@@ -20,6 +20,19 @@ export interface ModuleSlot {
 
 export interface ImagineSlot { key: string; idx: number }
 
+export interface GearSet {
+  id: string
+  name: string
+  gear: GearSlot[]
+  legendaryTypes: string[]
+  legendaryVals: number[]
+  imagines: ImagineSlot[]
+  modules: ModuleSlot[]
+  selectedTalents: string[]
+  talentAspd: number
+  createdAt: string
+}
+
 export interface BaseStats {
   vers: number; mast: number; haste: number; crit: number; luck: number; agi: number
 }
@@ -30,7 +43,7 @@ export interface ExtBuffs {
 }
 
 export type AccentColor = "yellow" | "red" | "blue" | "green"
-export type NavSection = "classes" | "planner" | "optimizer" | "modules" | "talents" | "profile" | "curves" | "database" | "guide" | "guide_stormblade" | "dps_simulator"
+export type NavSection = "classes" | "planner" | "optimizer" | "modules" | "talents" | "profile" | "curves" | "database" | "guide" | "guide_stormblade" | "dps_simulator" | "gear_sets"
 
 const ACCENT_MAP: Record<AccentColor, string> = {
   yellow: "#e5c229",
@@ -352,6 +365,18 @@ export function calculateStats(
   }
 }
 
+// Helper to calculate stats from a saved GearSet (for comparison mode)
+export function calculateStatsFromGearSet(
+  gearSet: GearSet,
+  spec: string,
+  base: BaseStats,
+  ext: ExtBuffs
+): StatsResult {
+  const className = getClassForSpec(spec)
+  const talentFlags = { swift: className === "Stormblade" && gearSet.selectedTalents.includes("swift"), aspd: gearSet.talentAspd, selectedIds: gearSet.selectedTalents }
+  return calculateStats(gearSet.gear, gearSet.imagines, gearSet.modules, spec, base, ext, gearSet.legendaryTypes, gearSet.legendaryVals, talentFlags)
+}
+
 // ── Context ───────────────────────────────────────────────
 
 interface AppState {
@@ -406,6 +431,12 @@ interface AppState {
   setSelectedTalents: (t: string[]) => void
   talentAspd: number
   setTalentAspd: (v: number) => void
+
+  gearSets: GearSet[]
+  saveGearSet: (name: string) => void
+  deleteGearSet: (id: string) => void
+  loadGearSet: (id: string) => void
+  renameGearSet: (id: string, name: string) => void
 }
 
 const AppContext = createContext<AppState | null>(null)
@@ -435,6 +466,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [selectedClass, setSelectedClass] = useState<string | null>(null)
   const [selectedTalents, setSelectedTalents] = useState<string[]>([])
   const [talentAspd, setTalentAspd] = useState<number>(0)
+  const [gearSets, setGearSets] = useState<GearSet[]>([])
   const canSave = useRef(false)
 
   const accentColor = ACCENT_MAP[accent]
@@ -503,6 +535,42 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }))
   }, [])
 
+  const saveGearSet = useCallback((name: string) => {
+    const newSet: GearSet = {
+      id: `set_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
+      name,
+      gear: gear.map(g => ({ ...g })),
+      legendaryTypes: [...legendaryTypes],
+      legendaryVals: [...legendaryVals],
+      imagines: imagines.map(im => ({ ...im })),
+      modules: modules.map(m => ({ ...m })),
+      selectedTalents: [...selectedTalents],
+      talentAspd,
+      createdAt: new Date().toISOString(),
+    }
+    setGearSets(prev => [...prev, newSet])
+  }, [gear, legendaryTypes, legendaryVals, imagines, modules, selectedTalents, talentAspd])
+
+  const deleteGearSet = useCallback((id: string) => {
+    setGearSets(prev => prev.filter(s => s.id !== id))
+  }, [])
+
+  const loadGearSet = useCallback((id: string) => {
+    const set = gearSets.find(s => s.id === id)
+    if (!set) return
+    setGearState(set.gear.map(g => ({ ...g })))
+    setLegendaryTypes([...set.legendaryTypes])
+    setLegendaryVals([...set.legendaryVals])
+    setImagines(set.imagines.map(im => ({ ...im })))
+    setModules(set.modules.map(m => ({ ...m })))
+    setSelectedTalents([...set.selectedTalents])
+    setTalentAspd(set.talentAspd)
+  }, [gearSets])
+
+  const renameGearSet = useCallback((id: string, name: string) => {
+    setGearSets(prev => prev.map(s => s.id === id ? { ...s, name } : s))
+  }, [])
+
   const recalculate = useCallback(() => {
     const className = getClassForSpec(spec)
     const talentFlags = { swift: className === "Stormblade" && selectedTalents.includes("swift"), aspd: talentAspd, selectedIds: selectedTalents }
@@ -519,11 +587,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (!canSave.current) return
     try {
-      localStorage.setItem(SAVE_KEY, JSON.stringify({ build, spec, gear, legendaryTypes, legendaryVals, imagines, modules, base, ext, accent, gearLib, selectedTalents, talentAspd }))
+      localStorage.setItem(SAVE_KEY, JSON.stringify({ build, spec, gear, legendaryTypes, legendaryVals, imagines, modules, base, ext, accent, gearLib, selectedTalents, talentAspd, gearSets }))
     } catch (e) {
       console.error('[BPSR] Save failed:', e)
     }
-  }, [build, spec, gear, legendaryTypes, legendaryVals, imagines, modules, base, ext, accent, gearLib, selectedTalents, talentAspd])
+  }, [build, spec, gear, legendaryTypes, legendaryVals, imagines, modules, base, ext, accent, gearLib, selectedTalents, talentAspd, gearSets])
 
   // Load persisted state on mount
   useEffect(() => {
@@ -564,6 +632,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       if (saved.gearLib && Array.isArray(saved.gearLib)) setGearLib(saved.gearLib)
       if (saved.selectedTalents && Array.isArray(saved.selectedTalents)) setSelectedTalents(saved.selectedTalents)
       if (typeof saved.talentAspd === "number") setTalentAspd(saved.talentAspd)
+      if (saved.gearSets && Array.isArray(saved.gearSets)) setGearSets(saved.gearSets)
     } catch (e) {
       console.error('[BPSR] Load failed:', e)
     }
@@ -589,6 +658,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     getAllowedForSlot,
     selectedTalents, setSelectedTalents,
     talentAspd, setTalentAspd,
+    gearSets, saveGearSet, deleteGearSet, loadGearSet, renameGearSet,
   }
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>
