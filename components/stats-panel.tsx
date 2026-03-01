@@ -2,6 +2,7 @@
 import { useApp, getStatPercentCombat } from "@/lib/app-context"
 import { GAME_DATA, MODULE_THRESHOLDS, LEVEL_COLORS } from "@/lib/game-data"
 import { Check, X, Settings } from "lucide-react"
+import { MIND_PROJECTIONS } from "@/lib/psychoscope-data"
 
 const STATS = [
   { key: "crit", stat: "Crit", extKey: "crit" },
@@ -51,7 +52,10 @@ function NumberInput({ label, value, onChange, step, tip }: {
 }
 
 export function StatsPanel() {
-  const { stats, base, setBase, ext, setExt, accentColor, setSection, spec } = useApp()
+  const { stats, base, setBase, ext, setExt, accentColor, setSection, spec, psychoscopeConfig } = useApp()
+  
+  // Get active Deep-Slumber projection
+  const activeProjection = MIND_PROJECTIONS.find(p => p.id === psychoscopeConfig?.projectionId)
 
   return (
     <aside className="flex flex-col border-l border-[#222] bg-[#000] h-full overflow-y-auto">
@@ -64,6 +68,31 @@ export function StatsPanel() {
           Stats Overview
         </div>
       </div>
+
+      {/* Active Deep-Slumber */}
+      {activeProjection && (
+        <div className="px-4 py-3 border-b border-[#1a1a1a]">
+          <div className="flex items-center gap-2 mb-1">
+            <div 
+              className="w-2 h-2 rounded-full animate-pulse"
+              style={{ background: accentColor }}
+            />
+            <span className="text-[8px] uppercase tracking-[1px] text-[#444]">
+              Active Deep-Slumber
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            {activeProjection.nodes[0]?.icon && (
+              <img 
+                src={activeProjection.nodes[0].icon} 
+                alt="" 
+                className="w-5 h-5 rounded"
+              />
+            )}
+            <span className="text-[10px] font-bold text-white">{activeProjection.name}</span>
+          </div>
+        </div>
+      )}
 
       {/* Main stats */}
       <div className="px-4 py-3 border-b border-[#1a1a1a]">

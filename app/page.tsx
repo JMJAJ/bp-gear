@@ -13,6 +13,7 @@ import { TalentsSection } from "@/components/talents-section"
 import { ProfileSection } from "@/components/profile-section"
 import { DpsSimulator } from "@/components/dps-simulator"
 import { GearSetsSection } from "@/components/gear-sets-section"
+import { PsychoscopeSection } from "@/components/psychoscope-section"
 import { useState, useEffect } from "react"
 
 const SECTION_TITLES: Record<string, string> = {
@@ -21,6 +22,7 @@ const SECTION_TITLES: Record<string, string> = {
   gear_sets: "Gear Sets",
   optimizer: "Auto-Optimizer",
   modules: "Power Core",
+  psychoscope: "Psychoscope",
   curves: "Stat Curves",
   database: "Database",
   guide: "Beginner Guide",
@@ -134,6 +136,7 @@ function AppShell() {
               {section === "gear_sets" && <GearSetsSection />}
               {section === "optimizer" && <OptimizerSection />}
               {section === "modules" && <ModulesSection />}
+              {section === "psychoscope" && <PsychoscopeSection />}
               {section === "curves" && <CurvesSection />}
               {section === "database" && <DatabaseSection />}
               {section === "guide" && <GuideSection />}

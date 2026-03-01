@@ -2,7 +2,7 @@
 import { useApp } from "@/lib/app-context"
 import type { NavSection, AccentColor } from "@/lib/app-context"
 import { 
-  Crown, LayoutDashboard, Package, Zap, Puzzle, Star, 
+  Crown, LayoutDashboard, Package, Zap, Puzzle, Brain, Star, 
   User, TrendingUp, Database, BookOpen, BarChart3 
 } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
@@ -13,6 +13,7 @@ const NAV_ITEMS: { id: NavSection; label: string; icon: LucideIcon }[] = [
   { id: "gear_sets", label: "Gear Sets", icon: Package },
   { id: "optimizer", label: "Optimizer", icon: Zap },
   { id: "modules", label: "Modules", icon: Puzzle },
+  { id: "psychoscope", label: "Psychoscope", icon: Brain },
   { id: "talents", label: "Talents", icon: Star },
   { id: "profile", label: "Profile", icon: User },
   { id: "curves", label: "Stat Curves", icon: TrendingUp },

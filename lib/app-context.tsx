@@ -6,6 +6,7 @@ import {
   getSlotType, getTierData, getDefaultTier,
 } from "@/lib/game-data"
 import { TALENT_DATA } from "@/lib/talent-data"
+import { type PsychoscopeConfig, DEFAULT_PSYCHOSCOPE_CONFIG } from "@/lib/psychoscope-data"
 
 export type { GearSlot, StatsResult, Build, GearLibItem }
 
@@ -43,7 +44,7 @@ export interface ExtBuffs {
 }
 
 export type AccentColor = "yellow" | "red" | "blue" | "green"
-export type NavSection = "classes" | "planner" | "optimizer" | "modules" | "talents" | "profile" | "curves" | "database" | "guide" | "guide_stormblade" | "dps_simulator" | "gear_sets"
+export type NavSection = "classes" | "planner" | "optimizer" | "modules" | "psychoscope" | "talents" | "profile" | "curves" | "database" | "guide" | "guide_stormblade" | "dps_simulator" | "gear_sets"
 
 const ACCENT_MAP: Record<AccentColor, string> = {
   yellow: "#e5c229",
@@ -449,6 +450,9 @@ interface AppState {
   loadGearSet: (id: string) => void
   renameGearSet: (id: string, name: string) => void
   importGearSets: (sets: GearSet[]) => void
+
+  psychoscopeConfig: PsychoscopeConfig
+  setPsychoscopeConfig: (config: PsychoscopeConfig) => void
 }
 
 const AppContext = createContext<AppState | null>(null)
@@ -479,6 +483,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [selectedTalents, setSelectedTalents] = useState<string[]>([])
   const [talentAspd, setTalentAspd] = useState<number>(0)
   const [gearSets, setGearSets] = useState<GearSet[]>([])
+  const [psychoscopeConfig, setPsychoscopeConfig] = useState<PsychoscopeConfig>(DEFAULT_PSYCHOSCOPE_CONFIG)
   const canSave = useRef(false)
 
   const accentColor = ACCENT_MAP[accent]
@@ -608,11 +613,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (!canSave.current) return
     try {
-      localStorage.setItem(SAVE_KEY, JSON.stringify({ build, spec, gear, legendaryTypes, legendaryVals, imagines, modules, base, ext, accent, gearLib, selectedTalents, talentAspd, gearSets }))
+      localStorage.setItem(SAVE_KEY, JSON.stringify({ build, spec, gear, legendaryTypes, legendaryVals, imagines, modules, base, ext, accent, gearLib, selectedTalents, talentAspd, gearSets, psychoscopeConfig }))
     } catch (e) {
       console.error('[BPSR] Save failed:', e)
     }
-  }, [build, spec, gear, legendaryTypes, legendaryVals, imagines, modules, base, ext, accent, gearLib, selectedTalents, talentAspd, gearSets])
+  }, [build, spec, gear, legendaryTypes, legendaryVals, imagines, modules, base, ext, accent, gearLib, selectedTalents, talentAspd, gearSets, psychoscopeConfig])
 
   // Load persisted state on mount
   useEffect(() => {
@@ -654,6 +659,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       if (saved.selectedTalents && Array.isArray(saved.selectedTalents)) setSelectedTalents(saved.selectedTalents)
       if (typeof saved.talentAspd === "number") setTalentAspd(saved.talentAspd)
       if (saved.gearSets && Array.isArray(saved.gearSets)) setGearSets(saved.gearSets)
+      if (saved.psychoscopeConfig?.projectionId) setPsychoscopeConfig(saved.psychoscopeConfig)
     } catch (e) {
       console.error('[BPSR] Load failed:', e)
     }
@@ -680,6 +686,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     selectedTalents, setSelectedTalents,
     talentAspd, setTalentAspd,
     gearSets, saveGearSet, deleteGearSet, loadGearSet, renameGearSet, importGearSets,
+    psychoscopeConfig, setPsychoscopeConfig,
   }
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>
