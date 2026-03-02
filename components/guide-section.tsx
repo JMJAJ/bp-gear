@@ -138,7 +138,7 @@ export function GuideSection({ variant }: { variant?: "stormblade" }) {
         </p>
       </Block>
 
-      <Block title="Raid vs. Gold Gear">
+      <Block title="Raid vs. Gold Gear (Lv140)">
         <div className="space-y-0.5">
           <KV k="Gold weapon" v="1,512 Primary + 756 Secondary + 453 Reforge" />
           <KV k="Raid weapon" v="1,966 Primary + 1,966 Secondary (no reforge)" />

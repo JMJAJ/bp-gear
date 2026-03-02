@@ -8,19 +8,19 @@ import {
 import type { LucideIcon } from "lucide-react"
 
 const NAV_ITEMS: { id: NavSection; label: string; icon: LucideIcon }[] = [
+  { id: "guide", label: "Beginner Guide", icon: BookOpen },
   { id: "classes", label: "Classes", icon: Crown },
   { id: "planner", label: "Planner", icon: LayoutDashboard },
   { id: "gear_sets", label: "Gear Sets", icon: Package },
-  { id: "optimizer", label: "Optimizer", icon: Zap },
   { id: "modules", label: "Modules", icon: Puzzle },
   { id: "psychoscope", label: "Psychoscope", icon: Brain },
   { id: "talents", label: "Talents", icon: Star },
-  { id: "profile", label: "Profile", icon: User },
-  { id: "curves", label: "Stat Curves", icon: TrendingUp },
-  { id: "database", label: "Database", icon: Database },
-  { id: "guide", label: "Beginner Guide", icon: BookOpen },
+  { id: "optimizer", label: "Optimizer", icon: Zap },
   // { id: "guide_stormblade", label: "Moonstrike Guide", icon: "⚔" },
   { id: "dps_simulator", label: "DPS Simulator", icon: BarChart3 },
+  { id: "curves", label: "Stat Curves", icon: TrendingUp },
+  { id: "database", label: "Database", icon: Database },
+  { id: "profile", label: "Profile", icon: User },
   { id: "details", label: "Details", icon: FileText },
 ]
 
@@ -48,7 +48,7 @@ export function Sidebar({ mobile }: { mobile?: boolean }) {
           className="text-[10px] font-light tracking-[1px] mt-0.5"
           style={{ color: accentColor }}
         >
-          GEAR BUILDER v0.4.4-alpha
+          GEAR BUILDER v0.4.5-alpha
         </div>
       </div>
 
