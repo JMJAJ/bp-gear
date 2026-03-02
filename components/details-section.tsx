@@ -19,7 +19,7 @@ export function DetailsSection() {
   const className = spec ? getClassForSpec(spec) : null
   const mainStatName = className ? GAME_DATA.CLASSES[className]?.main ?? null : null
   const isAgilityClass = mainStatName === "Agility"
-  const baseAgi = base.agi + 435
+  const baseAgi = base.agi
 
   return (
     <div className="p-6 space-y-6 max-w-5xl mx-auto">
@@ -133,8 +133,8 @@ export function DetailsSection() {
 
           <div className="mt-3 pt-3 border-t border-[#1a1a1a] text-xs text-[#666]">
             <span className="font-semibold" style={{ color: accentColor }}>Analysis:</span> The in-game UI shows 
-            Luck with a +5% default bonus that's always active. This calculator includes that base too.
-            Psychoscope should add +1668 raw Haste (13759 - 12091) from the "gained in any way +10%" 
+            Luck with a +5% default bonus that's always active. Our calculator shows the combat-accurate value 
+            which includes this base. Psychoscope should add +1668 raw Haste (13759 - 12091) from the "gained in any way +10%" 
             multiplier (Polarity X8).
           </div>
         </div>
@@ -325,7 +325,7 @@ export function DetailsSection() {
               {/* Base stat */}
               {baseAgi > 0 && (
                 <div className="flex justify-between text-[#aaa]">
-                  <Tip text="Your character's built-in base for this stat (from level/class/account stuff).">Base</Tip>
+                  <Tip text="Not sure where this coming from but I will just manually add this">Base</Tip>
                   <span className="font-mono">+{baseAgi}</span>
                 </div>
               )}

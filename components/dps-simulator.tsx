@@ -280,7 +280,7 @@ export function DpsSimulator() {
     }, [im1Name, im2Name])
 
     // User-configurable inputs
-    const [manualAtk, setManualAtk] = useState(3718)
+    const [manualAtk, setManualAtk] = useState(3794)
     const [manualAspd, setManualAspd] = useState(0) // 0 = use planner value, >0 = override (e.g. 89 for 89%)
     const [fightDuration, setFightDuration] = useState(90)
     const [activeTab, setActiveTab] = useState<"chart" | "breakdown" | "log" | "timeline">("chart")
