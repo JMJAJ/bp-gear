@@ -1,6 +1,7 @@
 "use client"
 import { useState, useMemo, useRef, useCallback, DragEvent } from "react"
 import { useApp, getStatPercent, getStatPercentCombat, getClassForSpec, calculateStatsFromGearSet, type GearSet, type StatsResult } from "@/lib/app-context"
+import { getGearSetColorByIndex } from "@/lib/gear-set-colors"
 import { XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, AreaChart, Area, Line, LineChart, BarChart, Bar, Cell, ScatterChart, Scatter, ZAxis } from "recharts"
 import { Check } from "lucide-react"
 
@@ -54,11 +55,11 @@ const MS_SKILLS: Record<string, SkillDef> = {
 
     // ── Scythe Wheel ──
     // Skill Damage: 420% ATK +1200. Summons Moonblades for 35s.
-    // Moonblade Direct Damage: 70% ATK +200
-    // Trigger Whirl Damage: 210% ATK +600 (triggered per moonblade when Moonstrike is cast)
-    // CD: 30s
+    // Moonblade Direct Damage: tooltip 70% +200 (base), actual Lv30 ≈ 165% +300 per moonblade
+    // Trigger Whirl Damage: 210% ATK +600 total across all moonblades
+    // CD: 30s. Hits: 7 per cast (calibrated from log: 21 hits / 3 casts)
     ScytheWheel: {
-        name: "Scythe Wheel", cd: 30, castTime: 1.2, mv: 420, flat: 1200, hits: 3,
+        name: "Scythe Wheel", cd: 30, castTime: 1.2, mv: 420, flat: 1200, hits: 7,
         element: "Thunder", type: "Expertise", grantsBladeIntent: 3,
     },
 
@@ -86,9 +87,10 @@ const MS_SKILLS: Record<string, SkillDef> = {
     },
 
     // ── Thundercleave (enhanced Thundercut after 5 consecutive casts — talent) ──
-    // Deals higher DMG (estimated ~1.8× Thundercut)
+    // Per-hit ≈ 4× TC per-hit (calibrated from real log: 30,950 avg non-crit vs TC 7,750)
+    // Total 3 hits: 1260% ATK +3600 (420%+1200 per hit)
     Thundercleave: {
-        name: "Thundercleave", cd: 0, castTime: 0.7, mv: 380, flat: 1080, hits: 3,
+        name: "Thundercleave", cd: 0, castTime: 0.7, mv: 1260, flat: 3600, hits: 3,
         element: "Thunder", type: "Expertise", consumesBladeIntent: 50, scalesWithAspd: true,
     },
 
@@ -135,15 +137,16 @@ const MS_SKILLS: Record<string, SkillDef> = {
     },
 }
 
-// ── Moonblade constants (from Scythe Wheel tooltip) ──
+// ── Moonblade constants (calibrated from real combat log: encounter_2139_full.txt) ──
 // Moonblades spin for 35s, dealing Attack Damage every 2s
-// Moonblade Direct Damage: 70% ATK +200 per moonblade
-const MB_MV = 70            // % ATK per moonblade hit
-const MB_FLAT = 200         // flat per moonblade hit
+// Tooltip says 70% +200 but that's base level; Lv30 actual ≈ 165% +300 per moonblade
+const MB_MV = 165           // % ATK per moonblade hit (Lv30 calibrated)
+const MB_FLAT = 300         // flat per moonblade hit (Lv30 calibrated)
 const MB_INTERVAL = 2.0     // seconds between moonblade auto-hits (from tooltip)
 const MB_BASE_COUNT = 3     // default active moonblades
 
-// Moonstrike Whirl Damage per moonblade: 210% ATK +600
+// Moonblade Whirl: 210% ATK +600 TOTAL across all moonblades (not per-moonblade!)
+// Per-moonblade whirl ≈ 52.5% +150 → total 210% +600 for 4 moonblades
 const MW_MV = 210
 const MW_FLAT = 600
 
@@ -170,7 +173,7 @@ const FI_FLAT = 1000
 const FI_ICD = 8.0 // seconds between procs
 
 // Lucky Strike (Tachi) — weapon type bonus on every lucky strike
-// Reverse-engineered: 422 procs × 3.72K avg → ~100% ATK +440
+// Calibrated: raw 3,719, with vers ≈ 4,038, real non-crit avg ≈ 4,392
 const TACHI_MV = 100
 const TACHI_FLAT = 440
 
@@ -203,62 +206,58 @@ const ROTATION_SKILLS = [
 // Rotation item: skill key + repeat count
 interface RotationItem { key: string; repeat: number }
 
-// Default optimal rotation (priority order) - based on 90s recording
+// Default optimal rotation — extracted from real combat log (encounter_2139_full.txt)
+// 90s fight, Stormblade Moonstrike, ATK=3279, ASPD≥80%
+// DivineSickle + Thundercleave are auto-procced by the sim (ssCount >= dsTrigger, consecutiveTc >= 5)
+// VoltSurge and Stormflash are 0-damage buffs (not in hit log), timing inferred from Lightning Strike procs
 const DEFAULT_ROTATION: RotationItem[] = [
-    // Opening buffs
-    { key: "Imagine1", repeat: 1 },      // Blackfire Foxen (t=0.00s)
-    { key: "Imagine2", repeat: 1 },      // Emerald Caprahorn (t=0.58s)
-    { key: "Stormflash", repeat: 1 },    // Blade Intent buff (t=1.26s)
-    { key: "VoltSurge", repeat: 1 },     // ATK buff (t=1.86s)
-    { key: "ScytheWheel", repeat: 1 },   // (t=2.61s)
-    // Phase 1: Thundercut spam with Moonstrike
-    { key: "Thundercut", repeat: 17 },   // (t=3.66s - 6.32s)
-    { key: "DivineSickle", repeat: 1 },   // (t=6.35s)
-    { key: "Thundercut", repeat: 43 },   // (t=7.29s - 14.10s)
-    { key: "DivineSickle", repeat: 1 },   // (t=14.15s)
-    { key: "Thundercut", repeat: 25 },   // (t=15.31s - 19.53s)
-    { key: "Moonstrike", repeat: 1 },    // (t=19.53s)
-    { key: "Thundercut", repeat: 4 },    // (t=20.02s - 20.60s)
-    { key: "Moonstrike", repeat: 1 },    // (t=20.88s)
-    { key: "Thundercut", repeat: 15 },   // (t=21.30s - 24.13s)
-    { key: "Moonstrike", repeat: 3 },    // (t=24.13s - 24.73s)
-    { key: "Thundercut", repeat: 22 },   // (t=24.90s - 28.78s)
-    { key: "Moonstrike", repeat: 1 },    // (t=28.78s)
-    { key: "DivineSickle", repeat: 1 },  // (t=29.39s)
-    { key: "Thundercut", repeat: 19 },   // (t=30.56s - 34.12s)
-    // Refresh ScytheWheel
-    { key: "ScytheWheel", repeat: 1 },   // (t=34.12s)
-    { key: "Thundercut", repeat: 1 },    // (t=36.02s)
-    // Refresh Stormflash
-    { key: "Stormflash", repeat: 1 },    // (t=36.54s)
-    { key: "Moonstrike", repeat: 1 },    // (t=37.38s)
-    { key: "Thundercut", repeat: 8 },    // (t=37.82s - 39.15s)
-    { key: "Moonstrike", repeat: 1 },    // (t=39.15s)
-    { key: "Thundercut", repeat: 19 },   // (t=39.57s - 43.05s)
-    { key: "DivineSickle", repeat: 1 },   // (t=43.05s)
-    { key: "Thundercut", repeat: 32 },   // (t=44.07s - 50.29s)
-    { key: "DivineSickle", repeat: 1 },   // (t=50.29s)
-    // Refresh VoltSurge
-    { key: "VoltSurge", repeat: 1 },     // (t=51.48s)
-    { key: "Moonstrike", repeat: 4 },    // (t=52.20s - 52.65s)
-    { key: "Thundercut", repeat: 34 },   // (t=52.85s - 59.40s)
-    { key: "Moonstrike", repeat: 16 },   // (t=59.40s - 62.18s) - heavy moonstrike phase
-    { key: "Thundercut", repeat: 13 },   // (t=62.60s - 65.22s)
-    // Refresh ScytheWheel
-    { key: "ScytheWheel", repeat: 1 },   // (t=65.22s)
-    { key: "Thundercut", repeat: 7 },    // (t=65.85s - 67.70s)
-    // Oblivion Combo (ultimate)
-    { key: "OblivionCombo", repeat: 1 }, // (t=67.70s)
-    { key: "Moonstrike", repeat: 3 },    // (t=70.50s - 71.63s)
-    { key: "Thundercut", repeat: 6 },    // (t=72.45s - 73.54s)
-    // Refresh Stormflash
-    { key: "Stormflash", repeat: 1 },    // (t=73.63s)
-    { key: "Moonstrike", repeat: 3 },    // (t=74.62s - 74.98s)
-    { key: "Thundercut", repeat: 20 },   // (t=75.10s - 78.43s)
-    { key: "DivineSickle", repeat: 1 },   // (t=78.43s)
-    { key: "Thundercut", repeat: 37 },   // (t=79.37s - 86.04s)
-    { key: "DivineSickle", repeat: 1 },   // (t=86.04s)
-    { key: "Thundercut", repeat: 17 },   // (t=86.87s - 89.94s)
+    // ── Opening (t=0-3s): Imagines, buffs, moonblades ──
+    { key: "Imagine1", repeat: 1 },      // Blackfire Foxen — Mastery +13% for 20s
+    { key: "Imagine2", repeat: 1 },      // Emerald Caprahorn — Haste +13% for 20s
+    { key: "Stormflash", repeat: 1 },    // BI regen + Lightning Strike enabler
+    { key: "VoltSurge", repeat: 1 },     // ATK +10% for 12s
+    { key: "ScytheWheel", repeat: 1 },   // Summon moonblades for 35s
+    // ── Phase 1 (t=3-15s): TC spam during Stormflash window 1 ──
+    { key: "Thundercut", repeat: 21 },   // Heavy TC burst (t=3-8s)
+    { key: "ChaosBreaker", repeat: 1 },  // Dump sigils during SF (t=9s)
+    { key: "Thundercut", repeat: 14 },   // Continue TC spam (t=10-14s)
+    { key: "Moonstrike", repeat: 2 },    // Dump sigils + trigger Moonblade Whirl (t=15s)
+    // ── Phase 2 (t=15-31s): TC with periodic MS dumps ──
+    { key: "Thundercut", repeat: 17 },   // TC spam (t=16-21s)
+    { key: "Moonstrike", repeat: 4 },    // MS dump (t=21-22s)
+    { key: "Thundercut", repeat: 8 },    // TC (t=24-26s)
+    { key: "Moonstrike", repeat: 10 },   // Heavy MS phase — dump accumulated sigils (t=27-30s)
+    { key: "Thundercut", repeat: 2 },    // TC bridge (t=31s)
+    // ── ScytheWheel refresh (t=32s, CD=30s from opener) ──
+    { key: "ScytheWheel", repeat: 1 },   // Refresh moonblades
+    { key: "Moonstrike", repeat: 2 },    // Trigger moonblade whirl (t=33s)
+    { key: "Thundercut", repeat: 8 },    // TC (t=34-36s)
+    // ── Stormflash refresh (t=36s, inferred from LS procs appearing at t=37s) ──
+    { key: "Stormflash", repeat: 1 },    // Refresh SF for window 2
+    { key: "Thundercut", repeat: 24 },   // Long TC streak during SF window 2 (t=39-50s)
+    // ── VoltSurge refresh (t=47s, CD=45s from opener) ──
+    { key: "VoltSurge", repeat: 1 },     // Refresh ATK buff
+    { key: "Thundercut", repeat: 5 },    // TC (t=51-52s)
+    { key: "ChaosBreaker", repeat: 1 },  // During SF window 2 (t=53s)
+    { key: "Thundercut", repeat: 7 },    // TC (t=54-56s)
+    { key: "Moonstrike", repeat: 2 },    // MS dump (t=57s)
+    { key: "Thundercut", repeat: 6 },    // TC (t=58-60s)
+    { key: "Moonstrike", repeat: 2 },    // MS dump (t=61s)
+    { key: "Thundercut", repeat: 2 },    // TC bridge (t=62s)
+    // ── ScytheWheel refresh (t=62s, CD=30s from 2nd cast) ──
+    { key: "ScytheWheel", repeat: 1 },   // Refresh moonblades
+    { key: "Thundercut", repeat: 9 },    // TC (t=64-67s)
+    { key: "Moonstrike", repeat: 4 },    // MS dump (t=69s)
+    { key: "Thundercut", repeat: 2 },    // TC (t=70s)
+    { key: "Moonstrike", repeat: 6 },    // Heavy MS phase (t=71-73s)
+    { key: "Thundercut", repeat: 4 },    // TC (t=74-75s)
+    { key: "Moonstrike", repeat: 14 },   // Very heavy MS dump (t=75-81s)
+    // ── Final burst (t=82-90s): Stormflash window 3 + Imagine refresh ──
+    { key: "Stormflash", repeat: 1 },    // Refresh SF for window 3 (CD=45s from ~36s)
+    { key: "Imagine1", repeat: 1 },      // Refresh Mastery buff (CD=80s from opener)
+    { key: "Thundercut", repeat: 9 },    // TC with SF active (t=82-84s)
+    { key: "Imagine2", repeat: 1 },      // Refresh Haste buff (CD=80s from opener)
+    { key: "Thundercut", repeat: 15 },   // Final TC burst (t=85-90s)
 ]
 
 // ═══════════════════════════════════════════════════════════
@@ -296,6 +295,11 @@ export function DpsSimulator() {
     const [compareMode, setCompareMode] = useState(false)
     const [selectedSetIds, setSelectedSetIds] = useState<string[]>([])
     const { gearSets, base, ext, psychoscopeConfig } = useApp()
+    const getGearSetColor = useCallback((setId: string) => {
+        const idx = gearSets.findIndex(s => s.id === setId)
+        if (idx < 0) return "#888"
+        return getGearSetColorByIndex(idx)
+    }, [gearSets])
 
     // Drag handlers
     const onDragStartPalette = useCallback((e: DragEvent<HTMLDivElement>, key: string) => {
@@ -381,7 +385,9 @@ export function DpsSimulator() {
 
         const dmgBoss = (stats.purpleStats?.["DMG Bonus vs Bosses (%)"] ?? 0) / 100
         const meleeDmg = (stats.purpleStats?.["Melee Damage Bonus (%)"] ?? 0) / 100
-        const weaponAtkPct = isMoonstrike ? 0.04 : 0 // Moonstrike raid weapon combat buff: ATK +4%
+        // Raid weapon combat buff: ATK +4% — only if the weapon is actually a raid weapon
+        const hasRaidWeapon = (stats.weaponEffects?.length ?? 0) > 0
+        const weaponAtkPct = (isMoonstrike && hasRaidWeapon) ? 0.04 : 0
 
         // Module damage bonuses (tracked in moduleStats but need to be applied in sim)
         // Physical DMG = ATK-based damage type, applies to ALL Stormblade skills (they are melee ATK-based)
@@ -442,6 +448,9 @@ export function DpsSimulator() {
         const psyConditionalElementDmg = (psyEffects?.conditionalElementDmg ?? 0) / 100
         const psySkillDmg = psyEffects?.skillDmg ?? {}
         const psyAllElementFlat = psyEffects?.allElementFlat ?? 0
+
+        // Fantasia Impact: only procs if psychoscope projection is Fantasia Impact
+        const hasFI = psyEffects?.projectionId === "fantasia-impact"
 
         // Talent flags
         const t = {
@@ -721,14 +730,15 @@ export function DpsSimulator() {
                 consecutiveTc = 0
             }
 
-            // Moonstrike: triggers Moonblade Whirl damage (210% +600 per active moonblade)
+            // Moonstrike: triggers Moonblade Whirl damage
+            // 210% +600 is the TOTAL across all moonblades (not per-moonblade)
             if (key === "Moonstrike" && mbActive) {
-                const whirlDmg = calcHit(MW_MV * moonbladeCount, MW_FLAT * moonbladeCount, "Special", tcStacks, sfActive, vsActive, "Thunder", "Moonblade Whirl")
+                const whirlDmg = calcHit(MW_MV, MW_FLAT, "Special", tcStacks, sfActive, vsActive, "Thunder", "Moonblade Whirl")
                 totalDmg += whirlDmg
                 addDmg("Moonblade Whirl", whirlDmg)
             }
             if (key === "ChaosBreaker" && mbActive) {
-                const whirlDmg = calcHit(MW_MV * moonbladeCount, MW_FLAT * moonbladeCount, "Special", tcStacks, sfActive, vsActive, "Thunder", "Moonblade Whirl")
+                const whirlDmg = calcHit(MW_MV, MW_FLAT, "Special", tcStacks, sfActive, vsActive, "Thunder", "Moonblade Whirl")
                 totalDmg += whirlDmg
                 addDmg("Moonblade Whirl", whirlDmg)
             }
@@ -746,10 +756,20 @@ export function DpsSimulator() {
                     addDmg("Moonblades", mbDmg)
                     mbTimer -= MB_INTERVAL
 
+                    // Tachi procs from moonblade hits (each moonblade hit can proc independently)
+                    if (luckRate > 0) {
+                        const vsAtkMult = vsActive ? 0.10 + psyConditionalAtkPct : 0
+                        const atkNow = vsActive ? effAtk * (1 + vsAtkMult) + 80 : effAtk
+                        const tachiPerProc = (atkNow * (TACHI_MV / 100) + TACHI_FLAT) * (1 + versPct)
+                        const tachiDmg = tachiPerProc * luckRate * moonbladeCount
+                        totalDmg += tachiDmg
+                        addDmg("Lucky Strike (Tachi)", tachiDmg)
+                    }
+
                     // Thunderstrike procs from moonblade lucky strikes (talent)
                     if (t.touchOfThunderSoul && luckRate > 0) {
                         const tsChance = 0.6 * luckRate
-                const tsDmgBase = calcHit(TS_MV, TS_FLAT, "Special", tcStacks, sfActive, vsActive, "Thunder", "Thunderstrike")
+                        const tsDmgBase = calcHit(TS_MV, TS_FLAT, "Special", tcStacks, sfActive, vsActive, "Thunder", "Thunderstrike")
                         let tsScale = 1.0
                         if (t.enhancedThunderstrike) tsScale = 1.2 + luckRate
                         const tsDmg = tsDmgBase * tsChance * tsScale
@@ -775,10 +795,11 @@ export function DpsSimulator() {
 
             // Lucky Strike (Tachi) — weapon type bonus on every lucky strike
             // Each hit has luckRate chance to proc, dealing ~100% ATK +440 extra damage
+            // Tachi gets Versatility multiplier (calibrated: real non-crit avg 4,392 vs raw 3,719)
             if (dmg > 0 && luckRate > 0) {
                 const vsAtkMult = vsActive ? 0.10 + psyConditionalAtkPct : 0
                 const atkNow = vsActive ? effAtk * (1 + vsAtkMult) + 80 : effAtk
-                const tachiPerProc = atkNow * (TACHI_MV / 100) + TACHI_FLAT
+                const tachiPerProc = (atkNow * (TACHI_MV / 100) + TACHI_FLAT) * (1 + versPct)
                 // TC at ≥50%: 3 attacks × 2 hits = 6 total hits for proc chances
                 const skillHits = (key === "Thundercut") ? 2 * (1 + getTcBonusAttacks()) : skill.hits
                 // Each individual hit can proc tachi independently
@@ -788,13 +809,13 @@ export function DpsSimulator() {
             }
 
             // Fantasia Impact — periodic high-damage proc (~8s ICD)
-            // Doesn't crit/luck, only scales with mastery  
-            while (fiTimer >= FI_ICD) {
+            // Doesn't crit/luck, only scales with mastery. Dream damage — NOT melee.
+            while (hasFI && fiTimer >= FI_ICD) {
                 const vsAtkMult = vsActive ? 0.10 + psyConditionalAtkPct : 0
                 const atkNow = vsActive ? effAtk * (1 + vsAtkMult) + 80 : effAtk
                 const fiBase = atkNow * (FI_MV / 100) + FI_FLAT
                 const mastNow = mastPct + (im1Timer > 0 ? 0.13 : 0)
-                const fiDmg = fiBase * (1 + versPct) * (1 + mastNow) * (1 + dmgBoss + meleeDmg + psyDreamDmg)
+                const fiDmg = fiBase * (1 + versPct) * (1 + mastNow) * (1 + dmgBoss + psyDreamDmg)
                 totalDmg += fiDmg
                 addDmg("Fantasia Impact", fiDmg)
                 fiTimer -= FI_ICD
@@ -944,7 +965,9 @@ export function DpsSimulator() {
         const luckMult = 1 + baseLuckDmg + bonusLuckDmg
         const dmgBoss = (statsResult.purpleStats?.["DMG Bonus vs Bosses (%)"] ?? 0) / 100
         const meleeDmg = (statsResult.purpleStats?.["Melee Damage Bonus (%)"] ?? 0) / 100
-        const weaponAtkPct = isMoonstrike ? 0.04 : 0
+        // Raid weapon combat buff: ATK +4% — only if the weapon is actually a raid weapon
+        const hasRaidWeaponComp = (statsResult.weaponEffects?.length ?? 0) > 0
+        const weaponAtkPct = (isMoonstrike && hasRaidWeaponComp) ? 0.04 : 0
         const physDmgPct = (statsResult.moduleStats?.["Physical DMG (%)"] ?? 0) / 100
         const dmgPerStack = statsResult.moduleStats?.["DMG (%) / stack"] ?? 0
         const dmgStackPct = dmgPerStack > 0 ? (dmgPerStack * 4) / 100 : 0
@@ -964,10 +987,9 @@ export function DpsSimulator() {
     }
 
     // ── Comparison mode: run simulation for each selected gear set ──
-    const SET_COLORS = ["#f59e0b", "#ef4444", "#22c55e", "#3b82f6", "#8b5cf6", "#ec4899", "#06b6d4", "#84cc16"]
     const comparisonResults = useMemo(() => {
         if (!compareMode || selectedSetIds.length === 0) return []
-        return selectedSetIds.map((id, idx) => {
+        return selectedSetIds.map((id) => {
             const gearSet = gearSets.find(s => s.id === id)
             if (!gearSet) return null
             const statsResult = calculateStatsFromGearSet(gearSet, spec, base, ext, psychoscopeConfig)
@@ -978,14 +1000,14 @@ export function DpsSimulator() {
             return {
                 id: gearSet.id,
                 name: gearSet.name,
-                color: SET_COLORS[idx % SET_COLORS.length],
+                color: getGearSetColor(gearSet.id),
                 data: simResult.data,
                 finalDps: simResult.finalDps,
                 finalDmg: simResult.finalDmg,
                 effAtk: simResult.effAtk,
             }
         }).filter(Boolean) as { id: string; name: string; color: string; data: { time: number; damage: number; dps: number }[]; finalDps: number; finalDmg: number; effAtk: number }[]
-    }, [compareMode, selectedSetIds, gearSets, spec, base, ext, manualAtk, fightDuration, useCustomRotation, rotation, skills])
+    }, [compareMode, selectedSetIds, gearSets, spec, base, ext, psychoscopeConfig, getGearSetColor])
 
     // Merge comparison data for LineChart (needs single dataset with multiple keys)
     // Resample all sets to common time intervals for proper alignment
@@ -1036,6 +1058,9 @@ export function DpsSimulator() {
         const psyConditionalElementDmg = (psyEffects?.conditionalElementDmg ?? 0) / 100
         const psySkillDmg = psyEffects?.skillDmg ?? {}
         const psyAllElementFlat = psyEffects?.allElementFlat ?? 0
+
+        // Fantasia Impact: only procs if psychoscope projection is Fantasia Impact
+        const hasFI = psyEffects?.projectionId === "fantasia-impact"
 
         const t = {
             thunderCurse: talents?.includes("thunder_curse"),
@@ -1219,10 +1244,10 @@ export function DpsSimulator() {
             }
 
             if (key === "Moonstrike" && mbActive) {
-                totalDmg += calcHit(MW_MV * moonbladeCount, MW_FLAT * moonbladeCount, "Special", tcStacks, sfActive, vsActive, im1Timer, im2Timer, "Thunder", "Moonblade Whirl")
+                totalDmg += calcHit(MW_MV, MW_FLAT, "Special", tcStacks, sfActive, vsActive, im1Timer, im2Timer, "Thunder", "Moonblade Whirl")
             }
             if (key === "ChaosBreaker" && mbActive) {
-                totalDmg += calcHit(MW_MV * moonbladeCount, MW_FLAT * moonbladeCount, "Special", tcStacks, sfActive, vsActive, im1Timer, im2Timer, "Thunder", "Moonblade Whirl")
+                totalDmg += calcHit(MW_MV, MW_FLAT, "Special", tcStacks, sfActive, vsActive, im1Timer, im2Timer, "Thunder", "Moonblade Whirl")
             }
 
             const prev = time; time += ct
@@ -1233,6 +1258,13 @@ export function DpsSimulator() {
                 while (mbTimer >= MB_INTERVAL) {
                     totalDmg += calcHit(MB_MV * moonbladeCount, MB_FLAT * moonbladeCount, "Basic", tcStacks, sfActive, vsActive, im1Timer, im2Timer, "Thunder", "Moonblades")
                     mbTimer -= MB_INTERVAL
+                    // Tachi procs from moonblade hits
+                    if (luckRate > 0) {
+                        const vsAtkMult = vsActive ? 0.10 + psyConditionalAtkPct : 0
+                        const atkNow = vsActive ? effAtk * (1 + vsAtkMult) + 80 : effAtk
+                        const tachiPerProc = (atkNow * (TACHI_MV / 100) + TACHI_FLAT) * (1 + versPct)
+                        totalDmg += tachiPerProc * luckRate * moonbladeCount
+                    }
                     if (t.touchOfThunderSoul && luckRate > 0) {
                         const tsChance = 0.6 * luckRate
                         const tsDmgBase = calcHit(TS_MV, TS_FLAT, "Special", tcStacks, sfActive, vsActive, im1Timer, im2Timer, "Thunder", "Thunderstrike")
@@ -1254,17 +1286,17 @@ export function DpsSimulator() {
             if (dmg > 0 && luckRate > 0) {
                 const vsAtkMult = vsActive ? 0.10 + psyConditionalAtkPct : 0
                 const atkNow = vsActive ? effAtk * (1 + vsAtkMult) + 80 : effAtk
-                const tachiPerProc = atkNow * (TACHI_MV / 100) + TACHI_FLAT
+                const tachiPerProc = (atkNow * (TACHI_MV / 100) + TACHI_FLAT) * (1 + versPct)
                 const skillHits = (key === "Thundercut") ? 2 * (1 + getTcBonusAttacks(im2Timer)) : skill.hits
                 totalDmg += tachiPerProc * luckRate * skillHits
             }
 
-            while (fiTimer >= FI_ICD) {
+            while (hasFI && fiTimer >= FI_ICD) {
                 const vsAtkMult = vsActive ? 0.10 + psyConditionalAtkPct : 0
                 const atkNow = vsActive ? effAtk * (1 + vsAtkMult) + 80 : effAtk
                 const fiBase = atkNow * (FI_MV / 100) + FI_FLAT
                 const mastNow = mastPct + (im1Timer > 0 ? 0.13 : 0)
-                totalDmg += fiBase * (1 + versPct) * (1 + mastNow) * (1 + dmgBoss + meleeDmg + psyDreamDmg)
+                totalDmg += fiBase * (1 + versPct) * (1 + mastNow) * (1 + dmgBoss + psyDreamDmg)
                 fiTimer -= FI_ICD
             }
 
@@ -1459,7 +1491,7 @@ export function DpsSimulator() {
                             <div className="flex flex-wrap gap-2">
                                 {gearSets.map((set, idx) => {
                                     const isSelected = selectedSetIds.includes(set.id)
-                                    const color = SET_COLORS[idx % SET_COLORS.length]
+                                    const color = getGearSetColor(set.id)
                                     return (
                                         <button
                                             key={set.id}

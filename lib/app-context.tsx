@@ -3,7 +3,7 @@ import { createContext, useContext, useState, useCallback, useEffect, useRef } f
 import {
   GAME_DATA, SIGIL_DB, MODULE_DB, MODULE_THRESHOLDS,
   type GearSlot, type StatsResult, type Build, type GearLibItem,
-  getSlotType, getTierData, getDefaultTier, applyPerfection,
+  getSlotType, getTierData, getDefaultTier, applyPerfection, getBasicAttrs,
 } from "@/lib/game-data"
 import { TALENT_DATA } from "@/lib/talent-data"
 import { type PsychoscopeConfig, DEFAULT_PSYCHOSCOPE_CONFIG, computePsychoscopeEffects } from "@/lib/psychoscope-data"
@@ -44,7 +44,7 @@ export interface ExtBuffs {
 }
 
 export type AccentColor = "yellow" | "red" | "blue" | "green"
-export type NavSection = "classes" | "planner" | "optimizer" | "modules" | "psychoscope" | "talents" | "profile" | "curves" | "database" | "guide" | "guide_stormblade" | "dps_simulator" | "gear_sets"
+export type NavSection = "classes" | "planner" | "optimizer" | "modules" | "psychoscope" | "talents" | "profile" | "curves" | "database" | "guide" | "guide_stormblade" | "dps_simulator" | "gear_sets" | "details"
 
 const ACCENT_MAP: Record<AccentColor, string> = {
   yellow: "#e5c229",
@@ -124,6 +124,7 @@ export function calculateStats(
   total.Crit += base.crit
   total.Luck += base.luck
   const baseAgi = base.agi
+  let gearMainStat = 0
 
   gear.forEach((g, i) => {
     if (!g) return
@@ -145,6 +146,20 @@ export function calculateStats(
     if (g.p && g.p !== "-") total[g.p] = (total[g.p] ?? 0) + vals.p
     if (g.s && g.s !== "-") total[g.s] = (total[g.s] ?? 0) + vals.s
     if (g.r && g.r !== "-" && vals.r > 0) total[g.r] = (total[g.r] ?? 0) + vals.r
+
+    // Accumulate main stat (Agility/Strength/Intellect) from gear basic attributes
+    if (g.tier) {
+      const basicAttrs = getBasicAttrs(g.tier, slotType)
+      if (basicAttrs && basicAttrs.mainStat > 0) {
+        let ms = basicAttrs.mainStat
+        // Apply perfection scaling to mainStat (same formula as combat stats)
+        if (g.perfection !== undefined && g.perfection < 100) {
+          const factor = (229 + 149 * Math.max(0, Math.min(100, g.perfection)) / 100) / 378
+          ms = Math.round(ms * factor)
+        }
+        gearMainStat += ms
+      }
+    }
 
     if (g.sigName) {
       const sig = SIGIL_DB.find(s => s.n === g.sigName)
@@ -216,7 +231,9 @@ export function calculateStats(
   // Collect total agility from all sources:
   // baseAgi (user-input character agility), moduleAgility (from power core modules),
   // sigilAgility (from sigil bonuses like Blackfire Foxen, Goblin Axeman, etc.)
+  // gearAgility (main stat from gear basic attributes, only for Agility classes)
   const sigilAgility = extraStats["Agility"] ?? 0
+  const gearAgility = (className && GAME_DATA.CLASSES[className]?.main === "Agility") ? gearMainStat : 0
 
   // Compute psychoscope effects (skip when disabled)
   const psyEffects = (psychoscopeConfig && psychoscopeConfig.enabled !== false)
@@ -225,7 +242,7 @@ export function calculateStats(
 
   // Add psychoscope flat Agility (e.g., Polarity X4: Agility +75)
   const psyAgility = psyEffects?.flatStats["Agility"] ?? 0
-  const rawAgility = baseAgi + moduleAgility + sigilAgility + psyAgility
+  const rawAgility = baseAgi + moduleAgility + sigilAgility + psyAgility + gearAgility
   // Apply Agility (%) from purple/legendary stats + psychoscope (e.g., Polarity X4: +2%)
   const agiPctBonus = (purpleStats["Agility (%)"] ?? 0) + (psyEffects?.pctStats["Agility"] ?? 0)
   const totalAgility = rawAgility * (1 + agiPctBonus / 100)
@@ -489,7 +506,7 @@ export function calculateStats(
   return {
     total, purpleStats, extraStats, moduleStats, powerCorePoints, appliedBonus, weaponEffects, aspd, cspd, talentAspd: talentAspdVal, ext: {
       crit: ext.crit, luck: ext.luck, haste: ext.haste, mast: ext.mast, vers: ext.vers, aspd: ext.aspd, cspd: ext.cspd, illu: ext.illu
-    }, raidArmorCount, raid2pcBonus, raid4pcBonus, set4pcHaste, psychoscopeEffects: psyEffects
+    }, raidArmorCount, gearMainStat, raid2pcBonus, raid4pcBonus, set4pcHaste, psychoscopeEffects: psyEffects
   }
 }
 

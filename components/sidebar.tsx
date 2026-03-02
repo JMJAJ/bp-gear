@@ -3,7 +3,7 @@ import { useApp } from "@/lib/app-context"
 import type { NavSection, AccentColor } from "@/lib/app-context"
 import { 
   Crown, LayoutDashboard, Package, Zap, Puzzle, Brain, Star, 
-  User, TrendingUp, Database, BookOpen, BarChart3 
+  User, TrendingUp, Database, BookOpen, BarChart3, FileText 
 } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
 
@@ -21,6 +21,7 @@ const NAV_ITEMS: { id: NavSection; label: string; icon: LucideIcon }[] = [
   { id: "guide", label: "Beginner Guide", icon: BookOpen },
   // { id: "guide_stormblade", label: "Moonstrike Guide", icon: "⚔" },
   { id: "dps_simulator", label: "DPS Simulator", icon: BarChart3 },
+  { id: "details", label: "Details", icon: FileText },
 ]
 
 const ACCENT_OPTIONS: { id: AccentColor; color: string; label: string }[] = [

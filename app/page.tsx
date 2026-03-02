@@ -14,6 +14,7 @@ import { ProfileSection } from "@/components/profile-section"
 import { DpsSimulator } from "@/components/dps-simulator"
 import { GearSetsSection } from "@/components/gear-sets-section"
 import { PsychoscopeSection } from "@/components/psychoscope-section"
+import { DetailsSection } from "@/components/details-section"
 import { useState, useEffect } from "react"
 
 const SECTION_TITLES: Record<string, string> = {
@@ -30,6 +31,7 @@ const SECTION_TITLES: Record<string, string> = {
   talents: "Talents",
   profile: "Profile",
   dps_simulator: "DPS Simulator",
+  details: "Calculation Details",
 }
 
 function AppShell() {
@@ -144,6 +146,7 @@ function AppShell() {
               {section === "talents" && <TalentsSection />}
               {section === "profile" && <ProfileSection />}
               {section === "dps_simulator" && <DpsSimulator />}
+              {section === "details" && <DetailsSection />}
             </div>
           </main>
 

@@ -271,57 +271,57 @@ export const GAME_DATA = {
   //
   // All other tiers have zeroes — fill in when datamined.
   BASIC_ATTRS: {
-    // ── Lv40 ──
+    // ── Lv40 ── (estimated: scaled from Lv140 using armor p-value ratio 100/756)
     "Lv40 Gold": {
-      weapon:    { atk: 0, mainStat: 0, endurance: 0 },
-      armor:     { armor: 0, mainStat: 0, endurance: 0, hp: 0 },
-      accessory: { mainStat: 0, endurance: 0 },
+      weapon:    { atk: 20, mainStat: 35, endurance: 160 },
+      armor:     { armor: 44, mainStat: 35, endurance: 160, hp: 0 },
+      accessory: { mainStat: 35, endurance: 160 },
     },
-    // ── Lv60 ──
+    // ── Lv60 ── (estimated: ratio 140/756)
     "Lv60 Gold": {
-      weapon:    { atk: 0, mainStat: 0, endurance: 0 },
-      armor:     { armor: 0, mainStat: 0, endurance: 0, hp: 0 },
-      accessory: { mainStat: 0, endurance: 0 },
+      weapon:    { atk: 28, mainStat: 50, endurance: 224 },
+      armor:     { armor: 62, mainStat: 50, endurance: 224, hp: 0 },
+      accessory: { mainStat: 50, endurance: 224 },
     },
     "Lv60 Raid": {
-      weapon:    { atk: 0, mainStat: 0, endurance: 0 },
-      armor:     { armor: 0, mainStat: 0, endurance: 0, hp: 0 },
-      accessory: { mainStat: 0, endurance: 0 },
+      weapon:    { atk: 28, mainStat: 50, endurance: 224 },
+      armor:     { armor: 62, mainStat: 50, endurance: 224, hp: 0 },
+      accessory: { mainStat: 50, endurance: 224 },
     },
-    // ── Lv70 ──
+    // ── Lv70 ── (estimated: interpolated)
     "Lv70 Raid": {
-      weapon:    { atk: 0, mainStat: 0, endurance: 0 },
-      armor:     { armor: 0, mainStat: 0, endurance: 0, hp: 0 },
-      accessory: { mainStat: 0, endurance: 0 },
+      weapon:    { atk: 34, mainStat: 60, endurance: 272 },
+      armor:     { armor: 76, mainStat: 60, endurance: 272, hp: 0 },
+      accessory: { mainStat: 60, endurance: 272 },
     },
-    // ── Lv80 ──
+    // ── Lv80 ── (estimated: ratio 200/756)
     "Lv80 Gold": {
-      weapon:    { atk: 0, mainStat: 0, endurance: 0 },
-      armor:     { armor: 0, mainStat: 0, endurance: 0, hp: 0 },
-      accessory: { mainStat: 0, endurance: 0 },
+      weapon:    { atk: 40, mainStat: 71, endurance: 320 },
+      armor:     { armor: 89, mainStat: 71, endurance: 320, hp: 0 },
+      accessory: { mainStat: 71, endurance: 320 },
     },
     "Lv80 Raid": {
-      weapon:    { atk: 0, mainStat: 0, endurance: 0 },
-      armor:     { armor: 0, mainStat: 0, endurance: 0, hp: 0 },
-      accessory: { mainStat: 0, endurance: 0 },
+      weapon:    { atk: 40, mainStat: 71, endurance: 320 },
+      armor:     { armor: 89, mainStat: 71, endurance: 320, hp: 0 },
+      accessory: { mainStat: 71, endurance: 320 },
     },
-    // ── Lv90 ──
+    // ── Lv90 ── (estimated: interpolated)
     "Lv90 Raid": {
-      weapon:    { atk: 0, mainStat: 0, endurance: 0 },
-      armor:     { armor: 0, mainStat: 0, endurance: 0, hp: 0 },
-      accessory: { mainStat: 0, endurance: 0 },
+      weapon:    { atk: 56, mainStat: 99, endurance: 448 },
+      armor:     { armor: 124, mainStat: 99, endurance: 448, hp: 0 },
+      accessory: { mainStat: 99, endurance: 448 },
     },
-    // ── Lv100 ──
+    // ── Lv100 ── (estimated: interpolated)
     "Lv100 Far Sea": {
-      weapon:    { atk: 0, mainStat: 0, endurance: 0 },
-      armor:     { armor: 0, mainStat: 0, endurance: 0, hp: 0 },
-      accessory: { mainStat: 0, endurance: 0 },
+      weapon:    { atk: 70, mainStat: 124, endurance: 560 },
+      armor:     { armor: 155, mainStat: 124, endurance: 560, hp: 0 },
+      accessory: { mainStat: 124, endurance: 560 },
     },
-    // ── Lv120 ──
+    // ── Lv120 ── (estimated: ratio 540/756)
     "Lv120 Gold": {
-      weapon:    { atk: 0, mainStat: 0, endurance: 0 },
-      armor:     { armor: 0, mainStat: 0, endurance: 0, hp: 0 },
-      accessory: { mainStat: 0, endurance: 0 },
+      weapon:    { atk: 108, mainStat: 191, endurance: 864 },
+      armor:     { armor: 240, mainStat: 191, endurance: 864, hp: 0 },
+      accessory: { mainStat: 191, endurance: 864 },
     },
     // ── Lv140 ── (datamined 100/100)
     "Lv140 Gold": {
@@ -330,42 +330,54 @@ export const GAME_DATA = {
       accessory: { mainStat: 268, endurance: 1209 },
     },
     "Lv140 Raid": {
-      weapon:    { atk: 0, mainStat: 0, endurance: 0 },
+      weapon:    { atk: 151, mainStat: 268, endurance: 1209 },
       armor:     { armor: 336, mainStat: 268, endurance: 1209, hp: 0 },
-      accessory: { mainStat: 0, endurance: 0 },
+      accessory: { mainStat: 268, endurance: 1209 },
     },
     "Lv140 Far Sea": {
-      weapon:    { atk: 0, mainStat: 0, endurance: 0 },
-      armor:     { armor: 0, mainStat: 0, endurance: 0, hp: 0 },
-      accessory: { mainStat: 0, endurance: 0 },
+      weapon:    { atk: 151, mainStat: 268, endurance: 1209 },
+      armor:     { armor: 336, mainStat: 268, endurance: 1209, hp: 0 },
+      accessory: { mainStat: 268, endurance: 1209 },
     },
-    // ── Lv150 ──
+    // ── Lv150 ── (estimated: ratio 828/756)
     "Lv150 Raid": {
-      weapon:    { atk: 0, mainStat: 0, endurance: 0 },
-      armor:     { armor: 0, mainStat: 0, endurance: 0, hp: 0 },
-      accessory: { mainStat: 0, endurance: 0 },
+      weapon:    { atk: 165, mainStat: 294, endurance: 1324 },
+      armor:     { armor: 368, mainStat: 294, endurance: 1324, hp: 0 },
+      accessory: { mainStat: 294, endurance: 1324 },
     },
-    // ── Lv160 ──
+    // ── Lv160 ── (estimated: ratio 954/756)
     "Lv160 Gold": {
-      weapon:    { atk: 0, mainStat: 0, endurance: 0 },
-      armor:     { armor: 0, mainStat: 0, endurance: 0, hp: 0 },
-      accessory: { mainStat: 0, endurance: 0 },
+      weapon:    { atk: 190, mainStat: 338, endurance: 1526 },
+      armor:     { armor: 424, mainStat: 338, endurance: 1526, hp: 0 },
+      accessory: { mainStat: 338, endurance: 1526 },
     },
     "Lv160 Raid": {
-      weapon:    { atk: 0, mainStat: 0, endurance: 0 },
-      armor:     { armor: 0, mainStat: 0, endurance: 0, hp: 0 },
-      accessory: { mainStat: 0, endurance: 0 },
+      weapon:    { atk: 190, mainStat: 338, endurance: 1526 },
+      armor:     { armor: 424, mainStat: 338, endurance: 1526, hp: 0 },
+      accessory: { mainStat: 338, endurance: 1526 },
     },
     "Lv160 Far Sea": {
-      weapon:    { atk: 0, mainStat: 0, endurance: 0 },
-      armor:     { armor: 0, mainStat: 0, endurance: 0, hp: 0 },
-      accessory: { mainStat: 0, endurance: 0 },
+      weapon:    { atk: 190, mainStat: 338, endurance: 1526 },
+      armor:     { armor: 424, mainStat: 338, endurance: 1526, hp: 0 },
+      accessory: { mainStat: 338, endurance: 1526 },
     },
-    // ── Lv170 ──
+    // ── Lv165 ── (estimated: ratio 990/756)
+    "Lv165 Raid": {
+      weapon:    { atk: 198, mainStat: 351, endurance: 1583 },
+      armor:     { armor: 440, mainStat: 351, endurance: 1583, hp: 0 },
+      accessory: { mainStat: 351, endurance: 1583 },
+    },
+    // ── Lv170 ── (estimated: ratio 1035/756)
     "Lv170 Raid": {
-      weapon:    { atk: 0, mainStat: 0, endurance: 0 },
-      armor:     { armor: 0, mainStat: 0, endurance: 0, hp: 0 },
-      accessory: { mainStat: 0, endurance: 0 },
+      weapon:    { atk: 207, mainStat: 367, endurance: 1655 },
+      armor:     { armor: 460, mainStat: 367, endurance: 1655, hp: 0 },
+      accessory: { mainStat: 367, endurance: 1655 },
+    },
+    // ── Lv180 ── (estimated: extrapolated)
+    "Lv180 Far Sea": {
+      weapon:    { atk: 228, mainStat: 404, endurance: 1823 },
+      armor:     { armor: 506, mainStat: 404, endurance: 1823, hp: 0 },
+      accessory: { mainStat: 404, endurance: 1823 },
     },
   } as Record<string, {
     weapon?:    { atk: number; mainStat: number; endurance: number }
@@ -698,6 +710,7 @@ export interface StatsResult {
   talentAspd: number
   ext: Record<string, number>
   raidArmorCount: number
+  gearMainStat: number
   raid2pcBonus: { l: string; v: number; t: "aspd" | "cspd" | "stat_pct" | "mastery_crit" | "aspd_cond" | "armor_ignore" | "text"; note?: string } | null
   raid4pcBonus: { l: string; v: number; t: "aspd" | "cspd" | "stat_pct" | "mastery_crit" | "aspd_cond" | "armor_ignore" | "text" | "crit_dmg" | "haste_pct" | "main_stat_pct"; note?: string } | null
   set4pcHaste: number

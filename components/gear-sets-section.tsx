@@ -1,10 +1,7 @@
 "use client"
 import { useState } from "react"
 import { useApp, type GearSet } from "@/lib/app-context"
-
-const SET_COLORS = [
-  "#f59e0b", "#ef4444", "#22c55e", "#3b82f6", "#8b5cf6", "#ec4899", "#06b6d4", "#84cc16",
-]
+import { getGearSetColorByIndex } from "@/lib/gear-set-colors"
 
 export function GearSetsSection() {
   const {
@@ -83,7 +80,7 @@ export function GearSetsSection() {
                 {/* Color indicator */}
                 <div
                   className="w-3 h-3 rounded-full shrink-0"
-                  style={{ backgroundColor: SET_COLORS[idx % SET_COLORS.length] }}
+                  style={{ backgroundColor: getGearSetColorByIndex(idx) }}
                 />
 
                 {/* Set info */}

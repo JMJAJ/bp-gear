@@ -750,6 +750,8 @@ export const PSYCHOSCOPE_CLASSES = CLASS_FACTORS.map(c => c.className)
 // ══════════════════════════════════════════════════════════════════════
 
 export interface PsychoscopeEffects {
+  // Active projection ID (for DPS sim to conditionally enable projection procs)
+  projectionId: string | null
   // Flat raw stat additions
   flatStats: Record<string, number>     // e.g. { Agility: 75, Versatility: 600 }
   // Percentage bonuses on main stats (e.g., Agility +2%)
@@ -934,6 +936,7 @@ export function computePsychoscopeEffects(
   className: string | null,
 ): PsychoscopeEffects {
   const effects: PsychoscopeEffects = {
+    projectionId: config.projectionId ?? null,
     flatStats: {},
     pctStats: {},
     gainMult: {},
