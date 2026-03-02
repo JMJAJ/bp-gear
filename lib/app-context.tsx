@@ -34,6 +34,19 @@ export interface GearSet {
   createdAt: string
 }
 
+/** Snapshot of all per-spec state, saved when switching away from a spec */
+export interface SpecSnapshot {
+  gear: GearSlot[]
+  legendaryTypes: string[]
+  legendaryVals: number[]
+  imagines: ImagineSlot[]
+  modules: ModuleSlot[]
+  selectedTalents: string[]
+  talentAspd: number
+  psychoscopeConfig: PsychoscopeConfig
+  gearSets: GearSet[]
+}
+
 export interface BaseStats {
   vers: number; mast: number; haste: number; crit: number; luck: number; agi: number
 }
@@ -59,7 +72,7 @@ const defaultGear = (): GearSlot[] =>
   GAME_DATA.SLOTS.map((_, i) => ({ tier: getDefaultTier(i), raid: false, p: "-", s: "-", r: "-", sigName: "", sigLvl: "1" }))
 
 const defaultModules = (): ModuleSlot[] =>
-  Array.from({ length: 4 }, () => ({ rarity: "Gold", a1: "", a1lv: 9, a2: "", a2lv: 9, a3: "", a3lv: 9 }))
+  Array.from({ length: 4 }, () => ({ rarity: "Gold", a1: "", a1lv: 10, a2: "", a2lv: 10, a3: "", a3lv: 10 }))
 
 const defaultImageSlots = (): ImagineSlot[] => [{ key: "", idx: 0 }, { key: "", idx: 0 }]
 
@@ -580,6 +593,7 @@ interface AppState {
   setTalentAspd: (v: number) => void
 
   gearSets: GearSet[]
+  setGearSets: (sets: GearSet[]) => void
   saveGearSet: (name: string) => void
   deleteGearSet: (id: string) => void
   loadGearSet: (id: string) => void
@@ -588,6 +602,9 @@ interface AppState {
 
   psychoscopeConfig: PsychoscopeConfig
   setPsychoscopeConfig: (config: PsychoscopeConfig) => void
+
+  switchSpec: (newSpec: string, newBuild: Build) => void
+  specSnapshots: Record<string, SpecSnapshot>
 }
 
 const AppContext = createContext<AppState | null>(null)
@@ -619,6 +636,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [talentAspd, setTalentAspd] = useState<number>(0)
   const [gearSets, setGearSets] = useState<GearSet[]>([])
   const [psychoscopeConfig, setPsychoscopeConfig] = useState<PsychoscopeConfig>(DEFAULT_PSYCHOSCOPE_CONFIG)
+  const [specSnapshots, setSpecSnapshots] = useState<Record<string, SpecSnapshot>>({})
   const canSave = useRef(false)
 
   const accentColor = ACCENT_MAP[accent]
@@ -732,6 +750,61 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     })
   }, [])
 
+  /** Switch spec atomically: save current state as snapshot, then load or reset for new spec */
+  const switchSpec = useCallback((newSpec: string, newBuild: Build) => {
+    if (newSpec === spec) return
+
+    // 1. Snapshot current state under current spec key
+    setSpecSnapshots(prev => ({
+      ...prev,
+      [spec]: {
+        gear: gear.map(g => ({ ...g })),
+        legendaryTypes: [...legendaryTypes],
+        legendaryVals: [...legendaryVals],
+        imagines: imagines.map(im => ({ ...im })),
+        modules: modules.map(m => ({ ...m })),
+        selectedTalents: [...selectedTalents],
+        talentAspd,
+        psychoscopeConfig: { ...psychoscopeConfig },
+        gearSets: gearSets.map(s => ({ ...s, gear: s.gear.map(g => ({ ...g })), imagines: s.imagines.map(im => ({ ...im })), modules: s.modules.map(m => ({ ...m })), selectedTalents: [...s.selectedTalents], legendaryTypes: [...s.legendaryTypes], legendaryVals: [...s.legendaryVals] })),
+      }
+    }))
+
+    // 2. Load snapshot for new spec, or reset to defaults
+    // Use functional updater to read the latest snapshots
+    setSpecSnapshots(prev => {
+      const snap = prev[newSpec]
+      if (snap) {
+        // Restore saved state
+        setGearState(snap.gear.map(g => ({ ...g })))
+        setLegendaryTypes([...snap.legendaryTypes])
+        setLegendaryVals([...snap.legendaryVals])
+        setImagines(snap.imagines.map(im => ({ ...im })))
+        setModules(snap.modules.map(m => ({ ...m })))
+        setSelectedTalents([...snap.selectedTalents])
+        setTalentAspd(snap.talentAspd)
+        setPsychoscopeConfig({ ...snap.psychoscopeConfig })
+        setGearSets(snap.gearSets.map(s => ({ ...s })))
+      } else {
+        // Reset to defaults for a fresh spec
+        setGearState(defaultGear())
+        setLegendaryTypes(GAME_DATA.SLOTS.map(() => "-"))
+        setLegendaryVals(GAME_DATA.SLOTS.map(() => 0))
+        setImagines(defaultImageSlots())
+        setModules(defaultModules())
+        setSelectedTalents([])
+        setTalentAspd(0)
+        setPsychoscopeConfig(DEFAULT_PSYCHOSCOPE_CONFIG)
+        setGearSets([])
+      }
+      return prev // snapshots themselves don't change here
+    })
+
+    // 3. Set new build and spec
+    setBuildState(newBuild)
+    setSpec(newSpec)
+  }, [spec, gear, legendaryTypes, legendaryVals, imagines, modules, selectedTalents, talentAspd, psychoscopeConfig, gearSets])
+
   const recalculate = useCallback(() => {
     const className = getClassForSpec(spec)
     const talentFlags = { swift: className === "Stormblade" && selectedTalents.includes("swift"), aspd: talentAspd, selectedIds: selectedTalents }
@@ -748,11 +821,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (!canSave.current) return
     try {
-      localStorage.setItem(SAVE_KEY, JSON.stringify({ build, spec, gear, legendaryTypes, legendaryVals, imagines, modules, base, ext, accent, gearLib, selectedTalents, talentAspd, gearSets, psychoscopeConfig }))
+      localStorage.setItem(SAVE_KEY, JSON.stringify({ build, spec, gear, legendaryTypes, legendaryVals, imagines, modules, base, ext, accent, gearLib, selectedTalents, talentAspd, gearSets, psychoscopeConfig, specSnapshots }))
     } catch (e) {
       console.error('[BPSR] Save failed:', e)
     }
-  }, [build, spec, gear, legendaryTypes, legendaryVals, imagines, modules, base, ext, accent, gearLib, selectedTalents, talentAspd, gearSets, psychoscopeConfig])
+  }, [build, spec, gear, legendaryTypes, legendaryVals, imagines, modules, base, ext, accent, gearLib, selectedTalents, talentAspd, gearSets, psychoscopeConfig, specSnapshots])
 
   // Load persisted state on mount
   useEffect(() => {
@@ -801,6 +874,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         if (typeof cfg.enabled !== "boolean") cfg.enabled = true
         setPsychoscopeConfig(cfg)
       }
+      if (saved.specSnapshots && typeof saved.specSnapshots === "object") {
+        setSpecSnapshots(saved.specSnapshots)
+      }
     } catch (e) {
       console.error('[BPSR] Load failed:', e)
     }
@@ -826,8 +902,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     getAllowedForSlot,
     selectedTalents, setSelectedTalents,
     talentAspd, setTalentAspd,
-    gearSets, saveGearSet, deleteGearSet, loadGearSet, renameGearSet, importGearSets,
+    gearSets, setGearSets, saveGearSet, deleteGearSet, loadGearSet, renameGearSet, importGearSets,
     psychoscopeConfig, setPsychoscopeConfig,
+    switchSpec, specSnapshots,
   }
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>

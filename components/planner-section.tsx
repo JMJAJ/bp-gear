@@ -351,7 +351,7 @@ export function PlannerSection() {
     modules, gearLib, setModules,
     selectedTalents, setSelectedTalents,
     talentAspd, setTalentAspd,
-    gearSets, importGearSets,
+    gearSets, setGearSets, importGearSets,
     psychoscopeConfig, setPsychoscopeConfig,
   } = useApp()
   const importRef = useRef<HTMLInputElement>(null)
@@ -362,8 +362,10 @@ export function PlannerSection() {
     setGear(GAME_DATA.SLOTS.map((_, i) => ({ tier: getDefaultTier(i), raid: false, p: "-", s: "-", r: "-", sigName: "", sigLvl: "1" })))
     GAME_DATA.SLOTS.forEach((_, i) => { setLegendaryType(i, "-"); setLegendaryVal(i, 0) })
     setAllImagines([{ key: "", idx: 0 }, { key: "", idx: 0 }])
+    setModules(Array.from({ length: 4 }, () => ({ rarity: "Gold", a1: "", a1lv: 10, a2: "", a2lv: 10, a3: "", a3lv: 10 })))
     setSelectedTalents([])
     setTalentAspd(0)
+    setGearSets([])
     setConfirmClear(false)
   }
 

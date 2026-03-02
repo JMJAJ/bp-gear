@@ -18,7 +18,7 @@ const ELEMENT_COLORS: Record<string, string> = {
 }
 
 export function ClassesSection() {
-  const { selectedClass, setSelectedClass, setSection, setBuild, setSpec, spec, accentColor } = useApp()
+  const { selectedClass, setSelectedClass, setSection, switchSpec, spec, accentColor } = useApp()
   const [pendingSpec, setPendingSpec] = useState<string>("")
 
   // Find which class owns the currently active spec
@@ -27,8 +27,7 @@ export function ClassesSection() {
   function applyClass(name: string, specToApply: string) {
     const cls = GAME_DATA.CLASSES[name]
     if (!cls) return
-    setBuild(cls.main as "Strength" | "Agility" | "Intellect")
-    setSpec(specToApply)
+    switchSpec(specToApply, cls.main as "Strength" | "Agility" | "Intellect")
     setSection("planner")
   }
 
