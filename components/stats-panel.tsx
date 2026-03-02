@@ -3,6 +3,7 @@ import { useApp, getStatPercentCombat } from "@/lib/app-context"
 import { GAME_DATA, MODULE_THRESHOLDS, LEVEL_COLORS } from "@/lib/game-data"
 import { Check, X, Settings } from "lucide-react"
 import { MIND_PROJECTIONS } from "@/lib/psychoscope-data"
+import { Tip } from "@/components/TooltipText"
 
 const STATS = [
   { key: "crit", stat: "Crit", extKey: "crit" },
@@ -71,7 +72,9 @@ export function StatsPanel() {
 
       {/* Psychoscope toggle */}
       <div className="px-4 py-2 border-b border-[#1a1a1a] flex items-center justify-between">
-        <span className="text-[9px] uppercase tracking-[1px] text-[#555]">Psychoscope</span>
+        <Tip text="Turns Psychoscope bonuses on/off (projection + branches + bond stuff).">
+          <span className="text-[9px] uppercase tracking-[1px] text-[#555]">Psychoscope</span>
+        </Tip>
         <button
           onClick={() => setPsychoscopeConfig({ ...psychoscopeConfig, enabled: !psychoscopeConfig.enabled })}
           className="flex items-center gap-1.5 px-2 py-0.5 rounded border transition-all text-[9px] font-bold uppercase tracking-[0.5px]"
@@ -97,7 +100,17 @@ export function StatsPanel() {
           return (
             <div key={key}>
               <div className="flex justify-between items-center">
-                <span className="text-[11px] text-[#888]">{stat}</span>
+                <Tip
+                  text={
+                    stat === "Crit" ? "Your crit chance (after base + gear + bonuses)." :
+                    stat === "Haste" ? "Speed stat. Used in a bunch of formulas (and helps Attack/Cast Speed)." :
+                    stat === "Luck" ? "Lucky Strike chance." :
+                    stat === "Mastery" ? "Damage scaling stat." :
+                    "General multiplier stat."
+                  }
+                >
+                  <span className="text-[11px] text-[#888]">{stat}</span>
+                </Tip>
                 <div className="text-right">
                   <span className="text-[11px] font-bold tabular-nums text-white">{pct.toFixed(2)}%</span>
                   <span className="block text-[9px] text-[#444]">{raw.toFixed(0)} raw</span>
@@ -111,7 +124,9 @@ export function StatsPanel() {
         {/* ASPD / CSPD */}
         <div className="mt-1 pt-2 border-t border-[#111]">
           <div className="flex justify-between items-center">
-            <span className="text-[11px] text-[#888]">Attack Speed</span>
+            <Tip text="ASPD. Some skills care about 25/50/80% breakpoints.">
+              <span className="text-[11px] text-[#888]">Attack Speed</span>
+            </Tip>
             <span
               className="text-[11px] font-bold tabular-nums"
               style={{ color: (stats?.aspd ?? 0) >= 80 ? "#4ade80" : (stats?.aspd ?? 0) >= 50 ? accentColor : "#fff" }}
@@ -150,7 +165,9 @@ export function StatsPanel() {
           )}
 
           <div className="flex justify-between items-center">
-            <span className="text-[11px] text-[#888]">Cast Speed</span>
+            <Tip text="CSPD. Shorter cast/animation time for skills that scale with it.">
+              <span className="text-[11px] text-[#888]">Cast Speed</span>
+            </Tip>
             <span className="text-[11px] font-bold tabular-nums text-white">{(stats?.cspd ?? 0).toFixed(2)}%</span>
           </div>
           <div className="relative h-[3px] bg-[#1a1a1a] mt-1 mb-2">
@@ -163,7 +180,9 @@ export function StatsPanel() {
           {/* Illusion Strength */}
           {(stats?.ext?.illu ?? 0) > 0 && (
             <div className="flex justify-between items-center mt-1">
-              <span className="text-[11px] text-[#888]">Illusion Strength</span>
+              <Tip text="Raw Illusion Strength (just summed up).">
+                <span className="text-[11px] text-[#888]">Illusion Strength</span>
+              </Tip>
               <span className="text-[11px] font-bold tabular-nums" style={{ color: accentColor }}>
                 {(stats?.ext?.illu ?? 0).toFixed(0)}
               </span>
@@ -201,7 +220,9 @@ export function StatsPanel() {
         {/* Raid bonus */}
         {stats?.appliedBonus && (
           <div className="mt-1 text-[10px]" style={{ color: accentColor }}>
-            Raid {stats.appliedBonus.l.replace(" (%)", "")} +{stats.appliedBonus.v}%
+            <Tip text="Extra % you get from raid gear bonuses.">
+              <span>Raid {stats.appliedBonus.l.replace(" (%)", "")} +{stats.appliedBonus.v}%</span>
+            </Tip>
           </div>
         )}
 
@@ -269,7 +290,9 @@ export function StatsPanel() {
         {/* Raid Set Bonuses */}
         {(stats?.raid2pcBonus || stats?.raid4pcBonus) && (
           <div className="mt-2 pt-2 border-t border-[#111]">
-            <div className="text-[9px] uppercase tracking-[1px] text-[#444] mb-1">Raid Set Bonuses</div>
+            <Tip text="2pc/4pc bonus. You need enough raid armor pieces equipped.">
+              <div className="text-[9px] uppercase tracking-[1px] text-[#444] mb-1">Raid Set Bonuses</div>
+            </Tip>
             {stats?.raid2pcBonus && (
               <div className="text-[10px] py-0.5" style={{ color: (stats.raidArmorCount ?? 0) >= 2 ? accentColor : "#333" }}>
                 <span className="font-bold mr-1">{(stats.raidArmorCount ?? 0) >= 2 ? <Check className="w-3 h-3 inline" /> : <X className="w-3 h-3 inline" />}</span>
@@ -292,7 +315,9 @@ export function StatsPanel() {
       {/* Module summary */}
       <div className="px-4 py-3 border-b border-[#1a1a1a]">
         <div className="flex justify-between items-center mb-2">
-          <div className="text-[9px] uppercase tracking-[1px] text-[#444]">Power Core</div>
+          <Tip text="Your module levels. More points = higher level.">
+            <div className="text-[9px] uppercase tracking-[1px] text-[#444]">Modules</div>
+          </Tip>
           <button
             onClick={() => setSection("modules")}
             className="text-[9px] uppercase tracking-[0.5px] text-[#555] hover:text-[#aaa] transition-colors"

@@ -123,7 +123,8 @@ export function calculateStats(
   total.Haste += base.haste
   total.Crit += base.crit
   total.Luck += base.luck
-  const baseAgi = base.agi
+  
+  const baseAgi = base.agi + 435 // untracked base agility (source unknown)
   let gearMainStat = 0
 
   gear.forEach((g, i) => {

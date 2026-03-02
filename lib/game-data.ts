@@ -10,7 +10,7 @@ export const GAME_DATA = {
   CONSTANTS: {
     "Versatility": { c: 11200, base: 0 },
     "Mastery": { c: 19975, base: 6 },
-    "Haste": { c: 19975, base: 0 },
+    "Haste": { c: 19975, base: 0.96 }, // +0.96% base Haste (idk source is just random/unknown)
     "Crit": { c: 19975, base: 5 },
     "Luck": { c: 19975, base: 5 },
   } as Record<string, { c: number; base: number }>,

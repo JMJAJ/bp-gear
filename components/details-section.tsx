@@ -1,6 +1,7 @@
 "use client"
 import { useApp, getStatPercentCombat, getClassForSpec } from "@/lib/app-context"
 import { GAME_DATA } from "@/lib/game-data"
+import { Tip } from "@/components/TooltipText"
 
 export function DetailsSection() {
   const { stats, base, ext, accentColor, spec, psychoscopeConfig } = useApp()
@@ -18,6 +19,7 @@ export function DetailsSection() {
   const className = spec ? getClassForSpec(spec) : null
   const mainStatName = className ? GAME_DATA.CLASSES[className]?.main ?? null : null
   const isAgilityClass = mainStatName === "Agility"
+  const baseAgi = base.agi + 435
 
   return (
     <div className="p-6 space-y-6 max-w-5xl mx-auto">
@@ -45,24 +47,46 @@ export function DetailsSection() {
 
             return (
               <div key={stat} className="bg-[#0a0a0a] border border-[#1a1a1a] rounded p-3">
-                <div className="text-xs text-[#666] mb-1">{stat}</div>
+                <div className="text-xs text-[#666] mb-1">
+                  <Tip
+                    text={
+                      stat === "Crit" ? "Crit chance." :
+                      stat === "Haste" ? "Haste %." :
+                      stat === "Luck" ? "Lucky Strike chance. (In-game UI often shows +5% base.)" :
+                      stat === "Mastery" ? "Damage scaling stat." :
+                      "General multiplier stat."
+                    }
+                  >
+                    <span>{stat}</span>
+                  </Tip>
+                </div>
                 <div className="flex items-baseline gap-2">
                   <span className="text-lg font-bold text-white">{finalPct.toFixed(2)}%</span>
-                  <span className="text-xs text-[#555]">({rawTotal.toFixed(0)} raw)</span>
+                  <Tip text="Raw points before the game converts them into %.">
+                    <span className="text-xs text-[#555]">({rawTotal.toFixed(0)} raw)</span>
+                  </Tip>
                 </div>
               </div>
             )
           })}
           
           <div className="bg-[#0a0a0a] border border-[#1a1a1a] rounded p-3">
-            <div className="text-xs text-[#666] mb-1">Attack Speed</div>
+            <div className="text-xs text-[#666] mb-1">
+              <Tip text="ASPD. Some skills care about 25/50/80% breakpoints.">
+                <span>Attack Speed</span>
+              </Tip>
+            </div>
             <div className="flex items-baseline gap-2">
               <span className="text-lg font-bold text-white">{(stats.aspd ?? 0).toFixed(2)}%</span>
             </div>
           </div>
           
           <div className="bg-[#0a0a0a] border border-[#1a1a1a] rounded p-3">
-            <div className="text-xs text-[#666] mb-1">Cast Speed</div>
+            <div className="text-xs text-[#666] mb-1">
+              <Tip text="CSPD. Shorter cast/animation time for skills that scale with it.">
+                <span>Cast Speed</span>
+              </Tip>
+            </div>
             <div className="flex items-baseline gap-2">
               <span className="text-lg font-bold text-white">{(stats.cspd ?? 0).toFixed(2)}%</span>
             </div>
@@ -109,8 +133,8 @@ export function DetailsSection() {
 
           <div className="mt-3 pt-3 border-t border-[#1a1a1a] text-xs text-[#666]">
             <span className="font-semibold" style={{ color: accentColor }}>Analysis:</span> The in-game UI shows 
-            Luck with a +5% default bonus that's always active. Our calculator shows the combat-accurate value 
-            which includes this base. Psychoscope should add +1668 raw Haste (13759 - 12091) from the "gained in any way +10%" 
+            Luck with a +5% default bonus that's always active. This calculator includes that base too.
+            Psychoscope should add +1668 raw Haste (13759 - 12091) from the "gained in any way +10%" 
             multiplier (Polarity X8).
           </div>
         </div>
@@ -155,16 +179,28 @@ export function DetailsSection() {
                 <div className="text-[#666] text-xs font-semibold mb-2">RAW STAT SOURCES:</div>
                 
                 {/* Base character stats */}
-                {base[stat.toLowerCase() as keyof typeof base] > 0 && (
+                {/* {base[stat.toLowerCase() as keyof typeof base] > 0 && (
                   <div className="flex justify-between text-[#aaa]">
                     <span>Base (Character/Talents/Account)</span>
                     <span className="font-mono">+{base[stat.toLowerCase() as keyof typeof base]}</span>
+                  </div>
+                )} */}
+
+                {/* Base % */}
+                {baseVal > 0 && (
+                  <div className="flex justify-between text-[#aaa]">
+                    <Tip text="Free base % the game gives you.">
+                      <span>Base</span>
+                    </Tip>
+                    <span className="font-mono">+{baseVal.toFixed(2)}%</span>
                   </div>
                 )}
 
                 {/* Gear contributions */}
                 <div className="flex justify-between text-[#aaa]">
-                  <span>From Gear (Primary/Secondary/Raid)</span>
+                  <Tip text="Raw points coming from your gear stats.">
+                    <span>From Gear (Primary/Secondary/Raid)</span>
+                  </Tip>
                   <span className="font-mono">
                     +{(rawBeforeGainMult - (base[stat.toLowerCase() as keyof typeof base] || 0)).toFixed(0)}
                   </span>
@@ -173,7 +209,9 @@ export function DetailsSection() {
                 {/* Psychoscope gain multiplier */}
                 {gainMult !== 0 && (
                   <div className="flex justify-between text-[#9b87f5]">
-                    <span>Psychoscope Gain Multiplier ({gainMult > 0 ? '+' : ''}{gainMult.toFixed(1)}%)</span>
+                    <Tip text="Psychoscope bonus that makes you gain more of this stat from all sources.">
+                      <span>Psychoscope Gain Multiplier ({gainMult > 0 ? '+' : ''}{gainMult.toFixed(1)}%)</span>
+                    </Tip>
                     <span className="font-mono">{gainMult > 0 ? '+' : ''}{gainMultBonus.toFixed(0)}</span>
                   </div>
                 )}
@@ -200,7 +238,9 @@ export function DetailsSection() {
                   {/* External buffs */}
                   {extVal > 0 && (
                     <div className="flex justify-between" style={{ color: accentColor }}>
-                      <span>External Buffs</span>
+                      <Tip text="Extra % from buffs (party, food, etc.).">
+                        <span>External Buffs</span>
+                      </Tip>
                       <span className="font-mono">+{extVal.toFixed(2)}%</span>
                     </div>
                   )}
@@ -208,7 +248,9 @@ export function DetailsSection() {
                   {/* Purple stat bonuses */}
                   {purplePct > 0 && (
                     <div className="flex justify-between" style={{ color: accentColor }}>
-                      <span>Purple Stats / Talents</span>
+                      <Tip text="Extra % from purple stats / talents.">
+                        <span>Purple Stats / Talents</span>
+                      </Tip>
                       <span className="font-mono">+{purplePct.toFixed(2)}%</span>
                     </div>
                   )}
@@ -218,19 +260,25 @@ export function DetailsSection() {
                     <>
                       {stats.psychoscopeEffects.treeStatPct[stat] && (
                         <div className="flex justify-between text-[#9b87f5]">
-                          <span>Psychoscope Tree Bonus</span>
+                          <Tip text="% from your Psychoscope tree.">
+                            <span>Psychoscope Tree Bonus</span>
+                          </Tip>
                           <span className="font-mono">+{stats.psychoscopeEffects.treeStatPct[stat]}%</span>
                         </div>
                       )}
                       {stat === "Crit" && stats.psychoscopeEffects.bondCritPct > 0 && (
                         <div className="flex justify-between text-[#9b87f5]">
-                          <span>Psychoscope Bond Exclusive</span>
+                          <Tip text="Extra % from Psychoscope bond.">
+                            <span>Psychoscope Bond Exclusive</span>
+                          </Tip>
                           <span className="font-mono">+{stats.psychoscopeEffects.bondCritPct}%</span>
                         </div>
                       )}
                       {stat === "Luck" && stats.psychoscopeEffects.bondLuckPct > 0 && (
                         <div className="flex justify-between text-[#9b87f5]">
-                          <span>Psychoscope Bond Exclusive</span>
+                          <Tip text="Extra % from Psychoscope bond.">
+                            <span>Psychoscope Bond Exclusive</span>
+                          </Tip>
                           <span className="font-mono">+{stats.psychoscopeEffects.bondLuckPct}%</span>
                         </div>
                       )}
@@ -274,11 +322,11 @@ export function DetailsSection() {
             <div className="space-y-2 text-sm">
               <div className="text-[#666] text-xs font-semibold mb-2">{mainStatName.toUpperCase()} SOURCES:</div>
               
-              {/* Base stat (from manual entry — currently unused/hidden) */}
-              {base.agi > 0 && (
+              {/* Base stat */}
+              {baseAgi > 0 && (
                 <div className="flex justify-between text-[#aaa]">
-                  <span>Base Character {mainStatName}</span>
-                  <span className="font-mono">+{base.agi}</span>
+                  <Tip text="Your character's built-in base for this stat (from level/class/account stuff).">Base</Tip>
+                  <span className="font-mono">+{baseAgi}</span>
                 </div>
               )}
 
@@ -318,7 +366,7 @@ export function DetailsSection() {
               <div className="flex justify-between font-semibold text-white pt-2 border-t border-[#1a1a1a]">
                 <span>Raw {mainStatName}</span>
                 <span className="font-mono">
-                  {(base.agi + 
+                  {(baseAgi + 
                     (stats.gearMainStat ?? 0) +
                     (stats.moduleStats?.[mainStatName] ?? 0) + 
                     (stats.extraStats?.[mainStatName] ?? 0) + 
@@ -357,7 +405,7 @@ export function DetailsSection() {
                   <div className="flex justify-between font-semibold text-white mt-2">
                     <span>Haste from Agility</span>
                     <span className="font-mono">
-                      +{((base.agi + 
+                      +{((baseAgi + 
                         (stats.gearMainStat ?? 0) +
                         (stats.moduleStats?.["Agility"] ?? 0) + 
                         (stats.extraStats?.["Agility"] ?? 0) + 

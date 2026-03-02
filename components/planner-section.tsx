@@ -469,14 +469,18 @@ export function PlannerSection() {
                 borderLeft: idx === 0 ? undefined : "none",
               }}
             >
-              {opt.label}
+              <Tip text="Picks your main stat (STR/AGI/INT). This mostly changes which purple stats show up on armor.">
+                <span>{opt.label}</span>
+              </Tip>
             </button>
           ))}
         </div>
 
         {/* Spec */}
         <div className="flex items-center gap-2">
-          <span className="text-[9px] uppercase tracking-[0.5px] text-[#555]">Spec</span>
+          <Tip text="Your spec. Raid items lock stats based on this.">
+            <span className="text-[9px] uppercase tracking-[0.5px] text-[#555]">Spec</span>
+          </Tip>
           <select
             value={spec}
             onChange={e => setSpec(e.target.value)}
@@ -489,7 +493,9 @@ export function PlannerSection() {
 
         {/* Global reforge */}
         <div className="flex items-center gap-2">
-          <span className="text-[9px] uppercase tracking-[0.5px] text-[#555]">Set Reforge</span>
+          <Tip text="Quick button: set the same reforge stat on everything (except raid weapon).">
+            <span className="text-[9px] uppercase tracking-[0.5px] text-[#555]">Set Reforge</span>
+          </Tip>
           <select
             onChange={e => {
               if (!e.target.value) return
@@ -555,13 +561,19 @@ export function PlannerSection() {
           <thead>
             <tr className="border-b border-[#222]">
               {[
-                "Slot", "Raid", "Tier", "Primary", "Secondary",
+                <Tip key="slot" text="Which gear slot this row is.">Slot</Tip>,
+                <Tip key="raidCol" text="Raid gear = primary/secondary are locked to your spec, and it can't have purple stats.">Raid</Tip>,
+                <Tip key="tier" text="Item level/tier.">Tier</Tip>,
+                <Tip key="primary" text="Main stat roll on the item.">Primary</Tip>,
+                <Tip key="secondary" text="Second stat roll on the item.">Secondary</Tip>,
                 <Tip key="perf" text="Perfection (0–100). Scales primary, secondary and reforge stats proportionally. Default 100 = max stats.">Perf</Tip>,
-                "Reforge", "Sigil", "Lv",
-                <Tip key="purple" text="Purple stat — class-filtered. Weapon/accessories get % stats, armor gets flat stats.">
+                <Tip key="reforge" text="Extra stat line. Not on raid weapon."><span>Reforge</span></Tip>,
+                <Tip key="sigil" text="Extra effect you can add to a piece."><span>Sigil</span></Tip>,
+                <Tip key="siglvl" text="Sigil level (1–3).">Lv</Tip>,
+                <Tip key="purple" text="Purple stat (legendary roll). Weapon/accessories are usually % stats, armor is usually flat stats.">
                   <span style={{ color: "#b888ff" }}>Purple</span>
                 </Tip>,
-                <Tip key="val" text="% value for percent stats (Attack Speed, Armor %, etc.). Raw number for flat stats (Armor, Max HP, Resistance).">Val</Tip>,
+                <Tip key="val" text="Value for the purple stat. % for percent stats, raw number for flat stats.">Val</Tip>,
               ].map((h, i) => (
                 <th key={i} className="text-left text-[9px] uppercase tracking-[1px] text-[#444] font-semibold px-2 py-2">
                   {h}
@@ -581,7 +593,9 @@ export function PlannerSection() {
           className="text-[9px] uppercase tracking-[1.5px] font-bold mb-3"
           style={{ color: accentColor }}
         >
-          Imagine Slots
+          <Tip text="Pick your 2 imagines + their tier.">
+            <span>Imagine Slots</span>
+          </Tip>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {[0, 1].map(i => (
