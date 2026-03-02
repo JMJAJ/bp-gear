@@ -5,6 +5,7 @@ import { GAME_DATA, SIGIL_MAP, getSlotType, getTierData, getDefaultTier, getPurp
 import type { Build, GearSlot } from "@/lib/app-context"
 import { useRef } from "react"
 import { Tip } from "@/components/TooltipText"
+import { DEFAULT_PSYCHOSCOPE_CONFIG } from "@/lib/psychoscope-data"
 
 const BUILD_OPTIONS: { id: Build; label: string }[] = [
   { id: "Strength", label: "STR" },
@@ -351,6 +352,7 @@ export function PlannerSection() {
     selectedTalents, setSelectedTalents,
     talentAspd, setTalentAspd,
     gearSets, importGearSets,
+    psychoscopeConfig, setPsychoscopeConfig,
   } = useApp()
   const importRef = useRef<HTMLInputElement>(null)
   const [importStatus, setImportStatus] = useState<"" | "ok" | "err" | "scan">("")
@@ -379,6 +381,7 @@ export function PlannerSection() {
       selectedTalents,
       talentAspd,
       gearSets,
+      psychoscopeConfig,
       exportedAt: new Date().toISOString(),
     }
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" })
@@ -420,6 +423,14 @@ export function PlannerSection() {
           if (parsed.selectedTalents && Array.isArray(parsed.selectedTalents)) setSelectedTalents(parsed.selectedTalents)
           if (typeof parsed.talentAspd === "number") setTalentAspd(parsed.talentAspd)
           if (parsed.gearSets && Array.isArray(parsed.gearSets)) importGearSets(parsed.gearSets)
+          if (parsed.psychoscopeConfig) {
+            const cfg = { ...DEFAULT_PSYCHOSCOPE_CONFIG, ...parsed.psychoscopeConfig }
+            if (typeof cfg.bondLevel !== "number") cfg.bondLevel = 0
+            if (typeof cfg.enabled !== "boolean") cfg.enabled = true
+            if (!Array.isArray(cfg.branches)) cfg.branches = [...DEFAULT_PSYCHOSCOPE_CONFIG.branches]
+            if (!Array.isArray(cfg.factorSlots)) cfg.factorSlots = [...DEFAULT_PSYCHOSCOPE_CONFIG.factorSlots]
+            setPsychoscopeConfig(cfg)
+          }
           setImportStatus("ok")
           setTimeout(() => setImportStatus(""), 3000)
         }
