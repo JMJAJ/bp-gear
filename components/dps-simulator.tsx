@@ -1426,7 +1426,7 @@ export function DpsSimulator() {
                             <span className="text-[9px] text-[#555]">
                                 {manualAspd > 0
                                     ? <><span className="text-amber-400 font-bold">Override: {manualAspd}%</span> (planner: {(combat.aspd * 100).toFixed(0)}%)</>
-                                    : <>0 = use planner ({(combat.aspd * 100).toFixed(0)}%). Enter AttrAttackSpeedPct \u00f7 100</>
+                                    : <>0 = use planner ({(combat.aspd * 100).toFixed(0)}%). Enter Attack Speed%</>
                                 }
                             </span>
                         </div>
