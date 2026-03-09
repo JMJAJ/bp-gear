@@ -35,28 +35,28 @@ export function GearSetsSection() {
     <div className="flex flex-col gap-4">
       <div className="mb-2">
         <div className="text-2xl font-bold tracking-tight text-white mb-1">Gear Sets</div>
-        <div className="text-[11px] text-[#555] max-w-xl leading-5">
+        <div className="text-xs text-[var(--text-dim)] max-w-xl leading-5">
           Save your current gear configuration as a set for easy comparison in the DPS Simulator.
           Select multiple sets to overlay their DPS curves and see which performs better.
         </div>
       </div>
 
       {/* Save new set */}
-      <div className="bg-[#111] border border-[#333] p-4 rounded-md">
-        <h3 className="text-[10px] text-[#666] uppercase tracking-wider font-bold mb-3">Save Current Build as Set</h3>
+      <div className="bg-muted border border-[#333] p-4 rounded-md">
+        <h3 className="text-xs text-muted-foreground uppercase tracking-wider font-bold mb-3">Save Current Build as Set</h3>
         <div className="flex gap-2">
           <input
             type="text"
             value={newSetName}
             onChange={e => setNewSetName(e.target.value)}
             placeholder="Enter set name..."
-            className="flex-1 bg-[#0a0a0a] border border-[#333] px-3 py-2 text-sm rounded text-white focus:border-[#555] outline-none"
+            className="flex-1 bg-card border border-[#333] px-3 py-2 text-sm rounded text-white focus:border-[#555] outline-none"
             onKeyDown={e => e.key === "Enter" && handleSave()}
           />
           <button
             onClick={handleSave}
             disabled={!newSetName.trim()}
-            className="px-4 py-2 text-[11px] font-bold uppercase tracking-[1px] border rounded transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+            className="px-4 py-2 text-xs font-bold uppercase tracking-[1px] border rounded transition-all disabled:opacity-40 disabled:cursor-not-allowed"
             style={{ borderColor: accentColor, color: accentColor }}
           >
             Save Set
@@ -66,10 +66,10 @@ export function GearSetsSection() {
 
       {/* Saved sets list */}
       {gearSets.length > 0 ? (
-        <div className="bg-[#111] border border-[#333] rounded-md overflow-hidden">
-          <div className="px-4 py-2 border-b border-[#222] flex items-center justify-between">
-            <h3 className="text-[10px] text-[#666] uppercase tracking-wider font-bold">Saved Sets ({gearSets.length})</h3>
-            <span className="text-[9px] text-[#444]">Click to load • Compare in DPS Simulator</span>
+        <div className="bg-muted border border-[#333] rounded-md overflow-hidden">
+          <div className="px-4 py-2 border-b border-border flex items-center justify-between">
+            <h3 className="text-xs text-muted-foreground uppercase tracking-wider font-bold">Saved Sets ({gearSets.length})</h3>
+            <span className="text-xs text-[var(--text-dim)]">Click to load • Compare in DPS Simulator</span>
           </div>
           <div className="divide-y divide-[#1a1a1a]">
             {gearSets.map((set, idx) => (
@@ -91,7 +91,7 @@ export function GearSetsSection() {
                         type="text"
                         value={editName}
                         onChange={e => setEditName(e.target.value)}
-                        className="flex-1 bg-[#0a0a0a] border border-[#333] px-2 py-1 text-sm rounded text-white focus:border-[#555] outline-none"
+                        className="flex-1 bg-card border border-[#333] px-2 py-1 text-sm rounded text-white focus:border-[#555] outline-none"
                         autoFocus
                         onKeyDown={e => {
                           if (e.key === "Enter") handleRename(set.id)
@@ -100,7 +100,7 @@ export function GearSetsSection() {
                       />
                       <button
                         onClick={() => handleRename(set.id)}
-                        className="text-[10px] px-2 py-1 bg-[#222] text-white rounded hover:bg-[#333]"
+                        className="text-xs px-2 py-1 bg-[#222] text-white rounded hover:bg-[#333]"
                       >
                         Save
                       </button>
@@ -108,10 +108,10 @@ export function GearSetsSection() {
                   ) : (
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-semibold text-white truncate">{set.name}</span>
-                      <span className="text-[9px] text-[#444]">({set.gear.filter(g => g.tier).length} pieces)</span>
+                      <span className="text-xs text-[var(--text-dim)]">({set.gear.filter(g => g.tier).length} pieces)</span>
                     </div>
                   )}
-                  <div className="text-[10px] text-[#555] mt-0.5">
+                  <div className="text-xs text-[var(--text-dim)] mt-0.5">
                     {formatDate(set.createdAt)}
                   </div>
                 </div>
@@ -120,13 +120,13 @@ export function GearSetsSection() {
                 <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                   <button
                     onClick={() => loadGearSet(set.id)}
-                    className="px-2.5 py-1.5 text-[9px] font-bold uppercase tracking-[0.5px] border border-[#333] text-[#888] hover:text-white hover:border-[#555] rounded transition-colors"
+                    className="px-2.5 py-1.5 text-xs font-bold uppercase tracking-[0.5px] border border-[#333] text-[var(--text-mid)] hover:text-white hover:border-[#555] rounded transition-colors"
                   >
                     Load
                   </button>
                   <button
                     onClick={() => { setEditingId(set.id); setEditName(set.name) }}
-                    className="px-2.5 py-1.5 text-[9px] font-bold uppercase tracking-[0.5px] border border-[#333] text-[#888] hover:text-white hover:border-[#555] rounded transition-colors"
+                    className="px-2.5 py-1.5 text-xs font-bold uppercase tracking-[0.5px] border border-[#333] text-[var(--text-mid)] hover:text-white hover:border-[#555] rounded transition-colors"
                   >
                     Rename
                   </button>
@@ -134,7 +134,7 @@ export function GearSetsSection() {
                     onClick={() => {
                       if (confirm(`Delete "${set.name}"?`)) deleteGearSet(set.id)
                     }}
-                    className="px-2.5 py-1.5 text-[9px] font-bold uppercase tracking-[0.5px] border border-[#333] text-[#888] hover:text-red-400 hover:border-red-500/40 rounded transition-colors"
+                    className="px-2.5 py-1.5 text-xs font-bold uppercase tracking-[0.5px] border border-[#333] text-[var(--text-mid)] hover:text-red-400 hover:border-red-500/40 rounded transition-colors"
                   >
                     Delete
                   </button>
@@ -144,9 +144,9 @@ export function GearSetsSection() {
           </div>
         </div>
       ) : (
-        <div className="bg-[#111] border border-[#333] p-8 rounded-md text-center">
-          <p className="text-[#555] text-sm">No gear sets saved yet.</p>
-          <p className="text-[#444] text-xs mt-1">Configure your gear in the Planner, then save it here for comparison.</p>
+        <div className="bg-muted border border-[#333] p-8 rounded-md text-center">
+          <p className="text-[var(--text-dim)] text-sm">No gear sets saved yet.</p>
+          <p className="text-[var(--text-dim)] text-xs mt-1">Configure your gear in the Planner, then save it here for comparison.</p>
         </div>
       )}
     </div>

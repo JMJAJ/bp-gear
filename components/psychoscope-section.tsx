@@ -1,6 +1,6 @@
 "use client"
 import { useState, useEffect, useRef, useCallback, useMemo } from "react"
-import { useApp, getClassForSpec } from "@/lib/app-context"
+import { useApp, getClassForSpec, getStatPercentCombat } from "@/lib/app-context"
 import { Slider } from "@/components/ui/slider"
 import {
   MIND_PROJECTIONS,
@@ -63,16 +63,11 @@ function TabBar<T extends string>({
           <button
             key={t.id}
             onClick={() => onChange(t.id)}
-            className="transition-all"
+            className={small ? "text-xs font-bold uppercase tracking-[0.5px] px-2 py-1 transition-all" : "text-sm font-bold uppercase tracking-[0.5px] px-3 py-1.5 transition-all"}
             style={{
-              fontSize: small ? 9 : 10,
-              fontWeight: 700,
-              letterSpacing: "0.5px",
-              textTransform: "uppercase",
-              padding: small ? "3px 8px" : "4px 12px",
-              border: `1px solid ${isActive ? accent : "#2a2a2a"}`,
+              border: `1px solid ${isActive ? accent : "var(--panel-border)"}`,
               background: isActive ? `${accent}18` : "transparent",
-              color: isActive ? "#fff" : "#666",
+              color: isActive ? "#fff" : "var(--muted-foreground)",
               opacity: isActive ? 1 : 0.5,
             }}
           >
@@ -87,16 +82,16 @@ function TabBar<T extends string>({
 // ── Factor reference row (for Factors tab) ──
 function FactorRow({ f, accent }: { f: Factor; accent: string }) {
   return (
-    <div className="flex items-start gap-3 py-2.5 border-b border-[#1a1a1a] last:border-0">
+    <div className="flex items-start gap-3 py-2.5 border-b border-border last:border-0">
       <Icon src={f.icon} size={28} className="mt-0.5 rounded" />
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 flex-wrap">
-          <span className="text-[11px] font-bold text-white">{f.name}</span>
+          <span className="text-sm font-bold text-white">{f.name}</span>
           {f.skillIcons?.map((si, i) => (
             <Icon key={i} src={si} size={16} className="opacity-80" />
           ))}
         </div>
-        <p className="text-[10px] text-[#999] leading-4 mt-0.5">{f.description}</p>
+        <p className="text-xs text-[var(--text-mid)] leading-4 mt-0.5">{f.description}</p>
       </div>
     </div>
   )
@@ -104,7 +99,7 @@ function FactorRow({ f, accent }: { f: Factor; accent: string }) {
 
 // ── Factor type color helper ──
 function getFactorTypeColors(factorType?: string) {
-  let bg = "#1a1a1a", fg = "#888"
+  let bg = "var(--stat-bar-bg)", fg = "var(--text-mid)"
   if (factorType === "General ATK") { bg = "#2a1515"; fg = "#e84545" }
   if (factorType === "General DEF") { bg = "#152a15"; fg = "#4ade80" }
   if (factorType === "Class-Exclusive") { bg = "#1a1a2a"; fg = "#8b5cf6" }
@@ -160,7 +155,7 @@ function FactorSlot({
       bgColor = branchSide === "left" ? "#e5c22915" : "#49A8FF15"
     } else if (isOtherBranch) {
       // Other side is active but this slot is still swappable
-      borderColor = "#2a2a2a"
+      borderColor = "var(--panel-border)"
       bgColor = "#050505"
     } else {
       // No choice yet — show type hint at low intensity
@@ -182,11 +177,11 @@ function FactorSlot({
         {assigned ? (
           <>
             <Icon src={assigned.icon} size={18} className="rounded shrink-0" />
-            <span className="text-[9px] font-bold text-white truncate max-w-[80px]">
+            <span className="text-xs font-bold text-white truncate max-w-[80px]">
               {assigned.name}
             </span>
             <span
-              className="text-[8px] font-bold ml-auto shrink-0 px-1 py-0.5 rounded"
+              className="text-xs font-bold ml-auto shrink-0 px-1 py-0.5 rounded"
               style={{ background: `${accent}22`, color: accent }}
             >
               G{slot.grade}
@@ -194,7 +189,7 @@ function FactorSlot({
           </>
         ) : (
           <span
-            className="text-[9px] font-bold uppercase tracking-[0.5px]"
+            className="text-xs font-bold uppercase tracking-[0.5px]"
             style={{ color: fg }}
           >
             + {node.factorType}
@@ -204,8 +199,8 @@ function FactorSlot({
       {assigned && (
         <button
           onClick={(e) => { e.stopPropagation(); onSelect("") }}
-          className="absolute -right-5 top-1/2 -translate-y-1/2 px-1 py-1.5 rounded border text-[11px] leading-none transition-all hover:text-white hover:bg-[#1a0000] hover:border-red-900"
-          style={{ borderColor: "#1a1a1a", background: "#0d0d0d", color: "#555" }}
+          className="absolute -right-5 top-1/2 -translate-y-1/2 px-1 py-1.5 rounded border text-sm leading-none transition-all hover:text-white hover:bg-[#1a0000] hover:border-red-900"
+          style={{ borderColor: "var(--stat-bar-bg)", background: "#0d0d0d", color: "var(--text-dim)" }}
           title="Remove factor"
         >
           ×
@@ -214,23 +209,23 @@ function FactorSlot({
 
       {isOpen && (
         <div
-          className="absolute z-50 mt-1 left-0 w-72 max-h-64 overflow-y-auto bg-[#111] border border-[#2a2a2a] rounded shadow-2xl"
+          className="absolute z-50 mt-1 left-0 w-72 max-h-64 overflow-y-auto bg-muted border border-[var(--panel-border)] rounded shadow-2xl"
           style={{ minWidth: 240 }}
         >
           {/* Grade selector (when assigned) */}
           {assigned && (
-            <div className="flex items-center gap-1.5 px-2 py-2 border-b border-[#1a1a1a]">
-              <span className="text-[9px] text-[#666] uppercase">Grade:</span>
+            <div className="flex items-center gap-1.5 px-2 py-2 border-b border-border">
+              <span className="text-xs text-muted-foreground uppercase">Grade:</span>
               <div className="flex gap-0.5">
                 {Array.from({ length: 10 }, (_, i) => i + 1).map(g => (
                   <button
                     key={g}
                     onClick={(e) => { e.stopPropagation(); onGradeChange(g) }}
-                    className="w-5 h-5 text-[8px] font-bold rounded transition-all"
+                    className="w-5 h-5 text-xs font-bold rounded transition-all"
                     style={{
-                      background: slot.grade === g ? accent : "#1a1a1a",
-                      color: slot.grade === g ? "#000" : "#666",
-                      border: `1px solid ${slot.grade === g ? accent : "#333"}`,
+                      background: slot.grade === g ? accent : "var(--stat-bar-bg)",
+                      color: slot.grade === g ? "#000" : "var(--muted-foreground)",
+                      border: `1px solid ${slot.grade === g ? accent : "var(--text-dim)"}`,
                     }}
                   >
                     {g}
@@ -242,7 +237,7 @@ function FactorSlot({
 
           {/* Unassign option */}
           <button
-            className="w-full text-left px-2 py-1.5 text-[9px] text-[#666] hover:bg-[#1a1a1a] border-b border-[#0a0a0a]"
+            className="w-full text-left px-2 py-1.5 text-xs text-muted-foreground hover:bg-[var(--stat-bar-bg)] border-b border-[#0a0a0a]"
             onClick={() => onSelect("")}
           >
             — Remove —
@@ -252,13 +247,13 @@ function FactorSlot({
           {available.map(f => (
             <button
               key={f.name}
-              className="w-full text-left flex items-center gap-2 px-2 py-1.5 hover:bg-[#1a1a1a] border-b border-[#0a0a0a] last:border-0"
+              className="w-full text-left flex items-center gap-2 px-2 py-1.5 hover:bg-[var(--stat-bar-bg)] border-b border-[#0a0a0a] last:border-0"
               onClick={() => onSelect(f.name)}
             >
               <Icon src={f.icon} size={20} className="rounded shrink-0" />
               <div className="min-w-0">
-                <div className="text-[9px] font-bold text-white">{f.name}</div>
-                <div className="text-[8px] text-[#555] truncate">{f.description}</div>
+                <div className="text-xs font-bold text-white">{f.name}</div>
+                <div className="text-xs text-[var(--text-dim)] truncate">{f.description}</div>
               </div>
             </button>
           ))}
@@ -269,7 +264,7 @@ function FactorSlot({
 }
 
 // ── Arrow connector component ──
-function ArrowDown({ color = "#333" }: { color?: string }) {
+function ArrowDown({ color = "var(--text-dim)" }: { color?: string }) {
   return (
     <svg width="20" height="24" viewBox="0 0 20 24" className="mx-auto block">
       <path
@@ -283,7 +278,7 @@ function ArrowDown({ color = "#333" }: { color?: string }) {
   )
 }
 
-function ArrowSplit({ leftColor = "#333", rightColor = "#333", middleColor = "#333", hasMiddle = false }: { leftColor?: string; rightColor?: string; middleColor?: string; hasMiddle?: boolean }) {
+function ArrowSplit({ leftColor = "var(--text-dim)", rightColor = "var(--text-dim)", middleColor = "var(--text-dim)", hasMiddle = false }: { leftColor?: string; rightColor?: string; middleColor?: string; hasMiddle?: boolean }) {
   return (
     <svg width="300" height="40" viewBox="0 0 300 40" className="mx-auto">
       {/* Left branch line */}
@@ -303,7 +298,7 @@ function ArrowSplit({ leftColor = "#333", rightColor = "#333", middleColor = "#3
 }
 
 
-function ArrowMerge({ leftColor = "#333", rightColor = "#333", middleColor = "#333", hasMiddle = false }: { leftColor?: string; rightColor?: string; middleColor?: string; hasMiddle?: boolean }) {
+function ArrowMerge({ leftColor = "var(--text-dim)", rightColor = "var(--text-dim)", middleColor = "var(--text-dim)", hasMiddle = false }: { leftColor?: string; rightColor?: string; middleColor?: string; hasMiddle?: boolean }) {
   return (
     <svg width="300" height="32" viewBox="0 0 300 32" className="mx-auto block">
       {/* Left branch line */}
@@ -368,12 +363,12 @@ function InteractiveTree({
 
   // Arrow color: show both sides' native colors (dimmed) when no choice is made yet
   const getBranchColor = (idx: number, side: "left" | "right") => {
-    if (idx < 0) return "#333"
+    if (idx < 0) return "var(--text-dim)"
     const choice = config.branches[idx] ?? "none"
     const nativeColor = side === "left" ? "#e5c229" : "#49A8FF"
     if (choice === "none") return `${nativeColor}50`   // both dimly colored before choosing
     if (choice === side) return nativeColor              // chosen side: full color
-    return "#1a1a1a"                                     // unchosen side: nearly invisible
+    return "var(--stat-bar-bg)"                                     // unchosen side: nearly invisible
   }
   const MIDDLE_COLOR = "#d054e3"
 
@@ -426,7 +421,7 @@ function InteractiveTree({
                 style={{ borderColor: accent, background: `${accent}15`, minWidth: 200 }}
               >
                 {n.icon && <Icon src={n.icon} size={32} className="rounded" />}
-                <span className="text-[12px] font-bold text-white">{n.name}</span>
+                <span className="text-base font-bold text-white">{n.name}</span>
               </div>
               {!isLast && (nextRow?.type === "branch" || (nextRow?.type === "factors" && nextRow.nodes.length > 1)) && (
                 <ArrowSplit
@@ -439,7 +434,7 @@ function InteractiveTree({
               {!isLast && nextRow?.type === "final" && <ArrowDown color={accent} />}
               {!isLast && nextRow?.type === "factors" && nextRow.nodes.length === 1 && <ArrowDown color={accent} />}
               {isFinal && (
-                <div className="mt-1 text-[8px] uppercase tracking-[1px] text-[#444]">End</div>
+                <div className="mt-1 text-xs uppercase tracking-[1px] text-[var(--text-dim)]">End</div>
               )}
             </div>
           )
@@ -461,7 +456,7 @@ function InteractiveTree({
                   const isLeftOrRight = side === "left" || side === "right"
                   const sel = isLeftOrRight && choice === side
 
-                  let borderColor = "#2a2a2a"
+                  let borderColor = "var(--panel-border)"
                   let bgColor = "#0a0a0a"
                   let opacity = 0.45
 
@@ -489,7 +484,7 @@ function InteractiveTree({
                       style={{ borderColor, background: bgColor, opacity, minWidth: 180, cursor: isLeftOrRight ? "pointer" : "default" }}
                     >
                       {n.icon && <Icon src={n.icon} size={28} className="rounded" />}
-                      <span className="text-[11px] font-bold text-white">{n.name}</span>
+                      <span className="text-sm font-bold text-white">{n.name}</span>
                     </button>
                   )
                 })}
@@ -657,7 +652,7 @@ function InteractiveTree({
 function ReadOnlyTree({ nodes, accent }: { nodes: PsychoscopeNode[]; accent: string }) {
   if (nodes.length === 0) {
     return (
-      <p className="text-[10px] text-[#555] italic py-4">
+      <p className="text-xs text-[var(--text-dim)] italic py-4">
         Node tree data not yet available for this projection.
       </p>
     )
@@ -687,7 +682,7 @@ function ReadOnlyTree({ nodes, accent }: { nodes: PsychoscopeNode[]; accent: str
               {!isLast && nextRow?.type !== "branch" && <ArrowDown color={accent} />}
               {/* Final node indicator */}
               {isFinal && (
-                <div className="mt-1 text-[8px] uppercase tracking-[1px] text-[#444]">End</div>
+                <div className="mt-1 text-xs uppercase tracking-[1px] text-[var(--text-dim)]">End</div>
               )}
             </div>
           )
@@ -724,7 +719,7 @@ function ReadOnlyTree({ nodes, accent }: { nodes: PsychoscopeNode[]; accent: str
                       }}
                     >
                       {n.icon && <Icon src={n.icon} size={28} className="rounded" />}
-                      <span className="text-[11px] font-bold text-white">{n.name}</span>
+                      <span className="text-sm font-bold text-white">{n.name}</span>
                     </div>
                   )
                 })}
@@ -734,7 +729,7 @@ function ReadOnlyTree({ nodes, accent }: { nodes: PsychoscopeNode[]; accent: str
                 <div className="flex justify-center gap-8 w-full px-4">
                   {row.nodes.map((n, ni) => {
                     const side = n.branch
-                    let color = "#333"
+                    let color = "var(--text-dim)"
                     if (side === "left") color = "#e5c229"
                     else if (side === "right") color = "#49A8FF"
                     else if (side === "middle") color = "#d054e3"
@@ -772,7 +767,7 @@ function ReadOnlyTree({ nodes, accent }: { nodes: PsychoscopeNode[]; accent: str
                   return (
                     <span
                       key={ni}
-                      className="text-[9px] font-bold uppercase tracking-[0.5px] px-3 py-1.5 rounded border"
+                      className="text-xs font-bold uppercase tracking-[0.5px] px-3 py-1.5 rounded border"
                       style={{
                         background: bg, color: fg,
                         borderColor: n.branch ? (n.branch === "left" ? "#e5c22944" : "#49A8FF44") : `${fg}44`,
@@ -823,11 +818,11 @@ function ProjectionCard({
         <h3 className="text-[12px] font-bold text-white tracking-[1px] uppercase">
           {proj.name}
         </h3>
-        <span className="text-[9px] text-[#666]">{proj.unlock}</span>
+        <span className="text-xs text-muted-foreground">{proj.unlock}</span>
       </div>
 
-      <div className="border border-[#1a1a1a] bg-[#060606] rounded-lg p-6 overflow-x-auto">
-        <div className="text-[10px] uppercase tracking-[1px] text-[#444] mb-4 text-center">
+      <div className="border border-border bg-[#060606] rounded-lg p-6 overflow-x-auto">
+        <div className="text-xs uppercase tracking-[1px] text-[var(--text-dim)] mb-4 text-center">
           {interactive ? "Node Tree Builder" : "Node Tree"}
         </div>
         {interactive && config && className && onBranchChange && onFactorChange ? (
@@ -845,15 +840,15 @@ function ProjectionCard({
       </div>
 
       {proj.bondExclusive && (
-        <div className="border border-[#1a1a1a] bg-[#060606] rounded p-3">
-          <div className="text-[9px] uppercase tracking-[1px] text-[#444] mb-2">
+        <div className="border border-border bg-[#060606] rounded p-3">
+          <div className="text-xs uppercase tracking-[1px] text-[var(--text-dim)] mb-2">
             Exclusive Bond Effect
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-[10px] font-bold" style={{ color: accent }}>
+            <span className="text-xs font-bold" style={{ color: accent }}>
               {proj.bondExclusive}
             </span>
-            <span className="text-[9px] text-[#555]">
+            <span className="text-xs text-[var(--text-dim)]">
               (at {proj.bondExclusiveUnlock} Bond Points)
             </span>
           </div>
@@ -866,16 +861,16 @@ function ProjectionCard({
 // ── Bond Level Summary ──
 function BondSummary({ accent, activeProjection, bondLevel, onBondLevelChange }: { accent: string; activeProjection?: MindProjection; bondLevel: number; onBondLevelChange: (v: number) => void }) {
   return (
-    <div className="border border-[#1a1a1a] bg-[#060606] rounded p-3 mb-4">
+    <div className="border border-border bg-[#060606] rounded p-3 mb-4">
       {/* Active Deep-Slumber indicator */}
       {activeProjection && (
-        <div className="mb-3 pb-3 border-b border-[#1a1a1a]">
+        <div className="mb-3 pb-3 border-b border-border">
           <div className="flex items-center gap-2">
             <div 
               className="w-2 h-2 rounded-full"
               style={{ background: accent }}
             />
-            <span className="text-[9px] uppercase tracking-[1px] text-[#444]">
+            <span className="text-xs uppercase tracking-[1px] text-[var(--text-dim)]">
               Active Deep-Slumber
             </span>
           </div>
@@ -888,9 +883,9 @@ function BondSummary({ accent, activeProjection, bondLevel, onBondLevelChange }:
         </div>
       )}
       {/* Bond Level input */}
-      <div className="mb-3 pb-3 border-b border-[#1a1a1a]">
+      <div className="mb-3 pb-3 border-b border-border">
         <div className="flex items-center justify-between gap-3">
-          <span className="text-[9px] uppercase tracking-[1px] text-[#444]">Bond Level</span>
+          <span className="text-xs uppercase tracking-[1px] text-[var(--text-dim)]">Bond Level</span>
           <div className="flex items-center gap-3">
             <Slider
               min={0}
@@ -902,7 +897,7 @@ function BondSummary({ accent, activeProjection, bondLevel, onBondLevelChange }:
               style={{ color: accent }}
             />
             <div 
-              className="w-7 h-5 flex items-center justify-center text-[10px] font-mono rounded"
+              className="w-7 h-5 flex items-center justify-center text-xs font-mono rounded"
               style={{ background: `${accent}15`, color: accent }}
             >
               {bondLevel}
@@ -910,7 +905,7 @@ function BondSummary({ accent, activeProjection, bondLevel, onBondLevelChange }:
           </div>
         </div>
         {bondLevel >= 12 && (
-          <div className="mt-2 text-[9px] text-[#666]">
+          <div className="mt-2 text-xs text-muted-foreground">
             {bondLevel >= 25
               ? <span>Highest stat <span className="text-amber-400 font-bold">+300</span> (Lvl 12 + Lvl 25)</span>
               : <span>Highest stat <span className="text-amber-400 font-bold">+150</span> (Lvl 12)</span>
@@ -918,19 +913,19 @@ function BondSummary({ accent, activeProjection, bondLevel, onBondLevelChange }:
           </div>
         )}
       </div>
-      <div className="text-[9px] uppercase tracking-[1px] text-[#444] mb-2">
+      <div className="text-xs uppercase tracking-[1px] text-[var(--text-dim)] mb-2">
         General Bond Effects
       </div>
       <div className="space-y-1.5">
         {BOND_GENERALS.map((b, i) => (
           <div key={i} className="flex items-start gap-2">
             <span
-              className="text-[9px] font-bold shrink-0 px-1.5 py-0.5 rounded"
+              className="text-xs font-bold shrink-0 px-1.5 py-0.5 rounded"
               style={{ background: `${accent}22`, color: accent }}
             >
               Lvl {b.level}
             </span>
-            <span className="text-[10px] text-[#999] leading-4">{b.effect}</span>
+            <span className="text-xs text-[var(--text-mid)] leading-4">{b.effect}</span>
           </div>
         ))}
       </div>
@@ -938,9 +933,131 @@ function BondSummary({ accent, activeProjection, bondLevel, onBondLevelChange }:
   )
 }
 
+// ── Factor Summary (slot status + effects) ──
+function FactorSummary({
+  projection,
+  config,
+  className,
+  accent,
+}: {
+  projection: MindProjection
+  config: PsychoscopeConfig
+  className: string
+  accent: string
+}) {
+  const rows = useMemo(() => parseNodeTree(projection.nodes), [projection.nodes])
+
+  // Collect all factor slots with their node info
+  const slotInfos = useMemo(() => {
+    const infos: { slotIdx: number; node: PsychoscopeNode; isPair: boolean; side?: "left" | "right" }[] = []
+    let si = 0
+    rows.forEach(row => {
+      if (row.type === "factors") {
+        const isPair = row.nodes.length > 1
+        row.nodes.forEach((n, ni) => {
+          infos.push({
+            slotIdx: si + ni,
+            node: n,
+            isPair,
+            side: isPair ? (n.branch as "left" | "right" | undefined) : undefined,
+          })
+        })
+        si += row.nodes.length
+      }
+    })
+    return infos
+  }, [rows])
+
+  const totalSlots = slotInfos.filter(s => !s.isPair).length +
+    slotInfos.filter(s => s.isPair).length // branched pairs: each side is a slot
+  const filledSlots = slotInfos.filter(s => config.factorSlots[s.slotIdx]?.factorName).length
+  const emptySlots = slotInfos.filter(s => !config.factorSlots[s.slotIdx]?.factorName)
+
+  // Collect assigned factors with descriptions
+  const assignedFactors = slotInfos
+    .map(s => {
+      const slot = config.factorSlots[s.slotIdx]
+      if (!slot?.factorName) return null
+      const factor = findFactor(slot.factorName, className)
+      return factor ? { factor, grade: slot.grade, slotType: s.node.factorType ?? "" } : null
+    })
+    .filter(Boolean) as { factor: Factor; grade: number; slotType: string }[]
+
+  return (
+    <div className="border border-border bg-[#060606] rounded p-4 space-y-3">
+      {/* Slot fill status */}
+      <div className="flex items-center justify-between">
+        <span className="text-xs font-bold uppercase tracking-[1px]" style={{ color: accent }}>
+          Factor Slots
+        </span>
+        <span className="text-xs font-bold" style={{ color: filledSlots === totalSlots ? "#4ade80" : "#e5c229" }}>
+          {filledSlots} / {totalSlots} filled
+        </span>
+      </div>
+
+      {/* Missing slot warnings */}
+      {emptySlots.length > 0 && (
+        <div className="space-y-1">
+          {emptySlots.map((s, i) => {
+            const { fg } = getFactorTypeColors(s.node.factorType)
+            return (
+              <div key={i} className="flex items-center gap-2 px-2 py-1 rounded border border-[#2a1a1a] bg-[#0d0808]">
+                <span className="text-xs" style={{ color: "#e84545" }}>⚠</span>
+                <span className="text-xs text-[var(--text-mid)]">
+                  Empty{s.isPair ? ` (${s.side})` : ""}:
+                </span>
+                <span className="text-xs font-bold" style={{ color: fg }}>
+                  {s.node.factorType}
+                </span>
+              </div>
+            )
+          })}
+        </div>
+      )}
+
+      {/* Effects summary from assigned factors */}
+      {assignedFactors.length > 0 && (
+        <div>
+          <div className="text-xs uppercase tracking-[1px] text-[var(--text-dim)] mb-2 mt-1">
+            Active Factor Effects
+          </div>
+          <div className="space-y-1.5">
+            {assignedFactors.map((af, i) => {
+              const { bg, fg } = getFactorTypeColors(af.slotType)
+              return (
+                <div key={i} className="flex items-start gap-2 px-2 py-1.5 rounded border border-border bg-card">
+                  <Icon src={af.factor.icon} size={20} className="rounded shrink-0 mt-0.5" />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-bold text-white">{af.factor.name}</span>
+                      <span
+                        className="text-xs font-bold px-1 py-0.5 rounded"
+                        style={{ background: `${accent}22`, color: accent }}
+                      >
+                        G{af.grade}
+                      </span>
+                      <span
+                        className="text-xs px-1 py-0.5 rounded"
+                        style={{ background: bg, color: fg }}
+                      >
+                        {af.slotType}
+                      </span>
+                    </div>
+                    <p className="text-xs text-[var(--text-mid)] leading-4 mt-0.5">{af.factor.description}</p>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
 // ── Main Psychoscope Component ──
 export function PsychoscopeSection() {
-  const { accentColor, spec, psychoscopeConfig, setPsychoscopeConfig } = useApp()
+  const { accentColor, spec, psychoscopeConfig, setPsychoscopeConfig, stats } = useApp()
   const className = normalizeClassName(getClassForSpec(spec))
 
   const [mainTab, setMainTab] = useState<MainTab>("mind_projections")
@@ -1020,10 +1137,10 @@ export function PsychoscopeSection() {
     <div className="space-y-4">
       {/* Enable / Disable toggle */}
       <div className="flex items-center justify-between">
-        <span className="text-[10px] font-bold uppercase tracking-[1px] text-[#888]">Psychoscope</span>
+        <span className="text-xs font-bold uppercase tracking-[1px] text-[var(--text-mid)]">Psychoscope</span>
         <button
           onClick={() => setPsychoscopeConfig({ ...psychoscopeConfig, enabled: !psychoscopeConfig.enabled })}
-          className="flex items-center gap-1.5 px-3 py-1 rounded border transition-all text-[9px] font-bold uppercase tracking-[0.5px]"
+          className="flex items-center gap-1.5 px-3 py-1 rounded border transition-all text-xs font-bold uppercase tracking-[0.5px]"
           style={{
             borderColor: psychoscopeConfig.enabled ? accentColor : '#333',
             background: psychoscopeConfig.enabled ? `${accentColor}18` : 'transparent',
@@ -1067,14 +1184,14 @@ export function PsychoscopeSection() {
 
               {/* Spec info + action buttons */}
               <div className="flex items-center gap-3 flex-wrap">
-                <span className="text-[9px] text-[#666] uppercase tracking-[1px]">
+                <span className="text-xs text-muted-foreground uppercase tracking-[1px]">
                   Spec: <span className="text-white font-bold">{spec}</span>
                   {className && <> ({className})</>}
                 </span>
                 {priority && (
                   <button
                     onClick={handleLoadRecommended}
-                    className="text-[9px] font-bold uppercase tracking-[0.5px] px-3 py-1 rounded border transition-all hover:brightness-125"
+                    className="text-xs font-bold uppercase tracking-[0.5px] px-3 py-1 rounded border transition-all hover:brightness-125"
                     style={{
                       borderColor: accentColor,
                       color: accentColor,
@@ -1086,14 +1203,14 @@ export function PsychoscopeSection() {
                 )}
                 <button
                   onClick={handleClearAll}
-                  className="text-[9px] font-bold uppercase tracking-[0.5px] px-3 py-1 rounded border border-[#333] text-[#666] hover:text-[#999] transition-all"
+                  className="text-xs font-bold uppercase tracking-[0.5px] px-3 py-1 rounded border border-[#333] text-muted-foreground hover:text-[var(--text-mid)] transition-all"
                 >
                   Clear All
                 </button>
               </div>
 
               {priority?.note && (
-                <div className="text-[9px] text-[#555] italic leading-4 px-1">
+                <div className="text-xs text-[var(--text-dim)] italic leading-4 px-1">
                   {priority.note}
                 </div>
               )}
@@ -1116,6 +1233,14 @@ export function PsychoscopeSection() {
                 onBranchChange={handleBranchChange}
                 onFactorChange={handleFactorChange}
                 interactive
+              />
+
+              {/* Factor Slot Status + Effects Summary */}
+              <FactorSummary
+                projection={activeProj}
+                config={psychoscopeConfig}
+                className={className}
+                accent={accentColor}
               />
             </div>
           )}
@@ -1164,8 +1289,8 @@ export function PsychoscopeSection() {
                 accent={accentColor}
                 small
               />
-              <div className="border border-[#1a1a1a] bg-[#060606] rounded p-3">
-                <div className="text-[9px] uppercase tracking-[1px] text-[#444] mb-2">
+              <div className="border border-border bg-[#060606] rounded p-3">
+                <div className="text-xs uppercase tracking-[1px] text-[var(--text-dim)] mb-2">
                   {activeCls.className} — Class Exclusive (X1–X11)
                 </div>
                 {activeCls.factors.map((f, i) => (
@@ -1173,8 +1298,8 @@ export function PsychoscopeSection() {
                 ))}
               </div>
               {activeCls.stasis.length > 0 && (
-                <div className="border border-[#1a1a1a] bg-[#060606] rounded p-3">
-                  <div className="text-[9px] uppercase tracking-[1px] text-[#444] mb-2">
+                <div className="border border-border bg-[#060606] rounded p-3">
+                  <div className="text-xs uppercase tracking-[1px] text-[var(--text-dim)] mb-2">
                     {activeCls.className} — Class Stasis
                   </div>
                   {activeCls.stasis.map((f, i) => (
@@ -1187,11 +1312,11 @@ export function PsychoscopeSection() {
 
           {/* ── Offensive Factors ── */}
           {factorTab === "offensive" && (
-            <div className="border border-[#1a1a1a] bg-[#060606] rounded p-3">
-              <div className="text-[9px] uppercase tracking-[1px] text-[#444] mb-2">
+            <div className="border border-border bg-[#060606] rounded p-3">
+              <div className="text-xs uppercase tracking-[1px] text-[var(--text-dim)] mb-2">
                 Offensive — Polarity (X1–X11)
               </div>
-              <p className="text-[9px] text-[#555] mb-3 leading-4">
+              <p className="text-xs text-[var(--text-dim)] mb-3 leading-4">
                 Polarity factors trade one substat for another. At G10, they provide
                 flat % boosts instead of raw values. All values shown are at G10.
               </p>
@@ -1203,11 +1328,11 @@ export function PsychoscopeSection() {
 
           {/* ── Defensive Factors ── */}
           {factorTab === "defensive" && (
-            <div className="border border-[#1a1a1a] bg-[#060606] rounded p-3">
-              <div className="text-[9px] uppercase tracking-[1px] text-[#444] mb-2">
+            <div className="border border-border bg-[#060606] rounded p-3">
+              <div className="text-xs uppercase tracking-[1px] text-[var(--text-dim)] mb-2">
                 Defensive — Stasis (X1–X9)
               </div>
-              <p className="text-[9px] text-[#555] mb-3 leading-4">
+              <p className="text-xs text-[var(--text-dim)] mb-3 leading-4">
                 Stasis factors provide defensive bonuses including HP, Armor,
                 Resistance, and survival mechanics. All values shown are at G10.
               </p>

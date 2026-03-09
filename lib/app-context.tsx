@@ -57,6 +57,7 @@ export interface ExtBuffs {
 }
 
 export type AccentColor = "yellow" | "red" | "blue" | "green"
+export type ThemeMode = "default" | "discord" | "vscode"
 export type NavSection = "classes" | "planner" | "optimizer" | "modules" | "psychoscope" | "talents" | "profile" | "curves" | "database" | "guide" | "guide_stormblade" | "dps_simulator" | "gear_sets" | "details"
 
 const ACCENT_MAP: Record<AccentColor, string> = {
@@ -547,6 +548,9 @@ interface AppState {
   setAccent: (a: AccentColor) => void
   accentColor: string
 
+  theme: ThemeMode
+  setTheme: (t: ThemeMode) => void
+
   build: Build
   setBuild: (b: Build) => void
 
@@ -620,6 +624,7 @@ const SAVE_KEY = "bpsr_v2_state"
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const [section, setSection] = useState<NavSection>("classes")
   const [accent, setAccentState] = useState<AccentColor>("yellow")
+  const [theme, setThemeState] = useState<ThemeMode>("default")
   const [build, setBuildState] = useState<Build>("Strength")
   const [spec, setSpec] = useState<string>("Moonstrike")
   const [gear, setGearState] = useState<GearSlot[]>(defaultGear)
@@ -645,6 +650,13 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setAccentState(a)
     document.documentElement.style.setProperty("--accent", ACCENT_MAP[a])
     document.documentElement.style.setProperty("--accent-foreground", a === "blue" ? "#ffffff" : "#000000")
+  }, [])
+
+  const setTheme = useCallback((t: ThemeMode) => {
+    setThemeState(t)
+    document.documentElement.classList.remove("theme-discord", "theme-vscode")
+    if (t === "discord") document.documentElement.classList.add("theme-discord")
+    if (t === "vscode")  document.documentElement.classList.add("theme-vscode")
   }, [])
 
   // Sync accent color to CSS on mount
@@ -821,7 +833,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (!canSave.current) return
     try {
-      localStorage.setItem(SAVE_KEY, JSON.stringify({ build, spec, gear, legendaryTypes, legendaryVals, imagines, modules, base, ext, accent, gearLib, selectedTalents, talentAspd, gearSets, psychoscopeConfig, specSnapshots }))
+      localStorage.setItem(SAVE_KEY, JSON.stringify({ build, spec, gear, legendaryTypes, legendaryVals, imagines, modules, base, ext, accent, theme, gearLib, selectedTalents, talentAspd, gearSets, psychoscopeConfig, specSnapshots }))
     } catch (e) {
       console.error('[BPSR] Save failed:', e)
     }
@@ -863,6 +875,13 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       if (saved.base) setBaseState({ ...defaultBase(), ...saved.base })
       if (saved.ext) setExtState({ ...defaultBuffs(), ...saved.ext })
       if (saved.accent) { setAccentState(saved.accent); document.documentElement.style.setProperty("--accent", ACCENT_MAP[saved.accent as AccentColor]) }
+      if (saved.theme) {
+        const t = saved.theme as ThemeMode
+        setThemeState(t)
+        document.documentElement.classList.remove("theme-discord", "theme-vscode")
+        if (t === "discord") document.documentElement.classList.add("theme-discord")
+        if (t === "vscode")  document.documentElement.classList.add("theme-vscode")
+      }
       if (saved.gearLib && Array.isArray(saved.gearLib)) setGearLib(saved.gearLib)
       if (saved.selectedTalents && Array.isArray(saved.selectedTalents)) setSelectedTalents(saved.selectedTalents)
       if (typeof saved.talentAspd === "number") setTalentAspd(saved.talentAspd)
@@ -888,6 +907,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const value: AppState = {
     section, setSection,
     accent, setAccent, accentColor,
+    theme, setTheme,
     build, setBuild,
     spec, setSpec,
     gear, setGear: setGearState, updateGearSlot,

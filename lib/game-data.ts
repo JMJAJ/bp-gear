@@ -110,6 +110,13 @@ export const GAME_DATA = {
     "Lv160 Gold": { p: 954, s: 477, r: 286, raid: false, illu: 200 },
   } as Record<string, { p: number; s: number; r: number; raid: boolean; illu: number }>,
 
+  MASTER_DUNGEONS: {
+    M1: 100, M2: 183, M3: 258, M4: 316, M5: 375,
+    M6: 425, M7: 466, M8: 500, M9: 516, M10: 533,
+    M11: 550, M12: 566, M13: 583, M14: 600, M15: 616,
+    M16: 633, M17: 650, M18: 666, M19: 683, M20: 700,
+  } as Record<string, number>,
+
   SPECS: {
     "Earthfort": ["Mastery", "Versatility"],
     "Block": ["Mastery", "Luck"],

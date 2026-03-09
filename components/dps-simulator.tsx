@@ -1404,26 +1404,26 @@ export function DpsSimulator() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 {/* Config */}
                 <div className="bg-[#111] border border-[#333] p-4 rounded-md">
-                    <h3 className="text-[10px] text-[#666] uppercase tracking-wider font-bold mb-3">Simulation Config</h3>
+                    <h3 className="text-xs text-[#666] uppercase tracking-wider font-bold mb-3">Simulation Config</h3>
                     <div className="grid grid-cols-3 gap-4">
                         <div className="flex flex-col gap-1.5">
-                            <label className="text-[10px] text-[#888] uppercase tracking-wider font-bold">ATK (character sheet)</label>
+                            <label className="text-xs text-[#888] uppercase tracking-wider font-bold">ATK (character sheet)</label>
                             <input
                                 type="number" value={manualAtk}
                                 onChange={e => setManualAtk(Math.max(0, parseInt(e.target.value) || 0))}
                                 className="bg-[#0a0a0a] border border-[#333] px-3 py-2 text-sm rounded text-white font-mono focus:border-[#555] outline-none"
                             />
-                            <span className="text-[9px] text-[#555]">Effective ATK: <span className="text-white font-bold">{sim.effAtk.toLocaleString()}</span></span>
+                            <span className="text-xs text-[#555]">Effective ATK: <span className="text-white font-bold">{sim.effAtk.toLocaleString()}</span></span>
                         </div>
                         <div className="flex flex-col gap-1.5">
-                            <label className="text-[10px] text-[#888] uppercase tracking-wider font-bold">Attack Speed %</label>
+                            <label className="text-xs text-[#888] uppercase tracking-wider font-bold">Attack Speed %</label>
                             <input
                                 type="number" value={manualAspd} min={0} max={200}
                                 onChange={e => setManualAspd(Math.max(0, Math.min(200, parseInt(e.target.value) || 0)))}
                                 className="bg-[#0a0a0a] border border-[#333] px-3 py-2 text-sm rounded text-white font-mono focus:border-[#555] outline-none"
                                 placeholder={`${(combat.aspd * 100).toFixed(0)}% (planner)`}
                             />
-                            <span className="text-[9px] text-[#555]">
+                            <span className="text-xs text-[#555]">
                                 {manualAspd > 0
                                     ? <><span className="text-amber-400 font-bold">Override: {manualAspd}%</span> (planner: {(combat.aspd * 100).toFixed(0)}%)</>
                                     : <>0 = use planner ({(combat.aspd * 100).toFixed(0)}%). Enter Attack Speed%</>
@@ -1431,19 +1431,19 @@ export function DpsSimulator() {
                             </span>
                         </div>
                         <div className="flex flex-col gap-1.5">
-                            <label className="text-[10px] text-[#888] uppercase tracking-wider font-bold">Fight Duration (s)</label>
+                            <label className="text-xs text-[#888] uppercase tracking-wider font-bold">Fight Duration (s)</label>
                             <input
                                 type="number" value={fightDuration} min={10} max={300}
                                 onChange={e => setFightDuration(Math.max(10, Math.min(300, parseInt(e.target.value) || 90)))}
                                 className="bg-[#0a0a0a] border border-[#333] px-3 py-2 text-sm rounded text-white font-mono focus:border-[#555] outline-none"
                             />
-                            <span className="text-[9px] text-[#555]">Min 10s, Max 300s</span>
+                            <span className="text-xs text-[#555]">Min 10s, Max 300s</span>
                         </div>
                     </div>
                 </div>
                 {/* Combat Stats */}
                 <div className="bg-[#111] border border-[#333] p-4 rounded-md">
-                    <h3 className="text-[10px] text-[#666] uppercase tracking-wider font-bold mb-3">Combat Stats (from Planner)</h3>
+                    <h3 className="text-xs text-[#666] uppercase tracking-wider font-bold mb-3">Combat Stats (from Planner)</h3>
                     <div className="grid grid-cols-2 gap-x-6 gap-y-1.5 text-xs font-mono">
                         <StatRow label="Versatility" value={`${(combat.versPct * 100).toFixed(1)}%`} desc="General DMG amp" />
                         <StatRow label="Mastery" value={`${(combat.mastPct * 100).toFixed(1)}%`} desc="Skill DMG amp" />
@@ -1464,10 +1464,10 @@ export function DpsSimulator() {
             <div className="bg-[#111] border border-[#333] p-4 rounded-md">
                 <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-3">
-                        <h3 className="text-[10px] text-[#666] uppercase tracking-wider font-bold">Gear Set Comparison</h3>
+                        <h3 className="text-xs text-[#666] uppercase tracking-wider font-bold">Gear Set Comparison</h3>
                         <button
                             onClick={() => { setCompareMode(!compareMode); if (compareMode) setSelectedSetIds([]) }}
-                            className={`px-3 py-1 text-[9px] font-bold uppercase tracking-[1px] border rounded transition-all duration-200 ${compareMode
+                            className={`px-3 py-1 text-xs font-bold uppercase tracking-[1px] border rounded transition-all duration-200 ${compareMode
                                 ? "border-emerald-500/60 text-emerald-400 bg-emerald-500/10 shadow-[0_0_8px_rgba(16,185,129,0.15)]"
                                 : "border-[#444] text-[#666] hover:border-[#555] hover:text-[#888]"
                                 }`}
@@ -1476,7 +1476,7 @@ export function DpsSimulator() {
                         </button>
                     </div>
                     {compareMode && gearSets.length > 0 && (
-                        <span className="text-[9px] text-[#555]">Select 2+ sets to compare DPS curves</span>
+                        <span className="text-xs text-[#555]">Select 2+ sets to compare DPS curves</span>
                     )}
                 </div>
 
@@ -1524,7 +1524,7 @@ export function DpsSimulator() {
                             </div>
                         )}
                         {selectedSetIds.length > 0 && (
-                            <div className="text-[9px] text-[#555]">
+                            <div className="text-xs text-[#555]">
                                 {selectedSetIds.length} set{selectedSetIds.length > 1 ? "s" : ""} selected
                                 {selectedSetIds.length < 2 && " — select at least 2 for comparison"}
                             </div>
@@ -1537,10 +1537,10 @@ export function DpsSimulator() {
             <div className="bg-[#111] border border-[#333] p-4 rounded-md">
                 <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-3">
-                        <h3 className="text-[10px] text-[#666] uppercase tracking-wider font-bold">Rotation Builder</h3>
+                        <h3 className="text-xs text-[#666] uppercase tracking-wider font-bold">Rotation Builder</h3>
                         <button
                             onClick={() => setUseCustomRotation(!useCustomRotation)}
-                            className={`px-3 py-1 text-[9px] font-bold uppercase tracking-[1px] border rounded transition-all duration-200 ${useCustomRotation
+                            className={`px-3 py-1 text-xs font-bold uppercase tracking-[1px] border rounded transition-all duration-200 ${useCustomRotation
                                 ? "border-emerald-500/60 text-emerald-400 bg-emerald-500/10 shadow-[0_0_8px_rgba(16,185,129,0.15)]"
                                 : "border-[#444] text-[#666] hover:border-[#555] hover:text-[#888]"
                                 }`}
@@ -1551,13 +1551,13 @@ export function DpsSimulator() {
                     <div className="flex gap-2">
                         <button
                             onClick={() => setRotation(DEFAULT_ROTATION.map(r => ({ ...r })))}
-                            className="px-2.5 py-1 text-[9px] font-bold uppercase tracking-[1px] border border-[#333] text-[#666] hover:text-[#aaa] hover:border-[#555] transition-colors rounded"
+                            className="px-2.5 py-1 text-xs font-bold uppercase tracking-[1px] border border-[#333] text-[#666] hover:text-[#aaa] hover:border-[#555] transition-colors rounded"
                         >
                             Reset
                         </button>
                         <button
                             onClick={() => setRotation([])}
-                            className="px-2.5 py-1 text-[9px] font-bold uppercase tracking-[1px] border border-[#333] text-[#666] hover:text-red-400 hover:border-red-500/40 transition-colors rounded"
+                            className="px-2.5 py-1 text-xs font-bold uppercase tracking-[1px] border border-[#333] text-[#666] hover:text-red-400 hover:border-red-500/40 transition-colors rounded"
                         >
                             Clear
                         </button>
@@ -1566,7 +1566,7 @@ export function DpsSimulator() {
 
                 {/* Skill Palette */}
                 <div className="mb-3">
-                    <span className="text-[9px] text-[#555] uppercase tracking-wider font-bold block mb-2">Drag skills into the rotation below</span>
+                    <span className="text-xs text-[#555] uppercase tracking-wider font-bold block mb-2">Drag skills into the rotation below</span>
                     <div className="flex flex-wrap gap-1.5">
                         {ROTATION_SKILLS.map(key => {
                             const skill = skills[key]
@@ -1582,9 +1582,9 @@ export function DpsSimulator() {
                                     style={{ borderLeftColor: color, borderLeftWidth: "3px" }}
                                     title={`${skill.name} — ${skill.type} | CD: ${skill.cd}s | MV: ${skill.mv}%`}
                                 >
-                                    <span className="text-[8px] font-bold px-1 py-0.5 rounded bg-[#222] text-[#666]">{badge}</span>
-                                    <span className="text-[10px] font-bold text-[#ccc] group-hover:text-white transition-colors">{skill.name}</span>
-                                    {skill.cd > 0 && <span className="text-[8px] text-[#555]">{skill.cd}s</span>}
+                                    <span className="text-xs font-bold px-1 py-0.5 rounded bg-[#222] text-[#666]">{badge}</span>
+                                    <span className="text-xs font-bold text-[#ccc] group-hover:text-white transition-colors">{skill.name}</span>
+                                    {skill.cd > 0 && <span className="text-xs text-[#555]">{skill.cd}s</span>}
                                 </div>
                             )
                         })}
@@ -1593,7 +1593,7 @@ export function DpsSimulator() {
 
                 {/* Rotation Timeline */}
                 <div className="relative">
-                    <span className="text-[9px] text-[#555] uppercase tracking-wider font-bold block mb-2">
+                    <span className="text-xs text-[#555] uppercase tracking-wider font-bold block mb-2">
                         Rotation Sequence {rotation.length > 0 && <span className="text-[#444]">({rotation.length} skills • loops)</span>}
                     </span>
                     <div
@@ -1631,44 +1631,44 @@ export function DpsSimulator() {
                                     >
                                         {/* Main skill row */}
                                         <div className="flex items-center gap-1 px-2 py-1">
-                                            <span className="text-[7px] font-bold px-1 py-0.5 rounded bg-[#222] text-[#555]">{badge}</span>
-                                            <span className="text-[9px] font-bold text-[#bbb]">{skill.name}</span>
+                                            <span className="text-xs font-bold px-1 py-0.5 rounded bg-[#222] text-[#555]">{badge}</span>
+                                            <span className="text-xs font-bold text-[#bbb]">{skill.name}</span>
                                             {/* Repeat badge */}
                                             {item.repeat > 1 && (
-                                                <span className="text-[8px] font-black px-1 rounded bg-[#222] border border-[#444]" style={{ color: accentColor }}>×{item.repeat}</span>
+                                                <span className="text-xs font-black px-1 rounded bg-[#222] border border-[#444]" style={{ color: accentColor }}>×{item.repeat}</span>
                                             )}
                                             <button
                                                 onClick={e => { e.stopPropagation(); removeFromRotation(idx) }}
-                                                className="text-[#444] hover:text-red-400 text-[10px] ml-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
+                                                className="text-[#444] hover:text-red-400 text-xs ml-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
                                             >
                                                 ✕
                                             </button>
                                         </div>
                                         {/* Event annotations */}
                                         <div className="flex gap-1 px-1.5 pb-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                            {cdInfo && <span className="text-[7px] px-1 rounded-sm bg-[#1a1a1a] text-[#888] border border-[#292929]">{cdInfo}</span>}
-                                            {resInfo && <span className="text-[7px] px-1 rounded-sm bg-amber-900/20 text-amber-500/80 border border-amber-800/30">{resInfo}</span>}
-                                            {buffInfo && <span className="text-[7px] px-1 rounded-sm bg-emerald-900/20 text-emerald-400/80 border border-emerald-800/30">{buffInfo}</span>}
+                                            {cdInfo && <span className="text-xs px-1 rounded-sm bg-[#1a1a1a] text-[#888] border border-[#292929]">{cdInfo}</span>}
+                                            {resInfo && <span className="text-xs px-1 rounded-sm bg-amber-900/20 text-amber-500/80 border border-amber-800/30">{resInfo}</span>}
+                                            {buffInfo && <span className="text-xs px-1 rounded-sm bg-emerald-900/20 text-emerald-400/80 border border-emerald-800/30">{buffInfo}</span>}
                                         </div>
                                         {/* Repeat count controls (on hover) */}
                                         <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity z-10">
                                             <button
                                                 onClick={e => { e.stopPropagation(); setRepeat(idx, item.repeat - 1) }}
-                                                className="text-[8px] w-3.5 h-3.5 flex items-center justify-center rounded bg-[#222] text-[#888] hover:text-white border border-[#333] hover:border-[#555]"
+                                                className="text-xs w-3.5 h-3.5 flex items-center justify-center rounded bg-[#222] text-[#888] hover:text-white border border-[#333] hover:border-[#555]"
                                             >−</button>
-                                            <span className="text-[7px] text-[#666] font-mono min-w-[14px] text-center">×{item.repeat}</span>
+                                            <span className="text-xs text-[#666] font-mono min-w-[14px] text-center">×{item.repeat}</span>
                                             <button
                                                 onClick={e => { e.stopPropagation(); setRepeat(idx, item.repeat + 1) }}
-                                                className="text-[8px] w-3.5 h-3.5 flex items-center justify-center rounded bg-[#222] text-[#888] hover:text-white border border-[#333] hover:border-[#555]"
+                                                className="text-xs w-3.5 h-3.5 flex items-center justify-center rounded bg-[#222] text-[#888] hover:text-white border border-[#333] hover:border-[#555]"
                                             >+</button>
                                         </div>
                                         {/* Index badge */}
-                                        <span className="absolute -top-1 -left-1 text-[7px] bg-[#222] text-[#555] rounded-full w-3 h-3 flex items-center justify-center font-mono">
+                                        <span className="absolute -top-1 -left-1 text-xs bg-[#222] text-[#555] rounded-full w-3 h-3 flex items-center justify-center font-mono">
                                             {idx + 1}
                                         </span>
                                     </div>
                                     {idx < rotation.length - 1 && (
-                                        <span className="text-[#333] text-[8px] mx-0.5">→</span>
+                                        <span className="text-[#333] text-xs mx-0.5">→</span>
                                     )}
                                 </div>
                             )
@@ -1679,9 +1679,9 @@ export function DpsSimulator() {
                     </div>
                     {rotation.length > 0 && (
                         <div className="flex items-center gap-2 mt-2">
-                            <span className="text-[8px] text-[#444] italic">↻ Rotation loops from start when reaching the end</span>
+                            <span className="text-xs text-[#444] italic">↻ Rotation loops from start when reaching the end</span>
                             {!useCustomRotation && (
-                                <span className="text-[8px] text-amber-500/70 font-bold">⚠ Enable "Custom Rotation" to simulate this sequence</span>
+                                <span className="text-xs text-amber-500/70 font-bold">⚠ Enable "Custom Rotation" to simulate this sequence</span>
                             )}
                         </div>
                     )}
@@ -1693,22 +1693,22 @@ export function DpsSimulator() {
                 <div className="flex flex-wrap justify-between items-center mb-4 border-b border-[#222] pb-4 gap-4">
                     <div className="flex gap-8">
                         <div className="flex flex-col">
-                            <span className="text-[10px] text-[#666] uppercase tracking-wider font-bold">Total Damage ({Math.floor(fightDuration / 60)}:{String(fightDuration % 60).padStart(2, "0")})</span>
+                            <span className="text-xs text-[#666] uppercase tracking-wider font-bold">Total Damage ({Math.floor(fightDuration / 60)}:{String(fightDuration % 60).padStart(2, "0")})</span>
                             <span className="text-2xl font-black">{Math.round(sim.finalDmg).toLocaleString()}</span>
                         </div>
                         <div className="flex flex-col">
-                            <span className="text-[10px] text-[#666] uppercase tracking-wider font-bold">Average DPS</span>
+                            <span className="text-xs text-[#666] uppercase tracking-wider font-bold">Average DPS</span>
                             <span className="text-2xl font-black" style={{ color: accentColor }}>{Math.round(sim.finalDps).toLocaleString()}</span>
                         </div>
                         <div className="flex flex-col">
-                            <span className="text-[10px] text-[#666] uppercase tracking-wider font-bold">Effective ATK</span>
+                            <span className="text-xs text-[#666] uppercase tracking-wider font-bold">Effective ATK</span>
                             <span className="text-2xl font-black text-[#888]">{sim.effAtk.toLocaleString()}</span>
                         </div>
                     </div>
                     <div className="flex gap-1">
                         {(["chart", "timeline", "breakdown", "log"] as const).map(tab => (
                             <button key={tab} onClick={() => setActiveTab(tab)}
-                                className={`px-3 py-1.5 text-[10px] font-bold uppercase tracking-[1px] border transition-colors ${activeTab === tab ? "bg-[#222] text-white border-[#555]" : "border-[#333] text-[#666] hover:bg-[#1a1a1a]"}`}
+                                className={`px-3 py-1.5 text-xs font-bold uppercase tracking-[1px] border transition-colors ${activeTab === tab ? "bg-[#222] text-white border-[#555]" : "border-[#333] text-[#666] hover:bg-[#1a1a1a]"}`}
                                 style={activeTab === tab ? { borderColor: accentColor, color: accentColor } : {}}
                             >
                                 {tab}
@@ -1735,7 +1735,7 @@ export function DpsSimulator() {
                         value={`${((sim.rotStats.vsUptime / fightDuration) * 100).toFixed(0)}%`}
                         color="#8b5cf6"
                     />
-                    <span className="text-[#444] ml-auto text-[9px] self-center italic">
+                    <span className="text-[#444] ml-auto text-xs self-center italic">
                         {useCustomRotation ? "Custom Rotation" : "Priority AI"}
                     </span>
                 </div>
@@ -1746,7 +1746,7 @@ export function DpsSimulator() {
                         <div className="flex items-center justify-between">
                             <div>
                                 <h4 className="text-xs font-bold text-white">DPS Timeline Comparison</h4>
-                                <p className="text-[10px] text-[#555]">
+                                <p className="text-xs text-[#555]">
                                     Clean line comparison — easier to see differences
                                 </p>
                             </div>
@@ -1754,7 +1754,7 @@ export function DpsSimulator() {
                                 {comparisonResults.map(result => (
                                     <div key={result.id} className="flex items-center gap-1.5 px-2 py-1 rounded bg-[#0a0a0a] border border-[#222]">
                                         <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: result.color }} />
-                                        <span className="text-[10px] text-[#aaa]">{result.name}</span>
+                                        <span className="text-xs text-[#aaa]">{result.name}</span>
                                     </div>
                                 ))}
                             </div>
@@ -1795,12 +1795,12 @@ export function DpsSimulator() {
                         <div className="flex items-center justify-between">
                             <div>
                                 <h4 className="text-xs font-bold text-white">Skill Timeline</h4>
-                                <p className="text-[10px] text-[#555]">
+                                <p className="text-xs text-[#555]">
                                     {useCustomRotation ? "Custom Rotation" : "Priority Rotation"} — 
                                     Each point = skill hit (size = damage)
                                 </p>
                             </div>
-                            <div className="text-[10px] text-[#666]">
+                            <div className="text-xs text-[#666]">
                                 {sim.timelineData.length} skill casts recorded
                             </div>
                         </div>
@@ -1864,8 +1864,8 @@ export function DpsSimulator() {
                             {sim.skillOrder.map((skillName, idx) => (
                                 <div key={skillName} className="flex items-center gap-1.5 px-2 py-1 rounded bg-[#0a0a0a] border border-[#222]">
                                     <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: SKILL_COLORS[skillName] || "#888" }} />
-                                    <span className="text-[10px] text-[#aaa]">{skillName}</span>
-                                    <span className="text-[9px] text-[#555]">({sim.timelineData.filter(d => d.skill === skillName).length})</span>
+                                    <span className="text-xs text-[#aaa]">{skillName}</span>
+                                    <span className="text-xs text-[#555]">({sim.timelineData.filter(d => d.skill === skillName).length})</span>
                                 </div>
                             ))}
                         </div>
@@ -1880,11 +1880,11 @@ export function DpsSimulator() {
                             {comparisonResults.map((result, idx) => (
                                 <div key={result.id} className="flex items-center gap-2 px-2.5 py-1.5 rounded bg-[#0a0a0a] border border-[#333]">
                                     <div className="w-2 h-2 rounded-full" style={{ backgroundColor: result.color }} />
-                                    <span className="text-[10px] font-bold text-white">{result.name}</span>
+                                    <span className="text-xs font-bold text-white">{result.name}</span>
                                     <span className="text-[11px] font-black" style={{ color: result.color }}>{Math.round(result.finalDps).toLocaleString()}</span>
-                                    <span className="text-[9px] text-[#555]">DPS</span>
+                                    <span className="text-xs text-[#555]">DPS</span>
                                     {idx > 0 && (
-                                        <span className="text-[9px] font-bold" style={{ color: result.finalDps > comparisonResults[0].finalDps ? "#22c55e" : "#ef4444" }}>
+                                        <span className="text-xs font-bold" style={{ color: result.finalDps > comparisonResults[0].finalDps ? "#22c55e" : "#ef4444" }}>
                                             {result.finalDps > comparisonResults[0].finalDps ? "+" : ""}{((result.finalDps - comparisonResults[0].finalDps) / comparisonResults[0].finalDps * 100).toFixed(1)}%
                                         </span>
                                     )}
@@ -1968,12 +1968,12 @@ export function DpsSimulator() {
                         <div className="flex items-center justify-between border-b border-[#222] pb-2">
                             <div>
                                 <h4 className="text-xs font-bold text-white">Damage Breakdown</h4>
-                                <p className="text-[10px] text-[#555]">
+                                <p className="text-xs text-[#555]">
                                     {useCustomRotation ? "Custom Rotation" : "Priority Rotation"} — 
                                     {sim.breakdown.length} skill types dealt damage
                                 </p>
                             </div>
-                            <div className="text-[10px] text-[#666]">
+                            <div className="text-xs text-[#666]">
                                 Top: {sim.breakdown[0]?.name || "-"} ({sim.breakdown[0]?.pct || 0}%)
                             </div>
                         </div>

@@ -64,12 +64,12 @@ function CurveCanvas({
     ctx.fillRect(0, 0, W, H)
 
     // Grid lines + labels
-    ctx.strokeStyle = "#1a1a1a"
+    ctx.strokeStyle = "var(--stat-bar-bg)"
     ctx.lineWidth = 1
     for (let y = 0; y <= 80; y += 10) {
       const py = pad.top + gH - (y / maxY) * gH
       ctx.beginPath(); ctx.moveTo(pad.left, py); ctx.lineTo(W - pad.right, py); ctx.stroke()
-      ctx.fillStyle = "#444"
+      ctx.fillStyle = "var(--text-dim)"
       ctx.font = `10px 'Space Grotesk', system-ui, sans-serif`
       ctx.textAlign = "right"
       ctx.fillText(y + "%", pad.left - 5, py + 3.5)
@@ -78,7 +78,7 @@ function CurveCanvas({
       const px = pad.left + (x / maxX) * gW
       ctx.strokeStyle = "#151515"
       ctx.beginPath(); ctx.moveTo(px, pad.top); ctx.lineTo(px, H - pad.bottom); ctx.stroke()
-      ctx.fillStyle = "#333"
+      ctx.fillStyle = "var(--text-dim)"
       ctx.textAlign = "center"
       ctx.font = `9px 'Space Grotesk', system-ui, sans-serif`
       ctx.fillText(x >= 1000 ? (x / 1000).toFixed(0) + "k" : String(x), px, H - pad.bottom + 16)
@@ -250,18 +250,18 @@ export function CurvesSection() {
     <div className="w-full max-w-5xl mx-auto">
       <div className="mb-6">
         <div className="text-2xl font-bold tracking-tight text-white mb-1">Diminishing Returns</div>
-        <div className="text-[11px] text-[#555] max-w-xl leading-5">
+        <div className="text-xs text-[var(--text-dim)] max-w-xl leading-5">
           Every substat follows a continuous DR formula:{" "}
-          <code className="bg-[#111] px-1.5 py-0.5 text-white">% = Base + Raw / (Raw + Constant)</code>.
+          <code className="bg-muted px-1.5 py-0.5 text-white">% = Base + Raw / (Raw + Constant)</code>.
           Hover over curves to see exact values. Use the target input to find raw needed for any %.
         </div>
       </div>
 
       {/* Controls */}
-      <div className="flex flex-wrap gap-4 mb-6 p-4 border border-[#222] bg-[#0a0a0a]">
+      <div className="flex flex-wrap gap-4 mb-6 p-4 border border-border bg-card">
         {/* Target % input */}
         <div className="flex items-center gap-2">
-          <label className="text-[10px] uppercase tracking-[1px] text-[#555]">Raw %</label>
+          <label className="text-xs uppercase tracking-[1px] text-[var(--text-dim)]">Raw %</label>
           <input
             type="number"
             min="0"
@@ -273,16 +273,16 @@ export function CurvesSection() {
               const v = parseFloat(e.target.value)
               setTargetPct(isNaN(v) ? null : Math.max(0, Math.min(80, v)))
             }}
-            className="w-20 bg-[#111] border border-[#333] text-white px-2 py-1 text-[11px] focus:border-[#555] outline-none"
+            className="w-20 bg-muted border border-[#333] text-white px-2 py-1 text-xs focus:border-[#555] outline-none"
           />
           {targetPct !== null && (
-            <span className="text-[9px] text-[#4ade80]">→ shows on all curves</span>
+            <span className="text-xs text-[#4ade80]">→ shows on all curves</span>
           )}
         </div>
 
         {/* Breakpoint checkboxes */}
         <div className="flex items-center gap-3 ml-auto">
-          <span className="text-[10px] uppercase tracking-[1px] text-[#555]">Breakpoints</span>
+          <span className="text-xs uppercase tracking-[1px] text-[var(--text-dim)]">Breakpoints</span>
           {[25, 50, 80].map(bp => (
             <label key={bp} className="flex items-center gap-1 cursor-pointer">
               <input
@@ -292,7 +292,7 @@ export function CurvesSection() {
                 className="accent-current"
                 style={{ accentColor }}
               />
-              <span className="text-[10px] text-[#888]">{bp}%</span>
+              <span className="text-xs text-[var(--text-mid)]">{bp}%</span>
             </label>
           ))}
         </div>
@@ -300,8 +300,8 @@ export function CurvesSection() {
 
       {/* Target % summary table */}
       {targetPct !== null && (
-        <div className="mb-4 p-3 border border-[#1a1a1a] bg-[#0a0a0a]">
-          <div className="text-[9px] uppercase tracking-[1px] text-[#4ade80] mb-2">
+        <div className="mb-4 p-3 border border-border bg-card">
+          <div className="text-xs uppercase tracking-[1px] text-[#4ade80] mb-2">
             Raw needed for {targetPct}% raw portion (total with base shown below)
           </div>
           <div className="grid grid-cols-5 gap-2">
@@ -310,12 +310,12 @@ export function CurvesSection() {
               const totalPct = targetPct + cData.base
               return (
                 <div key={stat} className="text-center">
-                  <div className="text-[10px] font-bold text-white">{stat}</div>
-                  <div className="text-[11px] font-mono text-[#4ade80]">
+                  <div className="text-xs font-bold text-white">{stat}</div>
+                  <div className="text-xs font-mono text-[#4ade80]">
                     {raw > 0 ? raw.toLocaleString() : "—"}
                   </div>
                   {cData.base > 0 && (
-                    <div className="text-[8px] text-[#888]">→ {totalPct.toFixed(1)}% total</div>
+                    <div className="text-xs text-[var(--text-mid)]">→ {totalPct.toFixed(1)}% total</div>
                   )}
                 </div>
               )
@@ -327,25 +327,25 @@ export function CurvesSection() {
       {/* Tooltip */}
       {tooltip && (
         <div 
-          className="fixed z-50 pointer-events-none px-2 py-1 bg-[#1a1a1a] border border-[#333] text-[10px]"
+          className="fixed z-50 pointer-events-none px-2 py-1 bg-[var(--stat-bar-bg)] border border-[#333] text-xs"
           style={{ 
             left: tooltip.x + 10, 
             top: tooltip.y - 30,
           }}
         >
           <span className="text-white font-bold">{tooltip.stat}</span>
-          <span className="text-[#888]">: </span>
+          <span className="text-[var(--text-mid)]">: </span>
           <span style={{ color: accentColor }}>{(tooltip.pct + tooltip.base).toFixed(2)}%</span>
-          {tooltip.base > 0 && <span className="text-[#555]"> ({tooltip.pct.toFixed(2)}% + {tooltip.base}% base)</span>}
-          <span className="text-[#444]"> · {Math.round(tooltip.raw).toLocaleString()} raw</span>
+          {tooltip.base > 0 && <span className="text-[var(--text-dim)]"> ({tooltip.pct.toFixed(2)}% + {tooltip.base}% base)</span>}
+          <span className="text-[var(--text-dim)]"> · {Math.round(tooltip.raw).toLocaleString()} raw</span>
         </div>
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
         {Object.entries(GAME_DATA.CONSTANTS).map(([stat, cData]) => (
-          <div key={stat} className="border border-[#222] bg-[#0a0a0a] p-4 min-w-0">
+          <div key={stat} className="border border-border bg-card p-4 min-w-0">
             <div
-              className="text-[10px] font-bold uppercase tracking-[1.5px] mb-3"
+              className="text-xs font-bold uppercase tracking-[1.5px] mb-3"
               style={{ color: accentColor }}
             >
               {stat}
@@ -364,16 +364,16 @@ export function CurvesSection() {
       </div>
 
       {/* Constants table */}
-      <div className="border border-[#222] bg-[#0a0a0a] p-4">
-        <div className="text-[9px] uppercase tracking-[1.5px] font-bold mb-3" style={{ color: accentColor }}>
+      <div className="border border-border bg-card p-4">
+        <div className="text-xs uppercase tracking-[1.5px] font-bold mb-3" style={{ color: accentColor }}>
           Constants — Season 2 Datamine
         </div>
         <div className="overflow-x-auto">
-          <table className="w-full text-[11px] border-collapse">
+          <table className="w-full text-xs border-collapse">
             <thead>
-              <tr className="border-b border-[#222]">
+              <tr className="border-b border-border">
                 {["Stat","Constant","Base %","50% Raw","Total @ 50%","Formula"].map(h => (
-                  <th key={h} className="text-left text-[9px] uppercase tracking-[0.5px] text-[#444] font-semibold px-2 py-2 whitespace-nowrap">
+                  <th key={h} className="text-left text-xs uppercase tracking-[0.5px] text-[var(--text-dim)] font-semibold px-2 py-2 whitespace-nowrap">
                     {h}
                   </th>
                 ))}
@@ -387,13 +387,13 @@ export function CurvesSection() {
                 return (
                   <tr key={stat} className="border-b border-[#0d0d0d] hover:bg-white/[0.01]">
                     <td className="px-2 py-2 font-bold text-white whitespace-nowrap">{stat}</td>
-                    <td className="px-2 py-2 text-[#888] whitespace-nowrap">{cData.c.toLocaleString()}</td>
-                    <td className="px-2 py-2 text-[#888]">{cData.base}%</td>
+                    <td className="px-2 py-2 text-[var(--text-mid)] whitespace-nowrap">{cData.c.toLocaleString()}</td>
+                    <td className="px-2 py-2 text-[var(--text-mid)]">{cData.base}%</td>
                     <td className="px-2 py-2 whitespace-nowrap" style={{ color: accentColor }}>
                       {need50raw.toLocaleString()} raw
                     </td>
-                    <td className="px-2 py-2 text-[#888]">{total50}%</td>
-                    <td className="px-2 py-2 text-[#555] font-mono text-[9px] whitespace-nowrap">
+                    <td className="px-2 py-2 text-[var(--text-mid)]">{total50}%</td>
+                    <td className="px-2 py-2 text-[var(--text-dim)] font-mono text-xs whitespace-nowrap">
                       {cData.base}% + R/(R+{cData.c.toLocaleString()})
                     </td>
                   </tr>

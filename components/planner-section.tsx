@@ -27,7 +27,7 @@ function GSelect({
       value={value}
       onChange={e => onChange(e.target.value)}
       disabled={disabled}
-      className="w-full text-[11px] px-1.5 py-1 border border-[#1a1a1a] bg-[#0a0a0a] text-white focus:border-[#444] outline-none"
+      className="w-full text-xs px-1.5 py-1 border border-border bg-card text-white focus:border-[#444] outline-none"
       style={{ opacity: disabled ? 0.3 : 1, cursor: disabled ? "not-allowed" : "default", ...style }}
     >
       <option value="-">—</option>
@@ -124,11 +124,11 @@ function GearRow({ index }: { index: number }) {
     : []
 
   return (
-    <tr className="border-b border-[#111] hover:bg-white/[0.01] transition-colors">
+    <tr className="border-b border-[var(--muted)] hover:bg-white/[0.01] transition-colors">
       <td className="px-2 py-1.5 w-32">
         <span
-          className="text-[11px] font-semibold whitespace-nowrap"
-          style={{ color: isRaid ? accentColor : "#888" }}
+          className="text-xs font-semibold whitespace-nowrap"
+          style={{ color: isRaid ? accentColor : "var(--text-mid)" }}
         >
           {slot}
         </span>
@@ -147,7 +147,7 @@ function GearRow({ index }: { index: number }) {
               : (isRaid ? "Raid gear — uncheck for gold" : "Check for raid gear")}
           />
         ) : (
-          <span className="text-[10px] text-[#222]">—</span>
+          <span className="text-xs text-[#222]">—</span>
         )}
       </td>
       <td className="px-1 py-1.5 w-20">
@@ -158,21 +158,21 @@ function GearRow({ index }: { index: number }) {
             const newTier = getTierForLevel(slotType, lv, isRaid) ?? getTierForLevel(slotType, lv, !isRaid)
             if (newTier) changeTier(newTier)
           }}
-          className="w-full text-[10px] px-1 py-1 border border-[#1a1a1a] bg-[#0a0a0a] text-white focus:border-[#444] outline-none"
+          className="w-full text-xs px-1 py-1 border border-border bg-card text-white focus:border-[#444] outline-none"
         >
           {tierLevels.map(lv => <option key={lv} value={lv}>Lv{lv}</option>)}
         </select>
       </td>
       <td className="px-1 py-1.5 w-28">
         {isRaid ? (
-          <div className="text-[11px] font-bold px-1.5" style={{ color: accentColor }}>{g.p}</div>
+          <div className="text-xs font-bold px-1.5" style={{ color: accentColor }}>{g.p}</div>
         ) : (
           <GSelect value={g.p} options={allowed} onChange={v => updateGearSlot(index, { p: v })} />
         )}
       </td>
       <td className="px-1 py-1.5 w-28">
         {isRaid ? (
-          <div className="text-[11px] font-bold px-1.5" style={{ color: accentColor }}>{g.s}</div>
+          <div className="text-xs font-bold px-1.5" style={{ color: accentColor }}>{g.s}</div>
         ) : (
           <GSelect value={g.s} options={allowedSecondary} onChange={v => updateGearSlot(index, { s: v })} />
         )}
@@ -187,8 +187,8 @@ function GearRow({ index }: { index: number }) {
             const v = Math.max(0, Math.min(100, parseInt(e.target.value) || 0))
             updateGearSlot(index, { perfection: v })
           }}
-          className="w-full text-[11px] px-1.5 py-1 border border-[#1a1a1a] bg-[#0a0a0a] text-white focus:border-[#444] outline-none text-center"
-          style={{ color: (g.perfection ?? 100) < 100 ? "#e5c229" : "#666" }}
+          className="w-full text-xs px-1.5 py-1 border border-border bg-card text-white focus:border-[#444] outline-none text-center"
+          style={{ color: (g.perfection ?? 100) < 100 ? "#e5c229" : "var(--muted-foreground)" }}
         />
       </td>
       <td className="px-1 py-1.5 w-28">
@@ -199,14 +199,14 @@ function GearRow({ index }: { index: number }) {
             onChange={v => updateGearSlot(index, { r: v })}
           />
         ) : (
-          <div className="text-[10px] text-[#333] px-1.5">—</div>
+          <div className="text-xs text-[var(--text-dim)] px-1.5">—</div>
         )}
       </td>
       <td className="px-1 py-1.5 w-36">
         <select
           value={g.sigName}
           onChange={e => updateGearSlot(index, { sigName: e.target.value })}
-          className="w-full text-[10px] px-1 py-1 border border-[#1a1a1a] bg-[#0a0a0a] text-[#aaa] focus:border-[#444] outline-none"
+          className="w-full text-xs px-1 py-1 border border-border bg-card text-[var(--text-mid)] focus:border-[#444] outline-none"
         >
           <option value="">— none —</option>
           {sigils.map(s => <option key={s.n} value={s.n}>{s.n}</option>)}
@@ -216,19 +216,19 @@ function GearRow({ index }: { index: number }) {
         <select
           value={g.sigLvl}
           onChange={e => updateGearSlot(index, { sigLvl: e.target.value })}
-          className="w-full text-[10px] px-1 py-1 border border-[#1a1a1a] bg-[#0a0a0a] text-white focus:border-[#444] outline-none"
+          className="w-full text-xs px-1 py-1 border border-border bg-card text-white focus:border-[#444] outline-none"
         >
           {[1, 2, 3].map(l => <option key={l} value={l}>{l}</option>)}
         </select>
       </td>
       <td className="px-1 py-1.5 w-36">
         {isRaid ? (
-          <div className="text-[10px] text-[#333] px-1.5">—</div>
+          <div className="text-xs text-[var(--text-dim)] px-1.5">—</div>
         ) : (
           <select
             value={legendaryTypes[index] ?? "-"}
             onChange={e => setLegendaryType(index, e.target.value)}
-            className="w-full text-[10px] px-1 py-1 border border-[#1a1a1a] bg-[#0a0a0a] text-[#b888ff] focus:border-[#444] outline-none"
+            className="w-full text-xs px-1 py-1 border border-border bg-card text-[#b888ff] focus:border-[#444] outline-none"
           >
             <option value="-">None</option>
             {purpleOpts.map(p => <option key={p} value={p}>{p}</option>)}
@@ -237,12 +237,12 @@ function GearRow({ index }: { index: number }) {
       </td>
       <td className="px-1 py-1.5 w-14">
         {isRaid ? (
-          <div className="text-[10px] text-[#333] px-1.5">—</div>
+          <div className="text-xs text-[var(--text-dim)] px-1.5">—</div>
         ) : purpleValOpts.length > 0 ? (
           <select
             value={legendaryVals[index] || ""}
             onChange={e => setLegendaryVal(index, parseFloat(e.target.value) || 0)}
-            className="w-full text-[11px] px-1 py-1 border border-[#1a1a1a] bg-[#0a0a0a] text-[#b888ff] focus:border-[#444] outline-none"
+            className="w-full text-xs px-1 py-1 border border-border bg-card text-[#b888ff] focus:border-[#444] outline-none"
           >
             <option value="">—</option>
             {purpleValOpts.map(v => <option key={v} value={v}>{v}</option>)}
@@ -253,7 +253,7 @@ function GearRow({ index }: { index: number }) {
             value={legendaryVals[index] || ""}
             onChange={e => setLegendaryVal(index, parseFloat(e.target.value) || 0)}
             placeholder="—"
-            className="w-full text-[11px] px-1.5 py-1 border border-[#1a1a1a] bg-[#0a0a0a] text-[#b888ff] focus:border-[#444] outline-none"
+            className="w-full text-xs px-1.5 py-1 border border-border bg-card text-[#b888ff] focus:border-[#444] outline-none"
           />
         )}
       </td>
@@ -450,24 +450,24 @@ export function PlannerSection() {
     <div>
       <div className="mb-4">
         <div className="text-2xl font-bold tracking-tight text-white mb-1">Gear Planner</div>
-        <div className="text-[11px] text-[#555] max-w-xl leading-5">
+        <div className="text-xs text-[var(--text-dim)] max-w-xl leading-5">
           Configure each gear slot. Raid gear locks primary/secondary to your spec&apos;s recommended substats.
           Import supports both the scanner JSON format and BPSR export files.
         </div>
       </div>
 
       {/* Controls */}
-      <div className="flex items-center gap-3 flex-wrap mb-4 pb-4 border-b border-[#1a1a1a]">
+      <div className="flex items-center gap-3 flex-wrap mb-4 pb-4 border-b border-border">
         {/* Build switch */}
         <div className="flex">
           {BUILD_OPTIONS.map((opt, idx) => (
             <button
               key={opt.id}
               onClick={() => setBuild(opt.id)}
-              className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-[1px] border border-[#222] transition-all"
+              className="px-3 py-1.5 text-xs font-bold uppercase tracking-[1px] border border-border transition-all"
               style={{
                 background: build === opt.id ? accentColor : "transparent",
-                color: build === opt.id ? "#000" : "#555",
+                color: build === opt.id ? "#000" : "var(--text-dim)",
                 borderLeft: idx === 0 ? undefined : "none",
               }}
             >
@@ -481,12 +481,12 @@ export function PlannerSection() {
         {/* Spec */}
         <div className="flex items-center gap-2">
           <Tip text="Your spec. Raid items lock stats based on this.">
-            <span className="text-[9px] uppercase tracking-[0.5px] text-[#555]">Spec</span>
+            <span className="text-xs uppercase tracking-[0.5px] text-[var(--text-dim)]">Spec</span>
           </Tip>
           <select
             value={spec}
             onChange={e => setSpec(e.target.value)}
-            className="text-[11px] px-2 py-1 border border-[#222] bg-[#0a0a0a] text-white focus:border-[#444] outline-none"
+            className="text-xs px-2 py-1 border border-border bg-card text-white focus:border-[#444] outline-none"
             style={{ width: 140 }}
           >
             {Object.keys(GAME_DATA.SPECS).map(s => <option key={s} value={s}>{s}</option>)}
@@ -496,7 +496,7 @@ export function PlannerSection() {
         {/* Global reforge */}
         <div className="flex items-center gap-2">
           <Tip text="Quick button: set the same reforge stat on everything (except raid weapon).">
-            <span className="text-[9px] uppercase tracking-[0.5px] text-[#555]">Set Reforge</span>
+            <span className="text-xs uppercase tracking-[0.5px] text-[var(--text-dim)]">Set Reforge</span>
           </Tip>
           <select
             onChange={e => {
@@ -504,7 +504,7 @@ export function PlannerSection() {
               const val = e.target.value
               setGear(gear.map((g, i) => (i === 0 && g.raid) ? g : { ...g, r: val }))
             }}
-            className="text-[11px] px-2 py-1 border border-[#222] bg-[#0a0a0a] text-white focus:border-[#444] outline-none"
+            className="text-xs px-2 py-1 border border-border bg-card text-white focus:border-[#444] outline-none"
             style={{ width: 120 }}
           >
             <option value="">—</option>
@@ -516,7 +516,7 @@ export function PlannerSection() {
         <div className="flex items-center gap-1.5 ml-auto">
           {importStatus && (
             <span
-              className="text-[9px] uppercase tracking-[0.5px] transition-all"
+              className="text-xs uppercase tracking-[0.5px] transition-all"
               style={{
                 color: importStatus === "err" ? "#e84545" : importStatus === "scan" ? "#49A8FF" : "#4ade80",
               }}
@@ -528,14 +528,14 @@ export function PlannerSection() {
           )}
           <button
             onClick={exportAll}
-            className="text-[9px] uppercase tracking-[0.5px] px-2.5 py-1.5 border border-[#333] text-[#666] hover:text-white hover:border-[#555] transition-all"
+            className="text-xs uppercase tracking-[0.5px] px-2.5 py-1.5 border border-[#333] text-muted-foreground hover:text-white hover:border-[#555] transition-all"
             title="Export gear, modules and library to JSON"
           >
             Export All
           </button>
           <button
             onClick={() => importRef.current?.click()}
-            className="text-[9px] uppercase tracking-[0.5px] px-2.5 py-1.5 border border-[#333] text-[#666] hover:text-white hover:border-[#555] transition-all"
+            className="text-xs uppercase tracking-[0.5px] px-2.5 py-1.5 border border-[#333] text-muted-foreground hover:text-white hover:border-[#555] transition-all"
             title="Import scanner JSON or BPSR export"
           >
             Import
@@ -546,10 +546,10 @@ export function PlannerSection() {
               if (confirmClear) { clearAll() }
               else { setConfirmClear(true); setTimeout(() => setConfirmClear(false), 2500) }
             }}
-            className="text-[9px] uppercase tracking-[0.5px] px-2.5 py-1.5 border transition-all"
+            className="text-xs uppercase tracking-[0.5px] px-2.5 py-1.5 border transition-all"
             style={{
-              borderColor: confirmClear ? "#e84545" : "#333",
-              color: confirmClear ? "#e84545" : "#555",
+              borderColor: confirmClear ? "#e84545" : "var(--text-dim)",
+              color: confirmClear ? "#e84545" : "var(--text-dim)",
             }}
           >
             {confirmClear ? "Confirm Clear?" : "Clear"}
@@ -561,7 +561,7 @@ export function PlannerSection() {
       <div className="overflow-x-hidden">
         <table className="w-full border-collapse">
           <thead>
-            <tr className="border-b border-[#222]">
+            <tr className="border-b border-border">
               {[
                 <Tip key="slot" text="Which gear slot this row is.">Slot</Tip>,
                 <Tip key="raidCol" text="Raid gear = primary/secondary are locked to your spec, and it can't have purple stats.">Raid</Tip>,
@@ -577,7 +577,7 @@ export function PlannerSection() {
                 </Tip>,
                 <Tip key="val" text="Value for the purple stat. % for percent stats, raw number for flat stats.">Val</Tip>,
               ].map((h, i) => (
-                <th key={i} className="text-left text-[9px] uppercase tracking-[1px] text-[#444] font-semibold px-2 py-2">
+                <th key={i} className="text-left text-xs uppercase tracking-[1px] text-[var(--text-dim)] font-semibold px-2 py-2">
                   {h}
                 </th>
               ))}
@@ -592,7 +592,7 @@ export function PlannerSection() {
       {/* Imagine slots */}
       <div className="mt-6">
         <div
-          className="text-[9px] uppercase tracking-[1.5px] font-bold mb-3"
+          className="text-xs uppercase tracking-[1.5px] font-bold mb-3"
           style={{ color: accentColor }}
         >
           <Tip text="Pick your 2 imagines + their tier.">
@@ -601,12 +601,12 @@ export function PlannerSection() {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {[0, 1].map(i => (
-            <div key={i} className="border border-[#222] bg-[#0a0a0a] p-3">
-              <div className="text-[9px] uppercase tracking-[1px] text-[#444] mb-2">Imagine {i + 1}</div>
+            <div key={i} className="border border-border bg-card p-3">
+              <div className="text-xs uppercase tracking-[1px] text-[var(--text-dim)] mb-2">Imagine {i + 1}</div>
               <select
                 value={imagines[i]?.key ?? ""}
                 onChange={e => setImagine(i, { key: e.target.value })}
-                className="w-full mb-2 text-[11px] px-2 py-1.5 border border-[#1a1a1a] bg-[#000] text-white focus:border-[#444] outline-none"
+                className="w-full mb-2 text-xs px-2 py-1.5 border border-border bg-background text-white focus:border-[#444] outline-none"
               >
                 <option value="">— none —</option>
                 {Object.keys(GAME_DATA.IMAGINE.OPTIONS).map(k => <option key={k} value={k}>{k}</option>)}
@@ -614,7 +614,7 @@ export function PlannerSection() {
               <select
                 value={imagines[i]?.idx ?? 0}
                 onChange={e => setImagine(i, { idx: parseInt(e.target.value) })}
-                className="w-full text-[11px] px-2 py-1.5 border border-[#1a1a1a] bg-[#000] text-white focus:border-[#444] outline-none"
+                className="w-full text-xs px-2 py-1.5 border border-border bg-background text-white focus:border-[#444] outline-none"
               >
                 {["Tier 0", "Tier 1", "Tier 2", "Tier 3", "Tier 4", "Tier 5"].map((t, j) => (
                   <option key={j} value={j}>{t}</option>

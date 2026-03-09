@@ -10,16 +10,16 @@ function CollapsibleSection({ title, children, accent }: { title: string; childr
     <div className="mb-2">
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between px-4 py-3 border border-[#222] bg-[#0a0a0a] text-left transition-all hover:bg-[#111]"
+        className="w-full flex items-center justify-between px-4 py-3 border border-border bg-card text-left transition-all hover:bg-muted"
         style={accent ? { borderLeftColor: accentColor, borderLeftWidth: 2 } : undefined}
       >
-        <span className="text-[11px] font-bold uppercase tracking-[0.5px]" style={{ color: accent ? accentColor : "#ccc" }}>{title}</span>
-        <span className="text-[#555] text-[10px]" style={{ color: open ? accentColor : undefined }}>
+        <span className="text-xs font-bold uppercase tracking-[0.5px]" style={{ color: accent ? accentColor : "#ccc" }}>{title}</span>
+        <span className="text-[var(--text-dim)] text-xs" style={{ color: open ? accentColor : undefined }}>
           {open ? "▾" : "▸"}
         </span>
       </button>
       {open && (
-        <div className="border border-t-0 border-[#222] bg-[#0a0a0a] p-4 overflow-x-auto">
+        <div className="border border-t-0 border-border bg-card p-4 overflow-x-auto">
           {children}
         </div>
       )}
@@ -29,11 +29,11 @@ function CollapsibleSection({ title, children, accent }: { title: string; childr
 
 function Table({ headers, rows }: { headers: string[]; rows: (string | number)[][] }) {
   return (
-    <table className="w-full border-collapse text-[10px]">
+    <table className="w-full border-collapse text-xs">
       <thead>
-        <tr className="border-b border-[#222]">
+        <tr className="border-b border-border">
           {headers.map(h => (
-            <th key={h} className="text-left text-[9px] uppercase tracking-[0.5px] text-[#444] font-semibold px-2 py-2">
+            <th key={h} className="text-left text-xs uppercase tracking-[0.5px] text-[var(--text-dim)] font-semibold px-2 py-2">
               {h}
             </th>
           ))}
@@ -43,7 +43,7 @@ function Table({ headers, rows }: { headers: string[]; rows: (string | number)[]
         {rows.map((row, i) => (
           <tr key={i} className="border-b border-[#0d0d0d] hover:bg-white/[0.01]">
             {row.map((cell, j) => (
-              <td key={j} className={`px-2 py-1.5 ${j === 0 ? "text-white font-medium" : "text-[#666]"}`}>
+              <td key={j} className={`px-2 py-1.5 ${j === 0 ? "text-white font-medium" : "text-muted-foreground"}`}>
                 {cell}
               </td>
             ))}
@@ -57,14 +57,14 @@ function Table({ headers, rows }: { headers: string[]; rows: (string | number)[]
 function FormulaBlock({ children }: { children: React.ReactNode }) {
   const { accentColor } = useApp()
   return (
-    <pre className="text-[10px] rounded px-4 py-2 my-2 border border-[#1a1a1a] bg-[#060606] font-mono leading-5 whitespace-pre-wrap" style={{ color: accentColor }}>
+    <pre className="text-xs rounded px-4 py-2 my-2 border border-border bg-[#060606] font-mono leading-5 whitespace-pre-wrap" style={{ color: accentColor }}>
       {children}
     </pre>
   )
 }
 
 function Note({ children }: { children: React.ReactNode }) {
-  return <p className="text-[10px] text-[#555] mt-2 leading-5">{children}</p>
+  return <p className="text-xs text-[var(--text-dim)] mt-2 leading-5">{children}</p>
 }
 
 export function DatabaseSection() {
@@ -151,7 +151,7 @@ export function DatabaseSection() {
     <div>
       <div className="mb-6">
         <div className="text-2xl font-bold tracking-tight text-white mb-1">Database</div>
-        <div className="text-[11px] text-[#555] max-w-xl leading-5">
+        <div className="text-xs text-[var(--text-dim)] max-w-xl leading-5">
           Complete reference data from the BPSR Gear Calculator datamine. Expand any section to browse.
           The <span style={{ color: accentColor }}>Calculations</span> section explains the exact math engine powering this tool.
         </div>
@@ -159,11 +159,11 @@ export function DatabaseSection() {
 
       {/* ── Calculations & Formulas ────────────────────────────────────────── */}
       <CollapsibleSection title="⚙ Calculations & Formulas" accent>
-        <div className="space-y-5 text-[10px] leading-5">
+        <div className="space-y-5 text-xs leading-5">
 
           <div>
-            <div className="text-[11px] font-bold text-white mb-1">1 · Stat % Conversion</div>
-            <Note>Raw stat points (e.g. from gear rolls, sigils, imagines) are converted to a percentage using the square-root formula derived from the datamine. Each stat has its own constant <span className="text-[#aaa]">c</span> and an additive <span className="text-[#aaa]">base</span>:</Note>
+            <div className="text-xs font-bold text-white mb-1">1 · Stat % Conversion</div>
+            <Note>Raw stat points (e.g. from gear rolls, sigils, imagines) are converted to a percentage using the square-root formula derived from the datamine. Each stat has its own constant <span className="text-[var(--text-mid)]">c</span> and an additive <span className="text-[var(--text-mid)]">base</span>:</Note>
             <FormulaBlock>{`stat% = sqrt( raw_points / c ) × 100 + base
 
 Stat         |  c       | base
@@ -177,7 +177,7 @@ Luck         | 19 975   |  5%`}</FormulaBlock>
           </div>
 
           <div>
-            <div className="text-[11px] font-bold text-white mb-1">2 · Gear Slot Stats (Primary / Secondary / Reforge)</div>
+            <div className="text-xs font-bold text-white mb-1">2 · Gear Slot Stats (Primary / Secondary / Reforge)</div>
             <Note>Each piece of gear contributes three independent stat rolls:</Note>
             <FormulaBlock>{`Primary   — highest roll; you choose which of the 5 stats it applies to
 Secondary — half of Primary for Gold gear; equal to Primary for Raid gear
@@ -187,7 +187,7 @@ All three add raw points to their chosen stat before conversion to %.`}</Formula
           </div>
 
           <div>
-            <div className="text-[11px] font-bold text-white mb-1">3 · Perfection Scaling</div>
+            <div className="text-xs font-bold text-white mb-1">3 · Perfection Scaling</div>
             <Note>Item stat values scale with perfection (0 – 100/100). The full-perfection values are the published datamine numbers. At any other perfection the stats are reduced proportionally:</Note>
             <FormulaBlock>{`factor = ( 229 + 149 × perfection / 100 ) / 378
 
@@ -199,7 +199,7 @@ At perfection = 100 → factor = 1.000 → original values returned unchanged.`}
           </div>
 
           <div>
-            <div className="text-[11px] font-bold text-white mb-1">4 · Imagine (Summon) Tiers</div>
+            <div className="text-xs font-bold text-white mb-1">4 · Imagine (Summon) Tiers</div>
             <Note>Each Imagine has 6 tiers (0 – 5). The raw stat values at each tier are fixed:</Note>
             <FormulaBlock>{`Boss Imagines  (e.g. Phantom Arachnocrab):
   T0: 3 584  T1: 4 636  T2: 5 688  T3: 6 740  T4: 7 792  T5: 8 960
@@ -209,7 +209,7 @@ Elite Imagines  (e.g. Bluespine Lizard):
           </div>
 
           <div>
-            <div className="text-[11px] font-bold text-white mb-1">5 · Haste → Attack / Cast Speed</div>
+            <div className="text-xs font-bold text-white mb-1">5 · Haste → Attack / Cast Speed</div>
             <Note>Haste% converts to Attack Speed % and Cast Speed % using class-specific multipliers:</Note>
             <FormulaBlock>{`Attack Speed %  = Haste% × aspd_ratio
 Cast Speed %    = Haste% × cspd_ratio
@@ -221,7 +221,7 @@ Beat Performer:                            aspd ×0.6   cspd ×2.0`}</FormulaBlo
           </div>
 
           <div>
-            <div className="text-[11px] font-bold text-white mb-1">6 · Psychoscope Factor Grade Scaling</div>
+            <div className="text-xs font-bold text-white mb-1">6 · Psychoscope Factor Grade Scaling</div>
             <Note>All factor numeric effects scale linearly between G1 and G10. G values between 1 and 10 are interpolated:</Note>
             <FormulaBlock>{`value(G) = G1_val + ( G10_val − G1_val ) × ( G − 1 ) / 9
 
@@ -233,7 +233,7 @@ If G1 data is missing, a fallback is used: value(G) = G10_val × G / 10`}</Formu
           </div>
 
           <div>
-            <div className="text-[11px] font-bold text-white mb-1">7 · Polarity / Gain-Multiplier Factors (X5–X8)</div>
+            <div className="text-xs font-bold text-white mb-1">7 · Polarity / Gain-Multiplier Factors (X5–X8)</div>
             <Note>Polarity factors apply a multiplicative gain multiplier to a stat — meaning they scale ALL sources of that stat (gear, sigils, imagines, modules, etc.) and also apply a negative multiplier to the opposing stat:</Note>
             <FormulaBlock>{`effective_stat = raw_stat × ( 1 + gainMult% )
 
@@ -246,7 +246,7 @@ G1:  +3.5% / −2.1%    G10:  +10.0% / −6.0%`}</FormulaBlock>
           </div>
 
           <div>
-            <div className="text-[11px] font-bold text-white mb-1">8 · Module Thresholds</div>
+            <div className="text-xs font-bold text-white mb-1">8 · Module Thresholds</div>
             <Note>Module levels require cumulative point investment. Unlocking higher levels gates the bonus stats:</Note>
             <FormulaBlock>{`Level  1 → 1  pts total   (basic atk bonus unlocked)
 Level  2 → 4  pts total
@@ -257,7 +257,7 @@ Level  6 → 20 pts total   (max level — strongest % bonus)`}</FormulaBlock>
           </div>
 
           <div>
-            <div className="text-[11px] font-bold text-white mb-1">9 · Slot Primary-Stat Restrictions</div>
+            <div className="text-xs font-bold text-white mb-1">9 · Slot Primary-Stat Restrictions</div>
             <Note>Each armor/accessory slot restricts one primary stat per build type (Strength / Agility / Intellect). The tool enforces these automatically:</Note>
             <FormulaBlock>{`The "restricted" stat must be assigned to Primary for that slot.
 Example: Helmet (Strength build) → primary must be Versatility.
@@ -382,6 +382,15 @@ No restrictions on Weapon or if the stat isn't listed for the slot.`}</FormulaBl
           rows={restrictionRows}
         />
         <Note>The listed stat must be assigned as the Primary roll for that slot in the given build class. Weapon has no restrictions.</Note>
+      </CollapsibleSection>
+
+      {/* ── Master Dungeons ────────────────────────────────────────────────── */}
+      <CollapsibleSection title="Master Dungeons">
+        <Table
+          headers={["Level", "Value"]}
+          rows={Object.entries(GAME_DATA.MASTER_DUNGEONS).map(([level, value]) => [level, value])}
+        />
+        <Note>Master Dungeon level values M1–M20.</Note>
       </CollapsibleSection>
     </div>
   )

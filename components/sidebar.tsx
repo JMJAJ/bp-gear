@@ -1,6 +1,6 @@
 "use client"
 import { useApp } from "@/lib/app-context"
-import type { NavSection, AccentColor } from "@/lib/app-context"
+import type { NavSection, AccentColor, ThemeMode } from "@/lib/app-context"
 import { 
   Crown, LayoutDashboard, Package, Zap, Puzzle, Brain, Star, 
   User, TrendingUp, Database, BookOpen, BarChart3, FileText 
@@ -32,16 +32,16 @@ const ACCENT_OPTIONS: { id: AccentColor; color: string; label: string }[] = [
 ]
 
 export function Sidebar({ mobile }: { mobile?: boolean }) {
-  const { section, setSection, accent, setAccent, accentColor } = useApp()
+  const { section, setSection, accent, setAccent, accentColor, theme, setTheme } = useApp()
 
   return (
     <aside
-      className="flex flex-col border-r border-[#222] bg-[#000] h-full overflow-y-auto"
-      style={{ minWidth: mobile ? undefined : 200 }}
+      className="flex flex-col border-r border-border bg-background h-full overflow-y-auto"
+      style={{ minWidth: mobile ? undefined : 220 }}
     >
       {/* Logo */}
-      <div className="px-5 py-5 border-b border-[#222]">
-        <div className="text-sm font-bold tracking-[3px] uppercase text-white">
+      <div className="px-5 py-5 border-b border-border">
+        <div className="text-sm font-bold tracking-[3px] uppercase text-foreground">
           BPSR
         </div>
         <div
@@ -58,11 +58,11 @@ export function Sidebar({ mobile }: { mobile?: boolean }) {
           <button
             key={item.id}
             onClick={() => setSection(item.id)}
-            className="w-full flex items-center gap-2.5 px-5 py-2.5 text-left text-[11px] font-medium tracking-[0.5px] uppercase transition-all"
+            className="w-full flex items-center gap-2.5 px-5 py-2.5 text-left text-sm font-medium tracking-[0.5px] uppercase transition-all"
             style={{
-              color: section === item.id ? "#fff" : "#666",
+              color: section === item.id ? "var(--foreground)" : "var(--muted-foreground)",
               borderLeft: `2px solid ${section === item.id ? accentColor : "transparent"}`,
-              background: section === item.id ? "#111" : "transparent",
+              background: section === item.id ? "var(--muted)" : "transparent",
             }}
           >
             <item.icon className="w-4 h-4" />
@@ -72,8 +72,8 @@ export function Sidebar({ mobile }: { mobile?: boolean }) {
       </nav>
 
       {/* Accent selector */}
-      <div className="px-5 py-3 border-t border-[#222]">
-        <div className="text-[9px] uppercase tracking-[1px] text-[#444] mb-2">
+      <div className="px-5 py-3 border-t border-border">
+        <div className="text-xs uppercase tracking-[1px] text-[var(--text-dim)] mb-2">
           Accent Color
         </div>
         <div className="flex gap-2">
@@ -93,19 +93,59 @@ export function Sidebar({ mobile }: { mobile?: boolean }) {
         </div>
       </div>
 
+      {/* Theme selector */}
+      <div className="px-5 py-3 border-t border-border">
+        <div className="text-xs uppercase tracking-[1px] text-[var(--text-dim)] mb-2">
+          Theme
+        </div>
+        <div className="flex gap-2">
+          <button
+            title="Default (Black)"
+            onClick={() => setTheme("default")}
+            className="w-5 h-5 transition-all border border-border"
+            style={{
+              background: "#000",
+              outline: theme === "default" ? `2px solid var(--ring)` : "2px solid transparent",
+              outlineOffset: 2,
+            }}
+          />
+          <button
+            title="Discord"
+            onClick={() => setTheme("discord")}
+            className="w-5 h-5 transition-all"
+            style={{
+              background: "#313338",
+              outline: theme === "discord" ? `2px solid #5865F2` : "2px solid transparent",
+              outlineOffset: 2,
+            }}
+          />
+          <button
+            title="VS Code"
+            onClick={() => setTheme("vscode")}
+            className="w-5 h-5 transition-all"
+            style={{
+              background: "#1e1e1e",
+              border: "1px solid #3c3c3c",
+              outline: theme === "vscode" ? `2px solid #007acc` : "2px solid transparent",
+              outlineOffset: 2,
+            }}
+          />
+        </div>
+      </div>
+
       {/* Footer */}
-      <div className="px-5 py-4 border-t border-[#222] text-[10px] text-[#444] leading-5">
-        <a href="https://docs.google.com/spreadsheets/d/1Hf-w1o9do50UC9AWNLgY59Wky1Zj4P1es5Pe9TlJRxE/edit" className="text-[#555] hover:text-[#888]">
+      <div className="px-5 py-4 border-t border-border text-xs text-[var(--text-dim)] leading-5">
+        <a href="https://docs.google.com/spreadsheets/d/1Hf-w1o9do50UC9AWNLgY59Wky1Zj4P1es5Pe9TlJRxE/edit" className="text-[var(--text-dim)] hover:text-[var(--text-mid)]">
           Gear Calculator
         </a>{" "}
         by Luxxio
         <br />
         Made by{" "}
-        <a href="https://discord.com/users/743448459029381221" className="text-[#555] hover:text-[#888]">
+        <a href="https://discord.com/users/743448459029381221" className="text-[var(--text-dim)] hover:text-[var(--text-mid)]">
           Jxint
         </a>
         <br />
-        <span className="text-[#333]">Data: S2 Exact Math Engine</span>
+        <span className="text-[var(--text-dim)]">Data: S2 Exact Math Engine</span>
       </div>
     </aside>
   )

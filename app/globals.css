@@ -33,6 +33,15 @@
   --stat-bar-bg: #1a1a1a;
   --text-mid: #aaaaaa;
   --text-dim: #555555;
+  --overlay: rgba(0,0,0,0.72);
+  --elevated: #080808;
+  --elevated-hover: #0d0d0d;
+  --badge-bg: #222222;
+  --badge-border: #333333;
+
+  --text-sm: 0.7rem;
+  --text-base: 0.825rem;
+  --text-lg: 0.95rem;
 }
 
 @theme inline {
@@ -70,26 +79,28 @@
   }
   body {
     @apply bg-background text-foreground font-sans;
+    font-family: var(--font-space-grotesk, 'Space Grotesk'), 'Space Grotesk', system-ui, sans-serif;
+    font-size: var(--text-base);
     -webkit-font-smoothing: antialiased;
   }
   ::-webkit-scrollbar { width: 4px; height: 4px; }
-  ::-webkit-scrollbar-track { background: #000; }
-  ::-webkit-scrollbar-thumb { background: #333; }
-  ::-webkit-scrollbar-thumb:hover { background: #555; }
+  ::-webkit-scrollbar-track { background: var(--background); }
+  ::-webkit-scrollbar-thumb { background: var(--border); }
+  ::-webkit-scrollbar-thumb:hover { background: var(--ring); }
 
   select, input[type="number"], input[type="text"] {
     background: var(--input);
     border: 1px solid var(--border);
-    color: #fff;
+    color: var(--foreground);
     padding: 6px 8px;
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 0.8rem;
+    font-family: var(--font-space-grotesk, 'Space Grotesk'), system-ui, sans-serif;
+    font-size: var(--text-sm);
     width: 100%;
     outline: none;
     transition: border-color 0.15s;
   }
   select:focus, input:focus {
-    border-color: #555;
+    border-color: var(--ring);
   }
   select:disabled, input:disabled {
     opacity: 0.25;
@@ -97,17 +108,95 @@
   }
   input[type="number"]::-webkit-inner-spin-button,
   input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
-  input[type="number"] { -moz-appearance: textfield; }
+  input[type="number"] { appearance: textfield; -moz-appearance: textfield; }
   input[type="checkbox"] { accent-color: var(--accent); width: 14px; height: 14px; cursor: pointer; }
-  a { color: #88c0ff; text-decoration: none; }
-  a:hover { text-decoration: underline; }
+  a { color: var(--text-mid); text-decoration: none; }
+  a:hover { text-decoration: underline; color: var(--foreground); }
 }
+
+/* ── Type scale (5 levels — edit here to shift entire UI) ──
+   text-2xl  (24px) → page section titles
+   text-sm   (14px) → sub-section headings, emphasized labels
+   text-xs   (12px) → body content, stat values, inputs
+   text-[10px]      → field labels, table headers, captions
+   text-[8px]       → badges, tiny type tags, pill annotations
+*/
 
 /* Accent color classes (controlled by JS/React state) */
 .accent-yellow { --accent: #e5c229; }
 .accent-red    { --accent: #e84545; }
 .accent-blue   { --accent: #49A8FF; }
 .accent-green  { --accent: #4ade80; }
+
+/* ── VS Code Dark+ theme ── */
+.theme-vscode {
+  --background:         #1e1e1e;
+  --foreground:         #d4d4d4;
+  --card:               #252526;
+  --card-foreground:    #cccccc;
+  --popover:            #2d2d2d;
+  --popover-foreground: #d4d4d4;
+  --primary:            #d4d4d4;
+  --primary-foreground: #1e1e1e;
+  --secondary:          #2d2d2d;
+  --secondary-foreground: #cccccc;
+  --muted:              #252526;
+  --muted-foreground:   #858585;
+  --destructive:        #f44747;
+  --destructive-foreground: #ffffff;
+  --border:             #3c3c3c;
+  --border-light:       #454545;
+  --input:              #3c3c3c;
+  --ring:               #007acc;
+
+  --panel-bg:     rgba(37,37,38,0.95);
+  --panel-border: #3c3c3c;
+  --stat-bar-bg:  #2d2d2d;
+  --text-mid:     #9d9d9d;
+  --text-dim:     #858585;
+  --overlay:      rgba(0,0,0,0.60);
+  --elevated:     #1b1b1c;
+  --elevated-hover: #232325;
+  --badge-bg:     #2d2d30;
+  --badge-border: #454545;
+}
+
+.theme-vscode ::-webkit-scrollbar-track { background: #1e1e1e; }
+.theme-vscode ::-webkit-scrollbar-thumb { background: #424242; }
+.theme-vscode ::-webkit-scrollbar-thumb:hover { background: #555555; }
+
+/* ── Discord theme ── */
+.theme-discord {
+  --background:         #313338;
+  --foreground:         #f2f3f5;
+  --card:               #2b2d31;
+  --card-foreground:    #f2f3f5;
+  --popover:            #1e1f22;
+  --popover-foreground: #f2f3f5;
+  --primary:            #f2f3f5;
+  --primary-foreground: #313338;
+  --secondary:          #383a40;
+  --secondary-foreground: #f2f3f5;
+  --muted:              #2b2d31;
+  --muted-foreground:   #80848e;
+  --destructive:        #ed4245;
+  --destructive-foreground: #ffffff;
+  --border:             #3f4248;
+  --border-light:       #4e5058;
+  --input:              #1e1f22;
+  --ring:               #72767d;
+
+  --panel-bg:     rgba(43,45,49,0.95);
+  --panel-border: #3f4248;
+  --stat-bar-bg:  #383a40;
+  --text-mid:     #b5bac1;
+  --text-dim:     #72767d;
+  --overlay:      rgba(17,18,20,0.72);
+  --elevated:     #232428;
+  --elevated-hover: #2b2d31;
+  --badge-bg:     #383a40;
+  --badge-border: #4e5058;
+}
 
 /* Scan-line overlay for in-game feel */
 .scanlines::after {
@@ -129,7 +218,7 @@
 .game-tooltip {
   position: relative;
   cursor: help;
-  border-bottom: 1px dotted #555;
+  border-bottom: 1px dotted var(--ring);
 }
 .game-tooltip::after {
   position: fixed;

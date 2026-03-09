@@ -5,14 +5,14 @@ import { ArrowRight } from "lucide-react"
 function Block({ title, children }: { title: string; children: React.ReactNode }) {
   const { accentColor } = useApp()
   return (
-    <div className="border border-[#222] bg-[#0a0a0a] mb-3">
+    <div className="border border-border bg-card mb-3">
       <div
-        className="px-4 py-2.5 border-b border-[#1a1a1a] text-[10px] font-bold uppercase tracking-[1.5px]"
+        className="px-4 py-2.5 border-b border-border text-xs font-bold uppercase tracking-[1.5px]"
         style={{ color: accentColor }}
       >
         {title}
       </div>
-      <div className="px-4 py-3 text-[11px] text-[#999] leading-[1.7]">
+      <div className="px-4 py-3 text-sm text-[var(--text-mid)] leading-[1.8]">
         {children}
       </div>
     </div>
@@ -22,9 +22,9 @@ function Block({ title, children }: { title: string; children: React.ReactNode }
 function KV({ k, v, accent }: { k: string; v: string; accent?: boolean }) {
   const { accentColor } = useApp()
   return (
-    <div className="flex justify-between items-baseline py-0.5 border-b border-[#111]">
-      <span className="text-[#666]">{k}</span>
-      <span className={accent ? "font-bold" : "text-[#aaa]"} style={{ color: accent ? accentColor : undefined }}>{v}</span>
+    <div className="flex justify-between items-baseline py-0.5 border-b border-[var(--muted)]">
+      <span className="text-muted-foreground">{k}</span>
+      <span className={accent ? "font-bold" : "text-[var(--text-mid)]"} style={{ color: accent ? accentColor : undefined }}>{v}</span>
     </div>
   )
 }
@@ -37,7 +37,7 @@ export function GuideSection({ variant }: { variant?: "stormblade" }) {
       <div>
         <div className="mb-6">
           <div className="text-2xl font-bold tracking-tight text-white mb-1">Moonstrike Guide</div>
-          <div className="text-[11px] text-[#555] max-w-xl leading-5">
+          <div className="text-xs text-[var(--text-dim)] max-w-xl leading-5">
             Full breakdown of the Stormblade Moonstrike spec — the meta single-target DPS with the highest
             burst ceiling in the current patch.
           </div>
@@ -94,7 +94,7 @@ export function GuideSection({ variant }: { variant?: "stormblade" }) {
           <KV k="Slot 2 (Gold)" v="Team Luck & Crit — Crit DMG 10.4% + Lucky Strike DMG Multiplier 6.8% at Lv6" />
           <KV k="Slot 3 (Gold)" v="Attack SPD — for Haste if below 50% ASPD breakpoint" />
           <KV k="Slot 4 (Purple)" v="DMG Stack — for sustained fights with stacking buff" />
-          <p className="mt-2 text-[10px] text-[#555]">
+          <p className="mt-2 text-xs text-[var(--text-dim)]">
             Module points stack — if the same affix appears in multiple slots, the total reaches a higher level tier.
           </p>
         </Block>
@@ -107,7 +107,7 @@ export function GuideSection({ variant }: { variant?: "stormblade" }) {
         <div className="mt-4">
           <button
             onClick={() => { setBuild("Agility"); setSpec("Moonstrike"); setSection("planner") }}
-            className="px-5 py-2.5 text-[11px] font-bold uppercase tracking-[1.5px] transition-all"
+            className="px-5 py-2.5 text-xs font-bold uppercase tracking-[1.5px] transition-all"
             style={{ background: accentColor, color: "#000" }}
           >
             Load Moonstrike Template <ArrowRight className="w-3 h-3 inline" />
@@ -121,14 +121,14 @@ export function GuideSection({ variant }: { variant?: "stormblade" }) {
     <div>
       <div className="mb-6">
         <div className="text-2xl font-bold tracking-tight text-white mb-1">Beginner Guide</div>
-        <div className="text-[11px] text-[#555] max-w-xl leading-5">
+        <div className="text-sm text-[var(--text-dim)] max-w-xl leading-6">
           A no-fluff breakdown of the BPSR gear system and how to use this tool effectively.
         </div>
       </div>
 
       <Block title="Core Concept — Diminishing Returns">
         <p>
-          Every substat uses the formula: <code className="bg-[#111] px-1.5 py-0.5 text-white font-mono text-[10px]">% = Base + Raw / (Raw + Constant)</code>.
+          Every substat uses the formula: <code className="bg-muted px-1.5 py-0.5 text-white font-mono text-xs">% = Base + Raw / (Raw + Constant)</code>.
           This means stacking one stat to extremes has rapidly diminishing returns.
           A balanced spread across 2–3 priority stats usually outperforms going deep into one.
         </p>

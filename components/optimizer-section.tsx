@@ -566,18 +566,18 @@ export function OptimizerSection() {
       {/* Header */}
       <div className="mb-6">
         <div className="text-2xl font-bold tracking-tight text-white mb-1">Gear Optimizer</div>
-        <div className="text-[11px] text-[#555] max-w-xl leading-5">
+        <div className="text-xs text-[var(--text-dim)] max-w-xl leading-5">
           Smart gear allocation using hill-climbing with multiple restarts against real DR curves.
           Supports per-slot locking, configurable raid sets, and auto stat weights per spec.
         </div>
       </div>
 
       {/* Mode Toggle */}
-      <div className="flex gap-1 mb-5 p-0.5 bg-[#111] border border-[#222] inline-flex">
+      <div className="flex gap-1 mb-5 p-0.5 bg-muted border border-border inline-flex">
         {(["smart", "targets"] as const).map(m => (
           <button key={m} onClick={() => setMode(m)}
-            className="px-4 py-1.5 text-[10px] font-bold uppercase tracking-[1.5px] transition-all"
-            style={{ background: mode === m ? accentColor : "transparent", color: mode === m ? "#000" : "#666" }}>
+            className="px-4 py-1.5 text-xs font-bold uppercase tracking-[1.5px] transition-all"
+            style={{ background: mode === m ? accentColor : "transparent", color: mode === m ? "#000" : "var(--muted-foreground)" }}>
             {m === "smart" ? "Smart Auto" : "Target %"}
           </button>
         ))}
@@ -586,16 +586,16 @@ export function OptimizerSection() {
       {/* Settings Row */}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-5">
         <div>
-          <label className="block text-[9px] uppercase tracking-[0.8px] text-[#555] mb-1">Target Gear Level</label>
+          <label className="block text-xs uppercase tracking-[0.8px] text-[var(--text-dim)] mb-1">Target Gear Level</label>
           <select value={targetLevel} onChange={e => setTargetLevel(parseInt(e.target.value))}
-            className="w-full text-[12px] px-2 py-1.5 border border-[#222] bg-[#0a0a0a] text-white focus:border-[#444] outline-none">
+            className="w-full text-xs px-2 py-1.5 border border-border bg-card text-white focus:border-[#444] outline-none">
             {availableLevels.filter(l => l >= 60).map(l => <option key={l} value={l}>Lv{l}</option>)}
           </select>
         </div>
         <div>
-          <label className="block text-[9px] uppercase tracking-[0.8px] text-[#555] mb-1">Raid Armor Pieces</label>
+          <label className="block text-xs uppercase tracking-[0.8px] text-[var(--text-dim)] mb-1">Raid Armor Pieces</label>
           <select value={raidMode} onChange={e => setRaidMode(e.target.value as any)}
-            className="w-full text-[12px] px-2 py-1.5 border border-[#222] bg-[#0a0a0a] text-white focus:border-[#444] outline-none">
+            className="w-full text-xs px-2 py-1.5 border border-border bg-card text-white focus:border-[#444] outline-none">
             <option value="auto">Auto (test 0/2/4)</option>
             <option value="0">0 (no raid armor)</option>
             <option value="2">2pc set bonus</option>
@@ -603,8 +603,8 @@ export function OptimizerSection() {
           </select>
         </div>
         <div>
-          <label className="block text-[9px] uppercase tracking-[0.8px] text-[#555] mb-1">Current Spec</label>
-          <div className="text-[12px] px-2 py-1.5 border border-[#222] bg-[#0a0a0a] text-[#888]">
+          <label className="block text-xs uppercase tracking-[0.8px] text-[var(--text-dim)] mb-1">Current Spec</label>
+          <div className="text-xs px-2 py-1.5 border border-border bg-card text-[var(--text-mid)]">
             {spec} ({className ?? "?"}) • {build}
           </div>
         </div>
@@ -613,16 +613,16 @@ export function OptimizerSection() {
       {/* Mode-specific settings */}
       {mode === "targets" ? (
         <div className="mb-5">
-          <div className="text-[10px] uppercase tracking-[0.8px] text-[#555] mb-2">Target Stat Percentages</div>
+          <div className="text-xs uppercase tracking-[0.8px] text-[var(--text-dim)] mb-2">Target Stat Percentages</div>
           <div className="grid grid-cols-3 md:grid-cols-5 gap-3">
             {(["crit", "haste", "luck", "mast", "vers"] as const).map(key => {
               const labels: Record<string, string> = { crit: "Crit %", haste: "Haste %", luck: "Luck %", mast: "Mastery %", vers: "Vers %" }
               return (
                 <div key={key}>
-                  <label className="block text-[9px] uppercase tracking-[0.8px] text-[#555] mb-1">{labels[key]}</label>
+                  <label className="block text-xs uppercase tracking-[0.8px] text-[var(--text-dim)] mb-1">{labels[key]}</label>
                   <input type="number" value={targets[key] || ""} placeholder="0"
                     onChange={e => setTargets(prev => ({ ...prev, [key]: parseFloat(e.target.value) || 0 }))}
-                    className="w-full text-[12px] px-2 py-1.5 border border-[#222] bg-[#0a0a0a] text-white focus:border-[#444] outline-none" />
+                    className="w-full text-xs px-2 py-1.5 border border-border bg-card text-white focus:border-[#444] outline-none" />
                 </div>
               )
             })}
@@ -630,33 +630,33 @@ export function OptimizerSection() {
         </div>
       ) : (
         <div className="mb-5">
-          <div className="text-[10px] uppercase tracking-[0.8px] text-[#555] mb-2">
+          <div className="text-xs uppercase tracking-[0.8px] text-[var(--text-dim)] mb-2">
             Stat Weights for {spec}
-            <span className="text-[#444] ml-2">(higher = optimizer values that stat more)</span>
+            <span className="text-[var(--text-dim)] ml-2">(higher = optimizer values that stat more)</span>
           </div>
           <div className="grid grid-cols-5 gap-2">
             {STAT_KEYS.map(stat => (
               <div key={stat}>
-                <label className="block text-[9px] uppercase tracking-[0.8px] text-[#555] mb-1">{stat.slice(0, 4)}</label>
+                <label className="block text-xs uppercase tracking-[0.8px] text-[var(--text-dim)] mb-1">{stat.slice(0, 4)}</label>
                 <input type="number" step="0.1" value={weights[stat] ?? 1.0}
                   onChange={e => setCustomWeights({ ...weights, [stat]: parseFloat(e.target.value) || 0 })}
-                  className="w-full text-[12px] px-2 py-1.5 border border-[#222] bg-[#0a0a0a] text-white focus:border-[#444] outline-none text-center" />
+                  className="w-full text-xs px-2 py-1.5 border border-border bg-card text-white focus:border-[#444] outline-none text-center" />
               </div>
             ))}
           </div>
           <button onClick={() => setCustomWeights(null)}
-            className="mt-1 text-[9px] text-[#555] hover:text-white transition-colors">Reset to defaults</button>
+            className="mt-1 text-xs text-[var(--text-dim)] hover:text-white transition-colors">Reset to defaults</button>
         </div>
       )}
 
       {/* Slot Locks */}
       <div className="mb-5">
         <div className="flex items-center justify-between mb-2">
-          <div className="text-[10px] uppercase tracking-[0.8px] text-[#555]">Slot Locks</div>
+          <div className="text-xs uppercase tracking-[0.8px] text-[var(--text-dim)]">Slot Locks</div>
           <div className="flex gap-2">
-            <button onClick={() => setLockedSlots(Array(11).fill(true))} className="text-[9px] text-[#555] hover:text-white transition-colors">Lock All</button>
-            <span className="text-[#333]">|</span>
-            <button onClick={() => setLockedSlots(Array(11).fill(false))} className="text-[9px] text-[#555] hover:text-white transition-colors">Unlock All</button>
+            <button onClick={() => setLockedSlots(Array(11).fill(true))} className="text-xs text-[var(--text-dim)] hover:text-white transition-colors">Lock All</button>
+            <span className="text-[var(--text-dim)]">|</span>
+            <button onClick={() => setLockedSlots(Array(11).fill(false))} className="text-xs text-[var(--text-dim)] hover:text-white transition-colors">Unlock All</button>
           </div>
         </div>
         <div className="grid grid-cols-6 md:grid-cols-11 gap-1">
@@ -665,15 +665,15 @@ export function OptimizerSection() {
             const short = slotName.replace("Bracelet ", "Br").replace("Earrings", "Ear").replace("Necklace", "Neck")
             return (
               <button key={i} onClick={() => toggleLock(i)}
-                className="text-center py-1.5 px-1 text-[8px] uppercase tracking-[0.5px] border transition-all"
-                style={{ borderColor: locked ? accentColor : "#222", background: locked ? `${accentColor}15` : "#0a0a0a", color: locked ? accentColor : "#555" }}
+                className="text-center py-1.5 px-1 text-xs uppercase tracking-[0.5px] border transition-all"
+                style={{ borderColor: locked ? accentColor : "var(--border)", background: locked ? `${accentColor}15` : "#0a0a0a", color: locked ? accentColor : "var(--text-dim)" }}
                 title={`${slotName}${locked ? " (locked)" : ""}`}>
                 {locked ? "🔒" : ""} {short}
               </button>
             )
           })}
         </div>
-        <div className="text-[9px] text-[#444] mt-1">Locked slots keep their current gear. Click to toggle.</div>
+        <div className="text-xs text-[var(--text-dim)] mt-1">Locked slots keep their current gear. Click to toggle.</div>
       </div>
 
       {/* Options */}
@@ -683,7 +683,7 @@ export function OptimizerSection() {
           { val: optImagines, set: setOptImagines, label: "Optimize Imagines" },
           { val: optModules, set: setOptModules, label: "Optimize Modules" },
         ].map(({ val, set, label }) => (
-          <label key={label} className="flex items-center gap-2 cursor-pointer text-[11px] text-[#888]">
+          <label key={label} className="flex items-center gap-2 cursor-pointer text-xs text-[var(--text-mid)]">
             <input type="checkbox" checked={val} onChange={e => set(e.target.checked)} style={{ accentColor }} />
             {label}
           </label>
@@ -691,66 +691,66 @@ export function OptimizerSection() {
       </div>
 
       {/* Active Configuration Summary */}
-      <div className="mb-5 border border-[#1a1a1a] bg-[#080808] p-3">
-        <div className="text-[10px] uppercase tracking-[0.8px] text-[#555] mb-2">Active Configuration</div>
+      <div className="mb-5 border border-border bg-[#080808] p-3">
+        <div className="text-xs uppercase tracking-[0.8px] text-[var(--text-dim)] mb-2">Active Configuration</div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           {/* Psychoscope */}
           <div>
-            <div className="text-[9px] uppercase tracking-[0.5px] text-[#444] mb-1">Psychoscope</div>
+            <div className="text-xs uppercase tracking-[0.5px] text-[var(--text-dim)] mb-1">Psychoscope</div>
             {psychoscopeConfig.enabled && psychoscopeConfig.projectionId ? (
-              <div className="text-[10px] text-[#888]">
-                <span className="text-[#aaa]">{MIND_PROJECTIONS.find(p => p.id === psychoscopeConfig.projectionId)?.name ?? psychoscopeConfig.projectionId}</span>
-                {psychoscopeConfig.bondLevel > 0 && <span className="text-[#666]"> · Bond Lv{psychoscopeConfig.bondLevel}</span>}
+              <div className="text-xs text-[var(--text-mid)]">
+                <span className="text-[var(--text-mid)]">{MIND_PROJECTIONS.find(p => p.id === psychoscopeConfig.projectionId)?.name ?? psychoscopeConfig.projectionId}</span>
+                {psychoscopeConfig.bondLevel > 0 && <span className="text-muted-foreground"> · Bond Lv{psychoscopeConfig.bondLevel}</span>}
               </div>
             ) : (
-              <div className="text-[10px] text-[#444] italic">None configured</div>
+              <div className="text-xs text-[var(--text-dim)] italic">None configured</div>
             )}
           </div>
 
           {/* Modules */}
           <div>
-            <div className="text-[9px] uppercase tracking-[0.5px] text-[#444] mb-1">Modules</div>
+            <div className="text-xs uppercase tracking-[0.5px] text-[var(--text-dim)] mb-1">Modules</div>
             {(() => {
               const activeAffixes = new Set<string>()
               modules.forEach(m => { if (m.a1) activeAffixes.add(m.a1); if (m.a2) activeAffixes.add(m.a2); if (m.a3) activeAffixes.add(m.a3) })
-              if (activeAffixes.size === 0) return <div className="text-[10px] text-[#444] italic">None configured</div>
-              return <div className="text-[10px] text-[#888]">{[...activeAffixes].join(", ")}</div>
+              if (activeAffixes.size === 0) return <div className="text-xs text-[var(--text-dim)] italic">None configured</div>
+              return <div className="text-xs text-[var(--text-mid)]">{[...activeAffixes].join(", ")}</div>
             })()}
           </div>
 
           {/* Talents */}
           <div>
-            <div className="text-[9px] uppercase tracking-[0.5px] text-[#444] mb-1">Talents</div>
+            <div className="text-xs uppercase tracking-[0.5px] text-[var(--text-dim)] mb-1">Talents</div>
             {selectedTalents.length > 0 && className ? (
-              <div className="text-[10px] text-[#888]">
+              <div className="text-xs text-[var(--text-mid)]">
                 {selectedTalents.length} selected
-                {talentAspd > 0 && <span className="text-[#666]"> · ASPD +{talentAspd}%</span>}
+                {talentAspd > 0 && <span className="text-muted-foreground"> · ASPD +{talentAspd}%</span>}
               </div>
             ) : (
-              <div className="text-[10px] text-[#444] italic">None selected</div>
+              <div className="text-xs text-[var(--text-dim)] italic">None selected</div>
             )}
           </div>
         </div>
-        <div className="text-[8px] text-[#333] mt-2">
+        <div className="text-xs text-[var(--text-dim)] mt-2">
           These are factored into the optimizer scoring. Configure them in their respective sections.
         </div>
       </div>
 
       {/* Run Button */}
       <button onClick={handleOptimize} disabled={running}
-        className="w-full py-3 text-[12px] font-bold uppercase tracking-[1.5px] transition-all mb-4"
+        className="w-full py-3 text-xs font-bold uppercase tracking-[1.5px] transition-all mb-4"
         style={{ background: accentColor, color: "#000", opacity: running ? 0.6 : 1 }}>
         {running ? "⏳ Optimizing…" : "⚡ Optimize Gear"}
       </button>
 
-      {status && <div className="text-center text-[11px] font-semibold mb-4" style={{ color: accentColor }}>{status}</div>}
+      {status && <div className="text-center text-xs font-semibold mb-4" style={{ color: accentColor }}>{status}</div>}
 
       {/* Results Preview */}
       {result && !running && (
-        <div className="border border-[#222] bg-[#0a0a0a] p-4 mb-4">
-          <div className="text-[11px] font-bold uppercase tracking-[1px] text-white mb-3">
+        <div className="border border-border bg-card p-4 mb-4">
+          <div className="text-xs font-bold uppercase tracking-[1px] text-white mb-3">
             Result Preview
-            {result.raidCount > 0 && <span className="text-[#888] font-normal ml-2">• Raid weapon + {result.raidCount}pc armor</span>}
+            {result.raidCount > 0 && <span className="text-[var(--text-mid)] font-normal ml-2">• Raid weapon + {result.raidCount}pc armor</span>}
           </div>
 
           {/* Stat comparison */}
@@ -759,17 +759,17 @@ export function OptimizerSection() {
               const before = currentPcts[stat] ?? 0
               const after = result.statPcts[stat] ?? 0
               const diff = after - before
-              const diffColor = diff > 0.1 ? "#4ade80" : diff < -0.1 ? "#ef4444" : "#666"
+              const diffColor = diff > 0.1 ? "#4ade80" : diff < -0.1 ? "#ef4444" : "var(--muted-foreground)"
               return (
                 <div key={stat} className="text-center">
-                  <div className="text-[8px] uppercase tracking-[0.5px] text-[#555] mb-0.5">{stat}</div>
-                  <div className="text-[13px] font-bold text-white">{after.toFixed(1)}%</div>
+                  <div className="text-xs uppercase tracking-[0.5px] text-[var(--text-dim)] mb-0.5">{stat}</div>
+                  <div className="text-sm font-bold text-white">{after.toFixed(1)}%</div>
                   {Math.abs(diff) >= 0.01 && (
-                    <div className="text-[9px] font-semibold" style={{ color: diffColor }}>
+                    <div className="text-xs font-semibold" style={{ color: diffColor }}>
                       {diff > 0 ? "+" : ""}{diff.toFixed(1)}%
                     </div>
                   )}
-                  <div className="text-[8px] text-[#444]">was {before.toFixed(1)}%</div>
+                  <div className="text-xs text-[var(--text-dim)]">was {before.toFixed(1)}%</div>
                 </div>
               )
             })}
@@ -777,25 +777,25 @@ export function OptimizerSection() {
 
           {/* Gear layout */}
           <div className="mb-4">
-            <div className="text-[9px] uppercase tracking-[0.5px] text-[#555] mb-1">Gear Layout</div>
+            <div className="text-xs uppercase tracking-[0.5px] text-[var(--text-dim)] mb-1">Gear Layout</div>
             <div className="grid grid-cols-1 gap-0.5">
               {result.gear.map((g, i) => {
                 const locked = lockedSlots[i]
                 const slotName = GAME_DATA.SLOTS[i]
                 const purpleStr = result.lt[i] && result.lt[i] !== "-" ? ` ▫ ${result.lt[i]} ${result.lv[i]}` : ""
                 return (
-                  <div key={i} className="flex items-center gap-2 text-[10px] py-0.5 px-2"
-                    style={{ color: locked ? "#555" : g.raid ? "#c084fc" : "#888" }}>
-                    <span className="w-[80px] text-[#555] truncate">{slotName}</span>
-                    <span className="text-[9px] text-[#444] w-[70px]">{g.tier}</span>
-                    {locked ? <span className="text-[#444]">🔒 kept</span> : (
+                  <div key={i} className="flex items-center gap-2 text-xs py-0.5 px-2"
+                    style={{ color: locked ? "var(--text-dim)" : g.raid ? "#c084fc" : "var(--text-mid)" }}>
+                    <span className="w-[80px] text-[var(--text-dim)] truncate">{slotName}</span>
+                    <span className="text-xs text-[var(--text-dim)] w-[70px]">{g.tier}</span>
+                    {locked ? <span className="text-[var(--text-dim)]">🔒 kept</span> : (
                       <>
                         <span className={g.raid ? "text-purple-400" : "text-amber-500"}>{g.raid ? "Raid" : "Gold"}</span>
                         <span className="text-white">{g.p}</span>
-                        <span className="text-[#666]">/</span>
-                        <span className="text-[#aaa]">{g.s}</span>
-                        {g.r && g.r !== "-" && <><span className="text-[#666]">/</span><span className="text-[#777]">{g.r}</span></>}
-                        {purpleStr && <span className="text-purple-300 text-[9px]">{purpleStr}</span>}
+                        <span className="text-muted-foreground">/</span>
+                        <span className="text-[var(--text-mid)]">{g.s}</span>
+                        {g.r && g.r !== "-" && <><span className="text-muted-foreground">/</span><span className="text-[var(--text-mid)]">{g.r}</span></>}
+                        {purpleStr && <span className="text-purple-300 text-xs">{purpleStr}</span>}
                       </>
                     )}
                   </div>
@@ -811,36 +811,36 @@ export function OptimizerSection() {
             if (affixSet.size === 0) return null
             return (
               <div className="mb-4">
-                <div className="text-[9px] uppercase tracking-[0.5px] text-[#555] mb-1">Optimized Modules</div>
+                <div className="text-xs uppercase tracking-[0.5px] text-[var(--text-dim)] mb-1">Optimized Modules</div>
                 <div className="flex flex-wrap gap-1.5">
                   {[...affixSet].map(affix => {
                     const mod = MODULE_DB.find(m => m.name === affix)
                     return (
-                      <span key={affix} className="text-[10px] px-2 py-0.5 border border-[#333] bg-[#111] text-[#aaa]">
+                      <span key={affix} className="text-xs px-2 py-0.5 border border-[#333] bg-muted text-[var(--text-mid)]">
                         {affix}{mod ? ` (${mod.cat})` : ""}
                       </span>
                     )
                   })}
                 </div>
-                <div className="text-[8px] text-[#444] mt-1">4 modules × 3 affixes, all at max level (10)</div>
+                <div className="text-xs text-[var(--text-dim)] mt-1">4 modules × 3 affixes, all at max level (10)</div>
               </div>
             )
           })()}
 
           {/* Actions */}
           <div className="flex gap-2">
-            <button onClick={applyResult} className="flex-1 py-2.5 text-[11px] font-bold uppercase tracking-[1.5px]"
+            <button onClick={applyResult} className="flex-1 py-2.5 text-xs font-bold uppercase tracking-[1.5px]"
               style={{ background: accentColor, color: "#000" }}>✓ Apply to Planner</button>
             <button onClick={() => { setResult(null); setStatus("") }}
-              className="px-6 py-2.5 text-[11px] font-bold uppercase tracking-[1.5px] border border-[#333] text-[#888] hover:text-white transition-colors">
+              className="px-6 py-2.5 text-xs font-bold uppercase tracking-[1.5px] border border-[#333] text-[var(--text-mid)] hover:text-white transition-colors">
               Discard</button>
           </div>
         </div>
       )}
 
       {/* Info */}
-      <div className="text-[9px] text-[#444] leading-4 mt-4">
-        <strong className="text-[#555]">How it works:</strong>{" "}
+      <div className="text-xs text-[var(--text-dim)] leading-4 mt-4">
+        <strong className="text-[var(--text-dim)]">How it works:</strong>{" "}
         {mode === "smart" ? (
           <>Smart mode uses a weighted multiplicative scoring function that naturally accounts for diminishing returns.
             Higher weights prioritize that stat. Tests {raidMode === "auto" ? "0/2/4pc raid configurations" : `${raidMode}pc raid`} with

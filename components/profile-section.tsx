@@ -106,7 +106,7 @@ function GearTooltip({ slot, slotIdx, g, legType = "-", legVal = 0, anchorRect }
   // ── Helpers ────────────────────────────────────────────────────────────
   const sectionTitle = (label: string) => (
     <div style={{
-      fontSize: 10, fontWeight: 700, color: "#555", letterSpacing: "0.08em",
+      fontSize: 10, fontWeight: 700, color: "var(--text-dim)", letterSpacing: "0.08em",
       textTransform: "uppercase", padding: "6px 0 3px",
       borderBottom: "1px solid #1e1e1e", marginBottom: 3,
     }}>{label}</div>
@@ -126,11 +126,11 @@ function GearTooltip({ slot, slotIdx, g, legType = "-", legVal = 0, anchorRect }
       }
       <span style={{
         flex: 1, fontSize: 12,
-        color: variant === "quality" ? "#c4b5fd" : variant === "reforge" ? "#666" : "#aaa",
+        color: variant === "quality" ? "#c4b5fd" : variant === "reforge" ? "var(--muted-foreground)" : "var(--text-mid)",
       }}>{label}</span>
       <span style={{
         fontSize: 12, fontWeight: 600, fontVariantNumeric: "tabular-nums",
-        color: variant === "quality" ? "#c4b5fd" : variant === "reforge" ? "#666" : "#fff",
+        color: variant === "quality" ? "#c4b5fd" : variant === "reforge" ? "var(--muted-foreground)" : "#fff",
       }}>{value}</span>
     </div>
   )
@@ -173,15 +173,15 @@ function GearTooltip({ slot, slotIdx, g, legType = "-", legVal = 0, anchorRect }
         <div style={{ flex: 1, minWidth: 0 }}>
           {/* Slot type + level badges */}
           <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 5 }}>
-            <span style={{ fontSize: 10, color: "#555", letterSpacing: "0.05em", textTransform: "uppercase" }}>{slot}</span>
+            <span style={{ fontSize: 10, color: "var(--text-dim)", letterSpacing: "0.05em", textTransform: "uppercase" }}>{slot}</span>
             {itemLevel > 0 && (
               <span style={{ fontSize: 10, color: color + "cc", fontWeight: 700 }}>Lv.{itemLevel}</span>
             )}
             {isRaid && (
-              <span style={{ fontSize: 9, color: "#e84545", border: "1px solid #e8454533", padding: "0 4px", letterSpacing: "0.08em" }}>RAID</span>
+              <span style={{ fontSize: 10, color: "#e84545", border: "1px solid #e8454533", padding: "0 4px", letterSpacing: "0.08em" }}>RAID</span>
             )}
             {wearingLevel > 0 && (
-              <span style={{ fontSize: 10, color: "#555" }}>Req {wearingLevel}</span>
+              <span style={{ fontSize: 10, color: "var(--text-dim)" }}>Req {wearingLevel}</span>
             )}
           </div>
           {/* Tier name */}
@@ -190,7 +190,7 @@ function GearTooltip({ slot, slotIdx, g, legType = "-", legVal = 0, anchorRect }
           </div>
           {/* Perfection bar */}
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-            <div style={{ flex: 1, height: 4, background: "#1a1a1a", borderRadius: 2, overflow: "hidden" }}>
+            <div style={{ flex: 1, height: 4, background: "var(--stat-bar-bg)", borderRadius: 2, overflow: "hidden" }}>
               <div style={{
                 height: "100%", borderRadius: 2,
                 width: `${perfPct}%`,
@@ -295,7 +295,7 @@ function GearTooltip({ slot, slotIdx, g, legType = "-", legVal = 0, anchorRect }
 
         {/* Empty state */}
         {!tierData && !sigil && (
-          <div style={{ fontSize: 11, color: "#444", textAlign: "center", padding: "10px 0" }}>No gear configured</div>
+          <div style={{ fontSize: 12, color: "var(--text-dim)", textAlign: "center", padding: "10px 0" }}>No gear configured</div>
         )}
       </div>
     </div>
@@ -332,7 +332,7 @@ function SlotButton({ slot, slotIdx, g, legType, legVal, align = "center" }: Too
       <div style={{
         width: SZ, height: SZ,
         backgroundImage: slotBg,
-        border: `1px solid ${isEmpty ? "#222" : hovered ? color : color + "55"}`,
+        border: `1px solid ${isEmpty ? "var(--border)" : hovered ? color : color + "55"}`,
         display: "flex", alignItems: "center", justifyContent: "center",
         cursor: "default", position: "relative",
         transition: "border-color 0.15s",
@@ -345,7 +345,7 @@ function SlotButton({ slot, slotIdx, g, legType, legVal, align = "center" }: Too
         <div style={{
           position: "absolute", bottom: 0, left: 0, right: 0,
           fontSize: 8, textAlign: "center", lineHeight: "14px",
-          color: isEmpty ? "#333" : "#888",
+          color: isEmpty ? "var(--text-dim)" : "var(--text-mid)",
           background: "rgba(0,0,0,0.65)", letterSpacing: 0.4,
           whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", padding: "0 3px",
         }}>
@@ -463,11 +463,11 @@ export function ProfileSection() {
       {/* Header with class/spec */}
       <div className="mb-4">
         <div className="text-2xl font-bold tracking-tight text-white mb-1">Profile</div>
-        <div className="text-[11px] text-[#555] leading-5">Hover any slot to inspect its gear stats.</div>
+        <div className="text-xs text-[var(--text-dim)] leading-5">Hover any slot to inspect its gear stats.</div>
         {className && (
           <div style={{ marginTop: 8, display: "flex", alignItems: "center", gap: 12 }}>
-            <span style={{ fontSize: 13, fontWeight: 700, color: "#fff", letterSpacing: 1 }}>{className}</span>
-            <span style={{ fontSize: 11, color: "#888", letterSpacing: 0.5 }}>·</span>
+            <span style={{ fontSize: 14, fontWeight: 700, color: "#fff", letterSpacing: 1 }}>{className}</span>
+            <span style={{ fontSize: 12, color: "var(--text-mid)", letterSpacing: 0.5 }}>·</span>
             <span style={{ fontSize: 12, fontWeight: 600, color: "#e5c229", letterSpacing: 0.5 }}>{spec}</span>
           </div>
         )}
@@ -490,7 +490,7 @@ export function ProfileSection() {
                   style={{ objectFit: "contain", flexShrink: 0 }}
                   onError={e => { (e.target as HTMLImageElement).style.opacity = "0.15" }}
                 />
-                <span style={{ flex: 1, fontSize: 12, color: "#aaa" }}>{label}</span>
+                <span style={{ flex: 1, fontSize: 12, color: "var(--text-mid)" }}>{label}</span>
                 <span style={{ fontSize: 12, fontWeight: 700, fontVariantNumeric: "tabular-nums", color: "#fff" }}>
                   {getStatValue(label)}
                 </span>

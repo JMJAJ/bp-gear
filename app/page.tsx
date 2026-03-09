@@ -41,29 +41,29 @@ function AppShell() {
 
   // Scale the entire UI so it looks identical on any physical screen width.
   // window.screen.width returns physical pixels regardless of OS DPI scaling.
-  // We normalise to a 1920px base so 2K/4K users see the same visual density
-  // as a 1080p user without having to manually zoom the browser.
+  // We normalise to a 1920px base so users on any resolution see the same visual density.
   const [uiScale, setUiScale] = useState({ zoom: 1, w: "100vw", h: "100vh" })
   useEffect(() => {
-    const physW = window.screen.width
+    // Use CSS pixels (innerWidth) so OS DPI scaling is already factored in.
+    // BASE is the viewport width the UI was designed for.
+    // z > 1 on larger screens (content scales up), z < 1 on smaller (scales down).
+    const cssW = window.innerWidth
     const BASE = 1920
-    if (physW > BASE) {
-      const z = physW / BASE
-      setUiScale({ zoom: z, w: `${(100 / z).toFixed(4)}vw`, h: `${(100 / z).toFixed(4)}vh` })
-    }
+    const z = Math.min(Math.max(cssW / BASE, 0.5), 2.0)
+    setUiScale({ zoom: z, w: `${(100 / z).toFixed(4)}vw`, h: `${(100 / z).toFixed(4)}vh` })
   }, [])
 
   return (
     <div
-      className="flex bg-black overflow-hidden font-sans scanlines"
+      className="flex bg-background overflow-hidden font-sans scanlines"
       style={{ zoom: uiScale.zoom, width: uiScale.w, height: uiScale.h }}
     >
 
       {/* ── Mobile nav overlay ── */}
       {mobileNavOpen && (
         <div className="fixed inset-0 z-50 flex lg:hidden">
-          <div className="flex-1 bg-black/70" onClick={() => setMobileNavOpen(false)} />
-          <div className="w-52 h-full bg-black border-l border-[#222] overflow-y-auto">
+          <div className="flex-1 bg-[var(--overlay)]" onClick={() => setMobileNavOpen(false)} />
+          <div className="w-52 h-full bg-background border-l border-border overflow-y-auto">
             <Sidebar />
           </div>
         </div>
@@ -72,15 +72,15 @@ function AppShell() {
       {/* ── Mobile stats overlay ── */}
       {mobileStatsOpen && (
         <div className="fixed inset-0 z-50 flex xl:hidden">
-          <div className="flex-1 bg-black/70" onClick={() => setMobileStatsOpen(false)} />
-          <div className="w-64 h-full bg-black border-l border-[#222] overflow-y-auto">
+          <div className="flex-1 bg-[var(--overlay)]" onClick={() => setMobileStatsOpen(false)} />
+          <div className="w-64 h-full bg-background border-l border-border overflow-y-auto">
             <StatsPanel />
           </div>
         </div>
       )}
 
       {/* ── Left nav sidebar (desktop only) ── */}
-      <div className="hidden lg:flex flex-col shrink-0 border-r border-[#1a1a1a]" style={{ width: 200 }}>
+      <div className="hidden lg:flex flex-col shrink-0 border-r border-border" style={{ width: 200 }}>
         <Sidebar />
       </div>
 
@@ -88,10 +88,10 @@ function AppShell() {
       <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
 
         {/* Top bar */}
-        <header className="flex items-center gap-3 px-4 lg:px-5 border-b border-[#1a1a1a] shrink-0 bg-black" style={{ height: 44 }}>
+        <header className="flex items-center gap-3 px-4 lg:px-5 border-b border-border shrink-0 bg-background" style={{ height: 44 }}>
           {/* Mobile hamburger */}
           <button
-            className="lg:hidden shrink-0 text-[#555] hover:text-white transition-colors"
+            className="lg:hidden shrink-0 text-[var(--text-dim)] hover:text-foreground transition-colors"
             onClick={() => setMobileNavOpen(true)}
             aria-label="Open menu"
           >
@@ -108,8 +108,8 @@ function AppShell() {
               style={{ color: accentColor }}>
               BPSR
             </span>
-            <span className="text-[#2a2a2a] hidden sm:block">/</span>
-            <span className="text-[11px] font-bold uppercase tracking-[1.5px] text-white truncate">
+            <span className="text-[var(--panel-border)] hidden sm:block">/</span>
+            <span className="text-[11px] font-bold uppercase tracking-[1.5px] text-foreground truncate">
               {SECTION_TITLES[section] ?? section}
             </span>
           </div>
@@ -117,13 +117,13 @@ function AppShell() {
           {/* Right controls */}
           <div className="flex items-center gap-2 shrink-0">
             <button
-              className="xl:hidden text-[9px] uppercase tracking-[1px] px-2 py-1 border border-[#2a2a2a] transition-colors"
-              style={{ color: mobileStatsOpen ? accentColor : "#555" }}
+              className="xl:hidden text-[9px] uppercase tracking-[1px] px-2 py-1 border border-[var(--panel-border)] transition-colors"
+              style={{ color: mobileStatsOpen ? accentColor : "var(--text-dim)" }}
               onClick={() => setMobileStatsOpen(v => !v)}
             >
               Stats
             </button>
-            <span className="text-[9px] text-[#2a2a2a] hidden md:block">v0.4.6-alpha</span>
+            <span className="text-[10px] text-[var(--panel-border)] hidden md:block">v0.4.6-alpha</span>
           </div>
         </header>
 
@@ -152,7 +152,7 @@ function AppShell() {
 
           {/* Right stats panel (desktop always visible) */}
           <div
-            className="hidden xl:flex flex-col shrink-0 border-l border-[#1a1a1a] overflow-y-auto"
+            className="hidden xl:flex flex-col shrink-0 border-l border-border overflow-y-auto"
             style={{ width: 248 }}
           >
             <StatsPanel />
