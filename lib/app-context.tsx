@@ -3,7 +3,7 @@ import { createContext, useContext, useState, useCallback, useEffect, useRef } f
 import {
   GAME_DATA, SIGIL_DB, MODULE_DB, MODULE_THRESHOLDS,
   type GearSlot, type StatsResult, type Build, type GearLibItem,
-  getSlotType, getTierData, getDefaultTier, applyPerfection, getBasicAttrs,
+  getSlotType, getTierData, getDefaultTier, applyPerfection, getBasicAttrs, getPerfectionFactor,
 } from "@/lib/game-data"
 import { TALENT_DATA } from "@/lib/talent-data"
 import { type PsychoscopeConfig, DEFAULT_PSYCHOSCOPE_CONFIG, computePsychoscopeEffects } from "@/lib/psychoscope-data"
@@ -58,7 +58,7 @@ export interface ExtBuffs {
 
 export type AccentColor = "yellow" | "red" | "blue" | "green"
 export type ThemeMode = "default" | "discord" | "vscode"
-export type NavSection = "classes" | "planner" | "optimizer" | "modules" | "psychoscope" | "talents" | "profile" | "curves" | "database" | "guide" | "guide_stormblade" | "dps_simulator" | "gear_sets" | "details"
+export type NavSection = "classes" | "profile" | "planner" | "optimizer" | "modules" | "psychoscope" | "talents" | "curves" | "database" | "guide" | "guide_stormblade" | "dps_simulator" | "gear_sets" | "details"
 
 const ACCENT_MAP: Record<AccentColor, string> = {
   yellow: "#e5c229",
@@ -156,7 +156,7 @@ export function calculateStats(
     }
     // Apply perfection scaling (0–100). Default 100 = no change.
     if (g.perfection !== undefined && g.perfection < 100) {
-      vals = applyPerfection(vals, Math.max(0, Math.min(100, g.perfection)))
+      vals = applyPerfection(vals, Math.max(0, Math.min(100, g.perfection)), g.tier)
     }
     if (g.p && g.p !== "-") total[g.p] = (total[g.p] ?? 0) + vals.p
     if (g.s && g.s !== "-") total[g.s] = (total[g.s] ?? 0) + vals.s
@@ -169,7 +169,7 @@ export function calculateStats(
         let ms = basicAttrs.mainStat
         // Apply perfection scaling to mainStat (same formula as combat stats)
         if (g.perfection !== undefined && g.perfection < 100) {
-          const factor = (229 + 149 * Math.max(0, Math.min(100, g.perfection)) / 100) / 378
+          const factor = getPerfectionFactor(Math.max(0, Math.min(100, g.perfection)), g.tier)
           ms = Math.round(ms * factor)
         }
         gearMainStat += ms

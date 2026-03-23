@@ -130,7 +130,7 @@ function CurveCanvas({
   currentRaw: number
   targetPct: number | null
   breakpoints: number[]
-  onHover: (point: HoverPoint | null) => void
+  onHover: (point: HoverPoint |   null) => void
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const hoverRef = useRef<HoverPoint | null>(null)

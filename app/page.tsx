@@ -19,6 +19,7 @@ import { useState, useEffect } from "react"
 
 const SECTION_TITLES: Record<string, string> = {
   classes: "Classes",
+  profile: "Profile",
   planner: "Gear Planner",
   gear_sets: "Gear Sets",
   optimizer: "Auto-Optimizer",
@@ -29,7 +30,6 @@ const SECTION_TITLES: Record<string, string> = {
   guide: "Beginner Guide",
   guide_stormblade: "Moonstrike Guide",
   talents: "Talents",
-  profile: "Profile",
   dps_simulator: "DPS Simulator",
   details: "Calculation Details",
 }
@@ -134,6 +134,7 @@ function AppShell() {
           <main className="flex-1 min-w-0 overflow-y-auto">
             <div className="px-4 lg:px-6 xl:px-10 py-5 w-full">
               {section === "classes" && <ClassesSection />}
+              {section === "profile" && <ProfileSection />}
               {section === "planner" && <PlannerSection />}
               {section === "gear_sets" && <GearSetsSection />}
               {section === "optimizer" && <OptimizerSection />}
@@ -144,7 +145,6 @@ function AppShell() {
               {section === "guide" && <GuideSection />}
               {section === "guide_stormblade" && <GuideSection variant="stormblade" />}
               {section === "talents" && <TalentsSection />}
-              {section === "profile" && <ProfileSection />}
               {section === "dps_simulator" && <DpsSimulator />}
               {section === "details" && <DetailsSection />}
             </div>

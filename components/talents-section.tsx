@@ -1,10 +1,10 @@
 "use client"
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useMemo } from "react"
 import { useApp, getStatPercentCombat, getClassForSpec } from "@/lib/app-context"
 import type { FetchedTalent } from "@/app/api/talents/route"
-import { ArrowUpRight } from "lucide-react"
-import { parseTalentTreeFromMaxrollHtml } from "@/lib/talent-tree-parser"
+import { buildTalentTreeFromTalents, type GuideTalentTreeData } from "@/lib/talent-tree-parser"
 import { TalentTree } from "@/components/talent-tree"
+import { MaxrollTalentTree } from "./maxroll-talent-tree"
 
 // ── ASPD keyword detection ─────────────────────────────────────────────────
 function isAspdTalent(desc: string): boolean {
@@ -31,6 +31,10 @@ const CLASS_MAXROLL_LINKS: Record<string, string> = {
   "Beat Performer": "https://maxroll.gg/blue-protocol/database/talents-beat-performer",
 }
 
+const PLANNER_JSON_PATHS: Record<string, string> = {
+  "Stormblade|Moonstrike": "/planner-data/stormblade-moonstrike.json",
+}
+
 export function TalentsSection() {
   const { accentColor, selectedTalents, setSelectedTalents, talentAspd, setTalentAspd, stats, spec } =
     useApp()
@@ -42,7 +46,7 @@ export function TalentsSection() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [fetchedAt, setFetchedAt] = useState<number | null>(null)
-  const [treeHtml, setTreeHtml] = useState<string | null>(null)
+  const [moonstrikeGuideData, setMoonstrikeGuideData] = useState<GuideTalentTreeData | null>(null)
 
   const fetchTalents = useCallback(async () => {
     if (!className) return
@@ -57,20 +61,6 @@ export function TalentsSection() {
       const data = await res.json()
       setTalents(data.talents ?? [])
       setFetchedAt(data.fetchedAt ?? null)
-
-      // For now we have a Maxroll HTML dump only for Moonstrike.
-      // Later we can add other class dumps and switch based on className.
-      if (className === "Stormblade" && spec === "Moonstrike") {
-        const htmlRes = await fetch(`/talent_tree_moonstrike.txt`)
-        if (htmlRes.ok) {
-          const txt = await htmlRes.text()
-          setTreeHtml(txt)
-        } else {
-          setTreeHtml(null)
-        }
-      } else {
-        setTreeHtml(null)
-      }
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : String(e))
     } finally {
@@ -98,7 +88,47 @@ export function TalentsSection() {
     t => isAspdTalent(t.desc) && selectedTalents.includes(t.id),
   )
 
-  const treeData = treeHtml ? parseTalentTreeFromMaxrollHtml(treeHtml) : null
+  const treeData = useMemo(
+    () => buildTalentTreeFromTalents({ className, spec, talents }),
+    [className, spec, talents],
+  )
+
+  const isMoonstrike = className === "Stormblade" && spec === "Moonstrike"
+  const plannerJsonPath = PLANNER_JSON_PATHS[`${className}|${spec}`]
+
+  useEffect(() => {
+    let cancelled = false
+
+    const loadPlannerData = async () => {
+      if (!plannerJsonPath) {
+        setMoonstrikeGuideData(null)
+        return
+      }
+
+      try {
+        const response = await fetch(plannerJsonPath)
+        if (!response.ok) {
+          setMoonstrikeGuideData(null)
+          return
+        }
+
+        const parsed = await response.json() as GuideTalentTreeData
+        if (!cancelled) {
+          setMoonstrikeGuideData(parsed)
+        }
+      } catch {
+        if (!cancelled) {
+          setMoonstrikeGuideData(null)
+        }
+      }
+    }
+
+    loadPlannerData()
+
+    return () => {
+      cancelled = true
+    }
+  }, [plannerJsonPath])
 
   function toggleTalentById(id: string, next: boolean) {
     setSelectedTalents(
@@ -258,13 +288,21 @@ export function TalentsSection() {
             </a>
           </div>
 
-          {treeData ? (
+          {isMoonstrike ? (
+            <MaxrollTalentTree
+              className={className}
+              spec={spec}
+              talents={talents}
+              selected={selectedTalents}
+              onToggle={toggleTalentById}
+              guideData={moonstrikeGuideData}
+            />
+          ) : treeData ? (
             <TalentTree
               data={treeData}
               selected={selectedTalents}
               onToggle={toggleTalentById}
               accentColor={accentColor}
-              maxPoints={60}
             />
           ) : (
             <div className="text-xs text-[var(--text-dim)] py-8 text-center border border-border">

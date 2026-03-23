@@ -73,7 +73,7 @@ function GearTooltip({ slot, slotIdx, g, legType = "-", legVal = 0, anchorRect }
 
   // Apply perfection scaling to get the real in-game values shown in tooltip
   const tierData = rawTierData
-    ? (perfection < 100 ? applyPerfection(rawTierData, perfection) : rawTierData)
+    ? (perfection < 100 ? applyPerfection(rawTierData, perfection, g.tier) : rawTierData)
     : null
 
   // Basic attribute lookup (user-filled data)

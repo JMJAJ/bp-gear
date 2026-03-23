@@ -188,8 +188,12 @@ All three add raw points to their chosen stat before conversion to %.`}</Formula
 
           <div>
             <div className="text-xs font-bold text-white mb-1">3 · Perfection Scaling</div>
-            <Note>Item stat values scale with perfection (0 – 100/100). The full-perfection values are the published datamine numbers. At any other perfection the stats are reduced proportionally:</Note>
-            <FormulaBlock>{`factor = ( 229 + 149 × perfection / 100 ) / 378
+            <Note>Item stat values scale with perfection (0 – 100/100). The full-perfection values are the published datamine numbers. At any other perfection the stats are reduced proportionally (curve depends on tier generation):</Note>
+            <FormulaBlock>{`Lv140-era gear:
+factor = ( 229 + 149 × perfection / 100 ) / 378
+
+Lv160+ gear:
+factor = ( 266.79 + 111.21 × perfection / 100 ) / 378
 
 primary   = round( p_max × factor )     ← standard rounding
 secondary = floor( s_max × factor )     ← floor  (raid: same as primary)

@@ -37,7 +37,7 @@ function NumberInput({ label, value, onChange, step, tip }: {
 }) {
   return (
     <div>
-      <label className="block text-xs uppercase tracking-[0.8px] text-[var(--text-dim)] mb-0.5">
+      <label className="block text-[9px] uppercase tracking-[0.8px] text-[var(--text-dim)] mb-0.5">
         {tip ? <span className="game-tooltip" data-tip={tip}>{label}</span> : label}
       </label>
       <input
@@ -46,7 +46,7 @@ function NumberInput({ label, value, onChange, step, tip }: {
         onChange={e => onChange(parseFloat(e.target.value) || 0)}
         placeholder="0"
         step={step}
-        className="w-full bg-card border border-border text-foreground px-2 py-1 text-[10px] focus:border-[var(--ring)] outline-none"
+        className="w-full bg-card border border-border text-foreground px-2 py-1 text-xs focus:border-[var(--ring)] outline-none"
       />
     </div>
   )
@@ -63,8 +63,8 @@ export function StatsPanel() {
       {/* Header */}
       <div className="px-4 py-4 border-b border-border">
         <div
-          className="font-bold tracking-[2px] uppercase"
-          style={{ color: accentColor, fontSize: 'var(--text-base)' }}
+          className="text-[10px] font-bold tracking-[2px] uppercase"
+          style={{ color: accentColor }}
         >
           Stats Overview
         </div>
@@ -73,11 +73,11 @@ export function StatsPanel() {
       {/* Psychoscope toggle */}
       <div className="px-4 py-2 border-b border-border flex items-center justify-between">
         <Tip text="Turns Psychoscope bonuses on/off (projection + branches + bond stuff).">
-          <span className="text-[10px] uppercase tracking-[1px] text-[var(--text-dim)]">Psychoscope</span>
+          <span className="text-[9px] uppercase tracking-[1px] text-[var(--text-dim)]">Psychoscope</span>
         </Tip>
         <button
           onClick={() => setPsychoscopeConfig({ ...psychoscopeConfig, enabled: !psychoscopeConfig.enabled })}
-          className="flex items-center gap-1.5 px-2 py-0.5 rounded border transition-all text-[10px] font-bold uppercase tracking-[0.5px]"
+          className="flex items-center gap-1.5 px-2 py-0.5 rounded border transition-all text-[9px] font-bold uppercase tracking-[0.5px]"
           style={{
             borderColor: psychoscopeConfig.enabled ? accentColor : '#333',
             background: psychoscopeConfig.enabled ? `${accentColor}18` : 'transparent',
@@ -109,11 +109,11 @@ export function StatsPanel() {
                     "General multiplier stat."
                   }
                 >
-                  <span className="text-[10px] text-[var(--text-mid)]">{stat}</span>
+                  <span className="text-[11px] text-[var(--text-mid)]">{stat}</span>
                 </Tip>
                 <div className="text-right">
-                  <span className="text-[10px] font-bold tabular-nums text-white">{pct.toFixed(2)}%</span>
-                  <span className="block text-[10px] text-[var(--text-dim)]">{raw.toFixed(0)} raw</span>
+                  <span className="text-[11px] font-bold tabular-nums text-white">{pct.toFixed(2)}%</span>
+                  <span className="block text-[9px] text-[var(--text-dim)]">{raw.toFixed(0)} raw</span>
                 </div>
               </div>
               <StatBar pct={pct} accent={accentColor} />
@@ -125,10 +125,10 @@ export function StatsPanel() {
         <div className="mt-1 pt-2 border-t border-[var(--muted)]">
           <div className="flex justify-between items-center">
             <Tip text="ASPD. Some skills care about 25/50/80% breakpoints.">
-              <span className="text-[10px] text-[var(--text-mid)]">Attack Speed</span>
+              <span className="text-[11px] text-[var(--text-mid)]">Attack Speed</span>
             </Tip>
             <span
-              className="text-[10px] font-bold tabular-nums"
+              className="text-[11px] font-bold tabular-nums"
               style={{ color: (stats?.aspd ?? 0) >= 80 ? "#4ade80" : (stats?.aspd ?? 0) >= 50 ? accentColor : "#fff" }}
             >
               {(stats?.aspd ?? 0).toFixed(2)}%
@@ -147,7 +147,7 @@ export function StatsPanel() {
             ))}
           </div>
           {(stats?.aspd ?? 0) > 0 && (
-            <div className="text-[10px] text-[var(--text-dim)] mb-2">
+            <div className="text-[9px] text-[var(--text-dim)] mb-2">
               {[25, 50, 80].filter(bp => (stats?.aspd ?? 0) >= bp).map(bp => (
                 <span key={bp} className="mr-1.5 inline-flex items-center gap-0.5" style={{ color: "#4ade80" }}>{bp}% <Check className="w-3 h-3" /></span>
               ))}
@@ -159,16 +159,16 @@ export function StatsPanel() {
             </div>
           )}
           {(stats?.talentAspd ?? 0) > 0 && (
-            <div className="text-[10px] mb-1" style={{ color: accentColor }}>
+            <div className="text-[9px] mb-1" style={{ color: accentColor }}>
               Talent: +{(stats?.talentAspd ?? 0).toFixed(1)}% ASPD
             </div>
           )}
 
           <div className="flex justify-between items-center">
             <Tip text="CSPD. Shorter cast/animation time for skills that scale with it.">
-              <span className="text-[10px] text-[var(--text-mid)]">Cast Speed</span>
+              <span className="text-[11px] text-[var(--text-mid)]">Cast Speed</span>
             </Tip>
-            <span className="text-[10px] font-bold tabular-nums text-white">{(stats?.cspd ?? 0).toFixed(2)}%</span>
+            <span className="text-[11px] font-bold tabular-nums text-white">{(stats?.cspd ?? 0).toFixed(2)}%</span>
           </div>
           <div className="relative h-[3px] bg-[var(--stat-bar-bg)] mt-1 mb-2">
             <div
@@ -181,9 +181,9 @@ export function StatsPanel() {
           {(stats?.ext?.illu ?? 0) > 0 && (
             <div className="flex justify-between items-center mt-1">
               <Tip text="Raw Illusion Strength (just summed up).">
-                <span className="text-[10px] text-[var(--text-mid)]">Illusion Strength</span>
+                <span className="text-[11px] text-[var(--text-mid)]">Illusion Strength</span>
               </Tip>
-              <span className="text-[10px] font-bold tabular-nums" style={{ color: accentColor }}>
+              <span className="text-[11px] font-bold tabular-nums" style={{ color: accentColor }}>
                 {(stats?.ext?.illu ?? 0).toFixed(0)}
               </span>
             </div>
@@ -195,7 +195,7 @@ export function StatsPanel() {
           k.includes("(%)") && k !== "Attack Speed (%)" && k !== "Cast Speed (%)" && v > 0
         ) && (
             <div className="mt-2 pt-2 border-t border-[var(--muted)]">
-              <div className="text-[10px] uppercase tracking-[1px] text-[var(--text-dim)] mb-1">Module Bonuses</div>
+              <div className="text-[9px] uppercase tracking-[1px] text-[var(--text-dim)] mb-1">Module Bonuses</div>
               {Object.entries(stats.moduleStats)
                 .filter(([k, v]) => k.includes("(%)") && k !== "Attack Speed (%)" && k !== "Cast Speed (%)" && v > 0)
                 .map(([k, v]) => (
@@ -210,7 +210,7 @@ export function StatsPanel() {
         {/* Weapon effects */}
         {stats?.weaponEffects && stats.weaponEffects.length > 0 && (
           <div className="mt-2 pt-2 border-t border-[var(--muted)]">
-            <div className="text-[10px] uppercase tracking-[1px] text-[var(--text-dim)] mb-1">Weapon Buffs</div>
+            <div className="text-[9px] uppercase tracking-[1px] text-[var(--text-dim)] mb-1">Weapon Buffs</div>
             {stats.weaponEffects.map((e, i) => (
               <div key={i} className="text-[10px] text-[var(--text-mid)] py-0.5">{e}</div>
             ))}
@@ -229,7 +229,7 @@ export function StatsPanel() {
         {/* Extra bonuses */}
         {stats?.extraStats && Object.keys(stats.extraStats).length > 0 && (
           <div className="mt-2 pt-2 border-t border-[var(--muted)]">
-            <div className="text-[10px] uppercase tracking-[1px] text-[var(--text-dim)] mb-1">Bonuses</div>
+            <div className="text-[9px] uppercase tracking-[1px] text-[var(--text-dim)] mb-1">Bonuses</div>
             {Object.entries(stats.extraStats).map(([s, v]) => v > 0 && (
               <div key={s} className="flex justify-between text-[10px] py-0.5">
                 <span className="text-[var(--text-mid)]">{s}</span>
@@ -251,11 +251,11 @@ export function StatsPanel() {
                 />
               )}
 
-              <span className="text-[10px] uppercase tracking-[1px] text-muted-foreground">
+              <span className="text-[9px] uppercase tracking-[1px] text-muted-foreground">
                 Psychoscope
               </span>
             
-              <span className="text-[var(--text-dim)] text-[10px]">—</span>
+              <span className="text-[var(--text-dim)] text-[9px]">—</span>
             
               <span className="text-[10px] font-semibold text-white leading-none">
                 {activeProjection.name}
@@ -265,7 +265,7 @@ export function StatsPanel() {
             {/* Effects */}
             <div className="border-b border-border">
               {stats.psychoscopeEffects.activeEffects.map((effect, i) => (
-                <div key={i} className="text-[10px] text-[var(--text-mid)] py-0.5 leading-3.5">
+                <div key={i} className="text-[9px] text-[var(--text-mid)] py-0.5 leading-3.5">
                   <span className="mr-1" style={{ color: accentColor }}>•</span>
                   {effect}
                 </div>
@@ -277,7 +277,7 @@ export function StatsPanel() {
         {/* Purple stats */}
         {stats?.purpleStats && Object.keys(stats.purpleStats).length > 0 && (
           <div className="mt-2 pt-2 border-t border-[var(--muted)]">
-            <div className="text-[10px] uppercase tracking-[1px] text-[var(--text-dim)] mb-1">Purple stats</div>
+            <div className="text-[9px] uppercase tracking-[1px] text-[var(--text-dim)] mb-1">Purple stats</div>
             {Object.entries(stats.purpleStats).map(([s, v]) => v > 0 && (
               <div key={s} className="flex justify-between text-[10px] py-0.5">
                 <span className="text-[var(--text-mid)]">{s}</span>
@@ -291,7 +291,7 @@ export function StatsPanel() {
         {(stats?.raid2pcBonus || stats?.raid4pcBonus) && (
           <div className="mt-2 pt-2 border-t border-[var(--muted)]">
             <Tip text="2pc/4pc bonus. You need enough raid armor pieces equipped.">
-              <div className="text-[10px] uppercase tracking-[1px] text-[var(--text-dim)] mb-1">Raid Set Bonuses</div>
+              <div className="text-[9px] uppercase tracking-[1px] text-[var(--text-dim)] mb-1">Raid Set Bonuses</div>
             </Tip>
             {stats?.raid2pcBonus && (
               <div className="text-[10px] py-0.5" style={{ color: (stats.raidArmorCount ?? 0) >= 2 ? accentColor : "var(--text-dim)" }}>
@@ -305,7 +305,7 @@ export function StatsPanel() {
                 {stats.raid4pcBonus.l}
               </div>
             )}
-            <div className="text-[10px] text-[var(--text-dim)] mt-1">
+            <div className="text-[9px] text-[var(--text-dim)] mt-1">
               {stats.raidArmorCount ?? 0}/6 raid armor
             </div>
           </div>
@@ -316,11 +316,11 @@ export function StatsPanel() {
       <div className="px-4 py-3 border-b border-border">
         <div className="flex justify-between items-center mb-2">
           <Tip text="Your module levels. More points = higher level.">
-            <div className="text-[10px] uppercase tracking-[1px] text-[var(--text-dim)]">Modules</div>
+            <div className="text-[9px] uppercase tracking-[1px] text-[var(--text-dim)]">Modules</div>
           </Tip>
           <button
             onClick={() => setSection("modules")}
-            className="text-[10px] uppercase tracking-[0.5px] text-[var(--text-dim)] hover:text-[var(--text-mid)] transition-colors"
+            className="text-[9px] uppercase tracking-[0.5px] text-[var(--text-dim)] hover:text-[var(--text-mid)] transition-colors"
           >
             Config <Settings className="w-3 h-3 inline" />
           </button>
@@ -337,7 +337,7 @@ export function StatsPanel() {
                 <div key={name} className="text-[10px]">
                   <span className="font-bold mr-1.5" style={{ color: col, textShadow: level === 6 ? "0 0 6px rgba(241,196,15,0.8)" : "none", }}>Lv.{level}</span>
                   <span className="text-[var(--text-mid)]">{name}</span>
-                  <span className="text-[var(--text-dim)] ml-1 text-[10px]">· {pts}pts</span>
+                  <span className="text-[var(--text-dim)] ml-1 text-[9px]">· {pts}pts</span>
                 </div>
               )
             })}
@@ -349,7 +349,7 @@ export function StatsPanel() {
 
       {/* Base raw stats */}
       {/* <div className="px-4 py-3 border-b border-border">
-        <div className="text-[10px] uppercase tracking-[1px] text-[var(--text-dim)] mb-2">
+        <div className="text-[9px] uppercase tracking-[1px] text-[var(--text-dim)] mb-2">
           <span
             className="game-tooltip"
             data-tip="Add raw stats from talents, planetarium, account levels, etc. Check your in-game character stats panel for values."
@@ -369,7 +369,7 @@ export function StatsPanel() {
 
       {/* External buffs */}
       {/* <div className="px-4 py-3">
-        <div className="text-[10px] uppercase tracking-[1px] text-[var(--text-dim)] mb-2">
+        <div className="text-[9px] uppercase tracking-[1px] text-[var(--text-dim)] mb-2">
           <span
             className="game-tooltip"
             data-tip="Add direct % bonuses from party members, Psychoscope (Polarity/Stasis), etc."

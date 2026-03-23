@@ -540,12 +540,43 @@ export function getBasicAttrs(tier: string, slotType: "weapon" | "armor" | "acce
   return GAME_DATA.BASIC_ATTRS[tier]?.[slotType] ?? null
 }
 
+function getTierLevel(tierOrLevel?: string | number): number {
+  if (typeof tierOrLevel === "number") return tierOrLevel
+  if (typeof tierOrLevel !== "string") return 0
+  const match = tierOrLevel.match(/Lv(\d+)/i)
+  return match ? parseInt(match[1], 10) : 0
+}
+
+/**
+ * Perfection factor by tier generation.
+ *
+ * Lv140-era gear follows the original S2 curve:
+ *   factor = (229 + 149 * perfection / 100) / 378
+ *
+ * Lv160+ gear uses a newer in-game curve calibrated from Lv160 tooltip values
+ * (e.g. 62/100 ring rolls), with a higher floor at low perfection:
+ *   factor = (266.79 + 111.21 * perfection / 100) / 378
+ */
+export function getPerfectionFactor(perfection: number, tierOrLevel?: string | number): number {
+  const p = Math.max(0, Math.min(100, perfection))
+  if (p >= 100) return 1
+
+  const level = getTierLevel(tierOrLevel)
+  const baselineAtZero = level >= 160 ? 266.79 : 229
+  return (baselineAtZero + (378 - baselineAtZero) * (p / 100)) / 378
+}
+
 /**
  * Scale tier stat values by perfection (0–100).
  * Derived from Lv140 datamined examples. Formula holds for all tiers because
  * it is applied proportionally to each stat's own max value.
  *
+ * Lv140-era curve:
  *   factor = (229 + 149 * perfection / 100) / 378
+ *
+ * Lv160+ curve:
+ *   factor = (266.79 + 111.21 * perfection / 100) / 378
+ *
  *   primary   = Math.round(p_max * factor)          [round]
  *   secondary = Math.floor(s_max * factor)           [floor, raid: s_max==p_max]
  *   reforge   = Math.floor(r_max * factor)           [floor]
@@ -554,15 +585,20 @@ export function getBasicAttrs(tier: string, slotType: "weapon" | "armor" | "acce
  */
 export function applyPerfection<T extends { p: number; s: number; r: number }>(
   vals: T,
-  perfection: number
+  perfection: number,
+  tierOrLevel?: string | number
 ): T {
   if (perfection >= 100) return vals
-  const factor = (229 + 149 * perfection / 100) / 378
+  const factor = getPerfectionFactor(perfection, tierOrLevel)
   const scaledP = Math.round(vals.p * factor)
   // Raid gear has s_max == p_max; scale the same way (round) so secondary stays equal to primary
   const scaledS = vals.s === vals.p ? scaledP : Math.floor(vals.s * factor)
   const scaledR = vals.r > 0 ? Math.floor(vals.r * factor) : 0
-  return { ...vals, p: scaledP, s: scaledS, r: scaledR }
+  const next: any = { ...vals, p: scaledP, s: scaledS, r: scaledR }
+  if (typeof (vals as any).illu === "number") {
+    next.illu = Math.round((vals as any).illu * factor)
+  }
+  return next as T
 }
 
 /** Look up the stat values for a tier. Returns null if tier not found. */
