@@ -18,6 +18,7 @@ export interface ModuleSlot {
   a1: string; a1lv: number
   a2: string; a2lv: number
   a3: string; a3lv: number
+  enabled?: boolean
 }
 
 export interface ImagineSlot { key: string; idx: number }
@@ -74,7 +75,7 @@ const defaultGear = (): GearSlot[] =>
   GAME_DATA.SLOTS.map((_, i) => ({ tier: getDefaultTier(i), raid: false, p: "-", s: "-", r: "-", sigName: "", sigLvl: "1" }))
 
 const defaultModules = (): ModuleSlot[] =>
-  Array.from({ length: 4 }, () => ({ rarity: "Gold", a1: "", a1lv: 10, a2: "", a2lv: 10, a3: "", a3lv: 10 }))
+  Array.from({ length: 4 }, () => ({ rarity: "Gold", a1: "", a1lv: 10, a2: "", a2lv: 10, a3: "", a3lv: 10, enabled: true }))
 
 const defaultImageSlots = (): ImagineSlot[] => [{ key: "", idx: 0 }, { key: "", idx: 0 }]
 

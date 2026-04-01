@@ -31,6 +31,7 @@ function ModuleReference({ accentColor }: { accentColor: string }) {
     Defense: false,
     Healer: false,
   })
+  const [searchQuery, setSearchQuery] = useState("")
 
   const toggleCategory = (cat: string) => {
     setExpandedCategories(prev => ({ ...prev, [cat]: !prev[cat] }))
@@ -43,22 +44,56 @@ function ModuleReference({ accentColor }: { accentColor: string }) {
     return acc
   }, {} as Record<string, typeof MODULE_DB>)
 
+  // Filter modules based on search query
+  const filteredModulesByCategory = Object.entries(modulesByCategory).reduce((acc, [cat, modules]) => {
+    if (!searchQuery.trim()) {
+      acc[cat] = modules
+      return acc
+    }
+    const query = searchQuery.toLowerCase()
+    const filtered = modules.filter(mod => {
+      // Search in module name
+      if (mod.name.toLowerCase().includes(query)) return true
+      // Search in affix names (stat names)
+      return mod.s.some(stats => 
+        Object.keys(stats).some(stat => stat.toLowerCase().includes(query))
+      )
+    })
+    if (filtered.length > 0) {
+      acc[cat] = filtered
+    }
+    return acc
+  }, {} as Record<string, typeof MODULE_DB>)
+
   const categoryOrder = ["Extreme", "Focus", "Speed", "Standard", "Defense", "Healer"]
 
   return (
     <div className="border border-border bg-card">
       <div className="px-4 py-3 border-b border-border">
-        <div className="text-xs uppercase tracking-[1.5px] font-bold mb-1" style={{ color: accentColor }}>
-          Module Reference
-        </div>
-        <div className="text-xs text-[var(--text-dim)]">
-          Level Thresholds: Lv1=1pt · Lv2=4pt · Lv3=8pt · Lv4=12pt · Lv5=16pt · Lv6=20pt
+        <div className="flex items-start justify-between gap-4 mb-2">
+          <div className="flex-1">
+            <div className="text-xs uppercase tracking-[1.5px] font-bold mb-1" style={{ color: accentColor }}>
+              Module Reference
+            </div>
+            <div className="text-xs text-[var(--text-dim)]">
+              Level Thresholds: Lv1=1pt · Lv2=4pt · Lv3=8pt · Lv4=12pt · Lv5=16pt · Lv6=20pt
+            </div>
+          </div>
+          <div className="shrink-0">
+            <input
+              type="text"
+              placeholder="Search affixes..."
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              className="text-xs px-2 py-1 border border-border bg-background text-white placeholder:text-[var(--text-dim)] focus:border-[#444] outline-none w-40"
+            />
+          </div>
         </div>
       </div>
 
       <div className="divide-y divide-[#0d0d0d]">
         {categoryOrder.map(cat => {
-          const modules = modulesByCategory[cat]
+          const modules = filteredModulesByCategory[cat]
           if (!modules) return null
           const isExpanded = expandedCategories[cat]
 
@@ -161,6 +196,7 @@ export function ModulesSection() {
   // Aggregate total pts per affix across all slots
   const totalPts: Record<string, number> = {}
   modules.forEach(mod => {
+    if (mod.enabled === false) return // Skip disabled modules
     ;[{k:mod.a1,lv:mod.a1lv},{k:mod.a2,lv:mod.a2lv},{k:mod.a3,lv:mod.a3lv}]
       .filter(a => a.k)
       .forEach(({k,lv}) => { totalPts[k] = (totalPts[k] ?? 0) + lv })
@@ -182,17 +218,28 @@ export function ModulesSection() {
           const rarity = mod.rarity
           const rarityColor = RARITY_COLORS[rarity]
           const maxAffixes = RARITY_SLOTS[rarity]
+          const isEnabled = mod.enabled !== false
 
           return (
-            <div key={i} className="border border-border bg-card">
+            <div key={i} className={`border border-border bg-card ${!isEnabled ? 'opacity-40' : ''}`}>
               <div className="flex items-center justify-between px-4 py-2.5 border-b border-border">
-                <span className="text-xs font-bold text-white uppercase tracking-[0.5px]">
-                  Module Slot {i + 1}
-                </span>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => updateModule(i, { enabled: !isEnabled })}
+                    className="text-xs px-1.5 py-0.5 border border-border hover:bg-white/[0.05] transition-colors"
+                    title={isEnabled ? "Disable this module" : "Enable this module"}
+                  >
+                    {isEnabled ? '✓' : '✗'}
+                  </button>
+                  <span className="text-xs font-bold text-white uppercase tracking-[0.5px]">
+                    Module Slot {i + 1}
+                  </span>
+                </div>
                 <select
                   value={rarity}
                   onChange={e => updateModule(i, { rarity: e.target.value as typeof mod.rarity })}
-                  className="text-xs px-2 py-0.5 font-bold border outline-none bg-card"
+                  disabled={!isEnabled}
+                  className="text-xs px-2 py-0.5 font-bold border outline-none bg-card disabled:opacity-50"
                   style={{ color: rarityColor, borderColor: rarityColor }}
                 >
                   <option value="Gold">Gold (3 Affixes)</option>
@@ -204,7 +251,7 @@ export function ModulesSection() {
               <div className="px-4 py-3 space-y-2">
                 <div className="text-xs uppercase tracking-[1px] text-[var(--text-dim)] mb-1 flex justify-between">
                   <span>Sub-Affixes</span>
-                  <span className="text-[#2a2a2a]">type · link pts (1–9)</span>
+                  <span className="text-[#2a2a2a]">type · link pts (1–10)</span>
                 </div>
                 {([
                   { keyProp: "a1" as const, lvProp: "a1lv" as const, idx: 1 },
@@ -223,7 +270,8 @@ export function ModulesSection() {
                       <select
                         value={affixName}
                         onChange={e => updateModule(i, { [keyProp]: e.target.value })}
-                        className="flex-1 text-xs px-1.5 py-1 border border-border bg-background text-[#ccc] focus:border-[#444] outline-none min-w-0"
+                        disabled={!isEnabled}
+                        className="flex-1 text-xs px-1.5 py-1 border border-border bg-background text-[#ccc] focus:border-[#444] outline-none min-w-0 disabled:opacity-50"
                       >
                         <option value="">— empty —</option>
                         {AFFIX_DB.map(a => <option key={a} value={a}>{a}</option>)}
@@ -233,13 +281,22 @@ export function ModulesSection() {
                           type="number"
                           min={1} max={10}
                           value={pts}
-                          onChange={e => updateModule(i, { [lvProp]: Math.min(10, Math.max(1, parseInt(e.target.value) || 1)) })}
-                          className="w-9 text-center text-xs px-1 py-1 border border-border bg-background text-white focus:border-[#444] outline-none"
+                          onChange={e => {
+                            const val = e.target.value
+                            if (val === '') {
+                              updateModule(i, { [lvProp]: 1 })
+                            } else {
+                              updateModule(i, { [lvProp]: Math.min(10, Math.max(1, parseInt(val) || 1)) })
+                            }
+                          }}
+                          onFocus={e => e.target.select()}
+                          disabled={!isEnabled}
+                          className="w-9 text-center text-xs px-1 py-1 border border-border bg-background text-white focus:border-[#444] outline-none disabled:opacity-50"
                           title="Link points contributed from this slot (1–10)"
                         />
                         <span className="text-xs text-[var(--text-dim)] w-5">pts</span>
                       </div>
-                      {affixName && (
+                      {affixName && isEnabled && (
                         <div
                           className="text-xs font-bold shrink-0 w-8 text-right"
                           style={{ color: lvl >= 6 ? accentColor : lvl >= 3 ? "var(--text-mid)" : "var(--text-dim)" }}

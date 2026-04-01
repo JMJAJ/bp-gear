@@ -131,9 +131,14 @@ function FactorSlot({
   available,
   isOpen,
   onToggle,
-  onSelect,
+  onSelectFactor,
   onGradeChange,
+  onBack,
+  onAccept,
   accent,
+  mode,
+  pendingFactor,
+  pendingGrade,
   isBranchedFactor,
   isSelectedBranch,
   isOtherBranch,
@@ -146,9 +151,14 @@ function FactorSlot({
   available: Factor[]
   isOpen: boolean
   onToggle: () => void
-  onSelect: (name: string) => void
+  onSelectFactor: (name: string) => void
   onGradeChange: (g: number) => void
+  onBack: () => void
+  onAccept: () => void
   accent: string
+  mode: "factor" | "grade"
+  pendingFactor?: Factor
+  pendingGrade?: number
   isBranchedFactor?: boolean
   isSelectedBranch?: boolean
   isOtherBranch?: boolean
@@ -217,7 +227,7 @@ function FactorSlot({
       </button>
       {assigned && (
         <button
-          onClick={(e) => { e.stopPropagation(); onSelect("") }}
+          onClick={(e) => { e.stopPropagation(); onSelectFactor("") }}
           className="absolute -right-5 top-1/2 -translate-y-1/2 px-1 py-1.5 rounded border text-sm leading-none transition-all hover:text-white hover:bg-[#1a0000] hover:border-red-900"
           style={{ borderColor: "var(--stat-bar-bg)", background: "#0d0d0d", color: "var(--text-dim)" }}
           title="Remove factor"
@@ -231,51 +241,82 @@ function FactorSlot({
           className="absolute z-50 mt-1 left-0 w-72 max-h-64 overflow-y-auto bg-muted border border-[var(--panel-border)] rounded shadow-2xl"
           style={{ minWidth: 240 }}
         >
-          {/* Grade selector (when assigned) */}
-          {assigned && (
-            <div className="flex items-center gap-1.5 px-2 py-2 border-b border-border">
-              <span className="text-xs text-muted-foreground uppercase">Grade:</span>
-              <div className="flex gap-0.5">
-                {Array.from({ length: 10 }, (_, i) => i + 1).map(g => (
-                  <button
-                    key={g}
-                    onClick={(e) => { e.stopPropagation(); onGradeChange(g) }}
-                    className="w-5 h-5 text-xs font-bold rounded transition-all"
-                    style={{
-                      background: slot.grade === g ? accent : "var(--stat-bar-bg)",
-                      color: slot.grade === g ? "#000" : "var(--muted-foreground)",
-                      border: `1px solid ${slot.grade === g ? accent : "var(--text-dim)"}`,
-                    }}
-                  >
-                    {g}
-                  </button>
-                ))}
+          {mode === "factor" ? (
+            <>
+              {/* Unassign option */}
+              <button
+                className="w-full text-left px-2 py-1.5 text-xs text-muted-foreground hover:bg-[var(--stat-bar-bg)] border-b border-[#0a0a0a]"
+                onClick={() => onSelectFactor("")}
+              >
+                — Remove —
+              </button>
+
+              {/* Factor list */}
+              {available.map(f => (
+                <button
+                  key={f.name}
+                  className="w-full text-left flex items-center gap-2 px-2 py-1.5 hover:bg-[var(--stat-bar-bg)] border-b border-[#0a0a0a] last:border-0"
+                  onClick={() => onSelectFactor(f.name)}
+                >
+                  <Icon src={f.icon} size={20} className="rounded shrink-0" />
+                  <div className="min-w-0">
+                    <div className="text-xs font-bold text-white">{f.name}</div>
+                    <div className="text-xs text-[var(--text-dim)] truncate">{f.description}</div>
+                  </div>
+                </button>
+              ))}
+            </>
+          ) : (
+            <>
+              <div className="px-2 py-2 border-b border-border">
+                <div className="text-[10px] uppercase tracking-[1px] text-[var(--text-dim)] mb-1">Selected Factor</div>
+                <div className="flex items-center gap-2">
+                  {(pendingFactor ?? assigned) && (
+                    <>
+                      <Icon src={(pendingFactor ?? assigned)!.icon} size={18} className="rounded shrink-0" />
+                      <span className="text-xs font-bold text-white leading-tight">{(pendingFactor ?? assigned)!.name}</span>
+                    </>
+                  )}
+                </div>
               </div>
-            </div>
+
+              <div className="px-2 py-2 border-b border-border">
+                <div className="text-[10px] uppercase tracking-[1px] text-[var(--text-dim)] mb-1">Choose Grade</div>
+                <div className="flex gap-0.5 flex-wrap">
+                  {Array.from({ length: 10 }, (_, i) => i + 1).map(g => (
+                    <button
+                      key={g}
+                      onClick={(e) => { e.stopPropagation(); onGradeChange(g) }}
+                      className="w-6 h-6 text-xs font-bold rounded transition-all"
+                      style={{
+                        background: (pendingGrade ?? slot.grade) === g ? accent : "var(--stat-bar-bg)",
+                        color: (pendingGrade ?? slot.grade) === g ? "#000" : "var(--muted-foreground)",
+                        border: `1px solid ${(pendingGrade ?? slot.grade) === g ? accent : "var(--text-dim)"}`,
+                      }}
+                    >
+                      {g}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between px-2 py-2">
+                <button
+                  className="text-xs font-bold uppercase tracking-[0.5px] px-2 py-1 rounded border border-[var(--panel-border)] text-[var(--text-mid)] hover:text-white"
+                  onClick={(e) => { e.stopPropagation(); onBack() }}
+                >
+                  Go Back
+                </button>
+                <button
+                  className="text-xs font-bold uppercase tracking-[0.5px] px-2 py-1 rounded border"
+                  style={{ borderColor: accent, color: accent, background: `${accent}18` }}
+                  onClick={(e) => { e.stopPropagation(); onAccept() }}
+                >
+                  Accept
+                </button>
+              </div>
+            </>
           )}
-
-          {/* Unassign option */}
-          <button
-            className="w-full text-left px-2 py-1.5 text-xs text-muted-foreground hover:bg-[var(--stat-bar-bg)] border-b border-[#0a0a0a]"
-            onClick={() => onSelect("")}
-          >
-            — Remove —
-          </button>
-
-          {/* Factor list */}
-          {available.map(f => (
-            <button
-              key={f.name}
-              className="w-full text-left flex items-center gap-2 px-2 py-1.5 hover:bg-[var(--stat-bar-bg)] border-b border-[#0a0a0a] last:border-0"
-              onClick={() => onSelect(f.name)}
-            >
-              <Icon src={f.icon} size={20} className="rounded shrink-0" />
-              <div className="min-w-0">
-                <div className="text-xs font-bold text-white">{f.name}</div>
-                <div className="text-xs text-[var(--text-dim)] truncate">{f.description}</div>
-              </div>
-            </button>
-          ))}
         </div>
       )}
     </div>
@@ -350,6 +391,8 @@ function InteractiveTree({
 }) {
   const rows = useMemo(() => parseNodeTree(projection.nodes), [projection.nodes])
   const [openSlot, setOpenSlot] = useState<number | null>(null)
+  const [menuStep, setMenuStep] = useState<"factor" | "grade">("factor")
+  const [pendingSelection, setPendingSelection] = useState<{ slotIdx: number; factorName: string; grade: number } | null>(null)
   const treeRef = useRef<HTMLDivElement>(null)
 
   // Close dropdown on outside click
@@ -357,6 +400,8 @@ function InteractiveTree({
     const handler = (e: MouseEvent) => {
       if (treeRef.current && !treeRef.current.contains(e.target as Node)) {
         setOpenSlot(null)
+        setMenuStep("factor")
+        setPendingSelection(null)
       }
     }
     document.addEventListener("mousedown", handler)
@@ -592,7 +637,9 @@ function InteractiveTree({
                 {row.nodes.map((n, ni) => {
                   const si = slotStart + ni
                   const slot = config.factorSlots[si] ?? { factorName: "", grade: 1 }
+                  const pendingForSlot = pendingSelection?.slotIdx === si ? pendingSelection : null
                   const assigned = slot.factorName ? findFactor(slot.factorName, className) : undefined
+                  const pendingFactor = pendingForSlot?.factorName ? findFactor(pendingForSlot.factorName, className) : undefined
                   const available = getFactorsForType(n.factorType ?? "", className)
 
                   if (isPair) {
@@ -608,15 +655,50 @@ function InteractiveTree({
                         isOpen={openSlot === si}
                         onToggle={() => {
                           if (isLockedOther) return
-                          setOpenSlot(openSlot === si ? null : si)
+                          if (openSlot === si) {
+                            setOpenSlot(null)
+                            setMenuStep("factor")
+                            setPendingSelection(null)
+                          } else {
+                            setOpenSlot(si)
+                            setMenuStep("factor")
+                            setPendingSelection(null)
+                          }
                         }}
-                        onSelect={(name) => {
+                        onSelectFactor={(name) => {
                           if (isLockedOther) return
-                          onFactorChange(si, name, slot.factorName ? slot.grade : 1)
-                          setOpenSlot(null)
+                          if (!name) {
+                            onFactorChange(si, "", 1)
+                            setOpenSlot(null)
+                            setMenuStep("factor")
+                            setPendingSelection(null)
+                            return
+                          }
+                          setPendingSelection({
+                            slotIdx: si,
+                            factorName: name,
+                            grade: slot.factorName ? slot.grade : 1,
+                          })
+                          setMenuStep("grade")
                         }}
-                        onGradeChange={(g) => onFactorChange(si, slot.factorName, g)}
+                        onGradeChange={(g) => {
+                          setPendingSelection(prev => {
+                            if (!prev || prev.slotIdx !== si) return prev
+                            return { ...prev, grade: g }
+                          })
+                        }}
+                        onBack={() => setMenuStep("factor")}
+                        onAccept={() => {
+                          if (!pendingForSlot) return
+                          onFactorChange(si, pendingForSlot.factorName, pendingForSlot.grade)
+                          setOpenSlot(null)
+                          setMenuStep("factor")
+                          setPendingSelection(null)
+                        }}
                         accent={accent}
+                        mode={openSlot === si && pendingForSlot && menuStep === "grade" ? "grade" : "factor"}
+                        pendingFactor={pendingFactor}
+                        pendingGrade={pendingForSlot?.grade}
                         isBranchedFactor={true}
                         isSelectedBranch={pairChoice === side}
                         isOtherBranch={pairChoice !== "none" && pairChoice !== side}
@@ -634,13 +716,50 @@ function InteractiveTree({
                       assigned={assigned}
                       available={available}
                       isOpen={openSlot === si}
-                      onToggle={() => setOpenSlot(openSlot === si ? null : si)}
-                      onSelect={(name) => {
-                        onFactorChange(si, name, slot.factorName ? slot.grade : 1)
-                        setOpenSlot(null)
+                      onToggle={() => {
+                        if (openSlot === si) {
+                          setOpenSlot(null)
+                          setMenuStep("factor")
+                          setPendingSelection(null)
+                        } else {
+                          setOpenSlot(si)
+                          setMenuStep("factor")
+                          setPendingSelection(null)
+                        }
                       }}
-                      onGradeChange={(g) => onFactorChange(si, slot.factorName, g)}
+                      onSelectFactor={(name) => {
+                        if (!name) {
+                          onFactorChange(si, "", 1)
+                          setOpenSlot(null)
+                          setMenuStep("factor")
+                          setPendingSelection(null)
+                          return
+                        }
+                        setPendingSelection({
+                          slotIdx: si,
+                          factorName: name,
+                          grade: slot.factorName ? slot.grade : 1,
+                        })
+                        setMenuStep("grade")
+                      }}
+                      onGradeChange={(g) => {
+                        setPendingSelection(prev => {
+                          if (!prev || prev.slotIdx !== si) return prev
+                          return { ...prev, grade: g }
+                        })
+                      }}
+                      onBack={() => setMenuStep("factor")}
+                      onAccept={() => {
+                        if (!pendingForSlot) return
+                        onFactorChange(si, pendingForSlot.factorName, pendingForSlot.grade)
+                        setOpenSlot(null)
+                        setMenuStep("factor")
+                        setPendingSelection(null)
+                      }}
                       accent={accent}
+                      mode={openSlot === si && pendingForSlot && menuStep === "grade" ? "grade" : "factor"}
+                      pendingFactor={pendingFactor}
+                      pendingGrade={pendingForSlot?.grade}
                     />
                   )
                 })}
