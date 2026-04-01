@@ -2,6 +2,17 @@
 import { useState } from "react"
 import { useApp, type GearSet } from "@/lib/app-context"
 import { getGearSetColorByIndex } from "@/lib/gear-set-colors"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
+import { Checkbox } from "@/components/ui/checkbox"
 
 export function GearSetsSection() {
   const {
@@ -12,6 +23,14 @@ export function GearSetsSection() {
   const [newSetName, setNewSetName] = useState("")
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editName, setEditName] = useState("")
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [setToDelete, setSetToDelete] = useState<GearSet | null>(null)
+  const [dontShowDeleteWarning, setDontShowDeleteWarning] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('dontShowDeleteWarning') === 'true'
+    }
+    return false
+  })
 
   const handleSave = () => {
     if (!newSetName.trim()) return
@@ -24,6 +43,30 @@ export function GearSetsSection() {
     renameGearSet(id, editName.trim())
     setEditingId(null)
     setEditName("")
+  }
+
+  const handleDeleteClick = (set: GearSet) => {
+    if (dontShowDeleteWarning) {
+      deleteGearSet(set.id)
+    } else {
+      setSetToDelete(set)
+      setDeleteDialogOpen(true)
+    }
+  }
+
+  const handleDeleteConfirm = () => {
+    if (setToDelete) {
+      deleteGearSet(setToDelete.id)
+      setSetToDelete(null)
+    }
+    setDeleteDialogOpen(false)
+  }
+
+  const handleDontShowChange = (checked: boolean) => {
+    setDontShowDeleteWarning(checked)
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('dontShowDeleteWarning', checked.toString())
+    }
   }
 
   const formatDate = (iso: string) => {
@@ -131,9 +174,7 @@ export function GearSetsSection() {
                     Rename
                   </button>
                   <button
-                    onClick={() => {
-                      if (confirm(`Delete "${set.name}"?`)) deleteGearSet(set.id)
-                    }}
+                    onClick={() => handleDeleteClick(set)}
                     className="px-2.5 py-1.5 text-xs font-bold uppercase tracking-[0.5px] border border-[#333] text-[var(--text-mid)] hover:text-red-400 hover:border-red-500/40 rounded transition-colors"
                   >
                     Delete
@@ -149,6 +190,35 @@ export function GearSetsSection() {
           <p className="text-[var(--text-dim)] text-xs mt-1">Configure your gear in the Planner, then save it here for comparison.</p>
         </div>
       )}
+
+      {/* Delete confirmation dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Gear Set</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete "{setToDelete?.name}"? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="flex items-center gap-2 py-2">
+            <Checkbox
+              id="dont-show-warning"
+              checked={dontShowDeleteWarning}
+              onCheckedChange={handleDontShowChange}
+            />
+            <label
+              htmlFor="dont-show-warning"
+              className="text-sm text-[var(--text-mid)] cursor-pointer select-none"
+            >
+              Don't show this warning again
+            </label>
+          </div>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteConfirm}>Delete</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

@@ -85,7 +85,7 @@ function ModuleReference({ accentColor }: { accentColor: string }) {
               placeholder="Search affixes..."
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              className="text-xs px-2 py-1 border border-border bg-background text-white placeholder:text-[var(--text-dim)] focus:border-[#444] outline-none w-40"
+              className="text-xs px-2 py-2 border border-border bg-background text-white placeholder:text-[var(--text-dim)] focus:border-[#444] outline-none w-40"
             />
           </div>
         </div>
