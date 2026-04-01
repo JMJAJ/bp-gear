@@ -1,5 +1,5 @@
 "use client"
-import { useEffect, useState, useMemo } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { useApp, getClassForSpec, getStatPercentCombat } from "@/lib/app-context"
 import { GAME_DATA, SIGIL_DB, SIGIL_ICONS_BASE, getTierData, getSlotType, applyPerfection, getBasicAttrs } from "@/lib/game-data"
 import type { GearSlot } from "@/lib/game-data"
@@ -58,9 +58,10 @@ interface TooltipProps {
   legVal?: number
   align?: "left" | "center" | "right"
   anchorRect?: DOMRect | null
+  layoutRect?: DOMRect | null
 }
 
-function GearTooltip({ slot, slotIdx, g, legType = "-", legVal = 0, anchorRect }: TooltipProps) {
+function GearTooltip({ slot, slotIdx, g, legType = "-", legVal = 0, align = "center", anchorRect, layoutRect }: TooltipProps) {
   const slotType = getSlotType(slotIdx)
   const rawTierData = g.tier ? getTierData(slotType, g.tier) : null
   const color = rarityColor(g.tier ?? "")
@@ -82,24 +83,50 @@ function GearTooltip({ slot, slotIdx, g, legType = "-", legVal = 0, anchorRect }
   // ── Tooltip positioning ────────────────────────────────────────────────
   // Compute position synchronously from anchorRect so there's no flash.
   const pos = useMemo(() => {
-    if (!anchorRect) return null
+    if (!anchorRect && !layoutRect) return null
     const W = 300
+    const H_EST = 380
     const MARGIN = 10
-    const GAP = 8
+    const GAP = 12
     const vw = window.innerWidth
     const vh = window.innerHeight
 
-    // Horizontal: prefer right side of slot, fall back to left
-    let left = anchorRect.right + GAP
-    if (left + W > vw - MARGIN) left = anchorRect.left - W - GAP
+    if (layoutRect) {
+      const centerX = layoutRect.left + layoutRect.width / 2
+      const centerY = layoutRect.top + layoutRect.height / 2
+      const left = Math.max(MARGIN, Math.min(vw - W - MARGIN, centerX - W / 2))
+      const top = Math.max(MARGIN, Math.min(vh - H_EST - MARGIN, centerY - H_EST / 2))
+      return { left, top }
+    }
+
+    // Horizontal: use requested alignment with viewport-safe fallback.
+    const refLeft = anchorRect!.left + anchorRect!.width / 2
+    const refRight = anchorRect!.right
+    const refTop = anchorRect!.top
+    const refWidth = anchorRect!.width
+
+    let left = refRight + GAP
+    if (align === "right") {
+      left = refLeft - W - GAP
+      if (left < MARGIN) left = refRight + GAP
+    } else if (align === "center") {
+      left = refLeft + (refWidth - W) / 2
+      if (left < MARGIN) left = refRight + GAP
+      if (left + W > vw - MARGIN) left = refLeft - W - GAP
+    } else if (left + W > vw - MARGIN) {
+      left = refLeft - W - GAP
+    }
+
+    if (left + W > vw - MARGIN) left = vw - W - MARGIN
+    if (left < MARGIN) left = MARGIN
     left = Math.max(MARGIN, Math.min(vw - W - MARGIN, left))
 
     // Vertical: align top with slot, clamp to viewport
-    let top = anchorRect.top
+    let top = refTop
     top = Math.max(MARGIN, Math.min(vh - MARGIN - 100, top)) // 100 = minimum visible
 
     return { left, top }
-  }, [anchorRect])
+  }, [align, anchorRect, layoutRect])
 
   if (!pos) return null
 
@@ -304,11 +331,12 @@ function GearTooltip({ slot, slotIdx, g, legType = "-", legVal = 0, anchorRect }
 
 // ── Slot button ────────────────────────────────────────────────────────────
 
-function SlotButton({ slot, slotIdx, g, legType, legVal, align = "center" }: TooltipProps) {
+function SlotButton({ slot, slotIdx, g, legType, legVal, align = "center", layoutRect }: TooltipProps) {
   const [hovered, setHovered] = useState(false)
   const [anchorRect, setAnchorRect] = useState<DOMRect | null>(null)
   const color = rarityColor(g.tier ?? "")
   const isEmpty = !g.tier || ((!g.p || g.p === "-") && (!g.s || g.s === "-"))
+  const iconScale = slot === "Weapon" ? 0.6 : 0.72
 
   const isCompletelyRed = g.tier && (g.tier.includes("90") || g.tier.includes("110") || g.tier.includes("130") || g.tier.includes("150") || g.tier.includes("170"))
   const slotBg = isEmpty
@@ -335,10 +363,11 @@ function SlotButton({ slot, slotIdx, g, legType, legVal, align = "center" }: Too
         border: `1px solid ${isEmpty ? "var(--border)" : hovered ? color : color + "55"}`,
         display: "flex", alignItems: "center", justifyContent: "center",
         cursor: "default", position: "relative",
+        overflow: "hidden",
         transition: "border-color 0.15s",
       }}>
         <img
-          src={SLOT_ICONS[slot]} alt={slot} width={Math.round(SZ * 0.72)} height={Math.round(SZ * 0.72)}
+          src={SLOT_ICONS[slot]} alt={slot} width={Math.round(SZ * iconScale)} height={Math.round(SZ * iconScale)}
           style={{ objectFit: "contain", opacity: isEmpty ? 0.12 : 1 }}
           onError={e => { (e.target as HTMLImageElement).style.opacity = "0.06" }}
         />
@@ -352,7 +381,7 @@ function SlotButton({ slot, slotIdx, g, legType, legVal, align = "center" }: Too
           {slot}
         </div>
       </div>
-      {hovered && <GearTooltip slot={slot} slotIdx={slotIdx} g={g} legType={legType} legVal={legVal} align={align} anchorRect={anchorRect} />}
+      {hovered && <GearTooltip slot={slot} slotIdx={slotIdx} g={g} legType={legType} legVal={legVal} align={align} anchorRect={anchorRect} layoutRect={layoutRect} />}
     </div>
   )
 }
@@ -366,6 +395,23 @@ export function ProfileSection() {
   const { gear, legendaryTypes, legendaryVals, spec, stats } = useApp()
   const slots = GAME_DATA.SLOTS as readonly string[]
   const className = getClassForSpec(spec)
+  const mainLayoutRef = useRef<HTMLDivElement | null>(null)
+  const [layoutRect, setLayoutRect] = useState<DOMRect | null>(null)
+
+  useEffect(() => {
+    const updateLayoutRect = () => {
+      if (!mainLayoutRef.current) return
+      setLayoutRect(mainLayoutRef.current.getBoundingClientRect())
+    }
+
+    updateLayoutRect()
+    window.addEventListener("resize", updateLayoutRect)
+    window.addEventListener("scroll", updateLayoutRect, true)
+    return () => {
+      window.removeEventListener("resize", updateLayoutRect)
+      window.removeEventListener("scroll", updateLayoutRect, true)
+    }
+  }, [])
 
   const weaponIdx = slots.indexOf("Weapon")
   const helmetIdx = slots.indexOf("Helmet")
@@ -382,6 +428,7 @@ export function ProfileSection() {
       legType: legendaryTypes[idx] ?? "-",
       legVal: legendaryVals[idx] ?? 0,
       align,
+      layoutRect,
     }
   }
 
@@ -405,6 +452,21 @@ export function ProfileSection() {
     { label: "Block", icon: `${ICON_BASE}/attributes/fight/common_attrblock.webp` },
   ]
 
+  const gearIllusionStrength = useMemo(() => {
+    let totalIllu = 0
+    gear.forEach((g, i) => {
+      if (!g?.tier) return
+      const slotType = getSlotType(i)
+      const rawTierData = getTierData(slotType, g.tier)
+      if (!rawTierData) return
+
+      const perf = g.perfection ?? 100
+      const tierData = perf < 100 ? applyPerfection(rawTierData, perf, g.tier) : rawTierData
+      totalIllu += tierData.illu ?? 0
+    })
+    return totalIllu
+  }, [gear])
+
   function getStatValue(label: string): string {
     if (!stats) return "0"
 
@@ -412,46 +474,76 @@ export function ProfileSection() {
       let sum = 0; for (const k of keys) sum += obj?.[k] || 0; return sum
     }
 
+    const tryGetSuffixed = (obj: any, root: string) => {
+      if (!obj) return 0
+      let sum = 0
+      for (const [k, v] of Object.entries(obj)) {
+        if (k.startsWith(`${root} (`)) sum += Number(v) || 0
+      }
+      return sum
+    }
+
+    const flatFromAll = (keys: string[]) => (
+      tryGet(stats.total, keys) +
+      tryGet(stats.extraStats, keys) +
+      tryGet(stats.purpleStats, keys) +
+      tryGet(stats.moduleStats, keys)
+    )
+
+    const pctFromAll = (keys: string[]) => (
+      tryGet(stats.purpleStats, keys) +
+      tryGet(stats.extraStats, keys) +
+      tryGet(stats.moduleStats, keys)
+    )
+
     if (label === "Max HP") {
-      const flat = tryGet(stats.extraStats, ["Max HP"]) + tryGet(stats.purpleStats, ["Max HP"]) + tryGet(stats.moduleStats, ["Max HP"])
-      const pct = tryGet(stats.purpleStats, ["Max HP (%)"]) + tryGet(stats.moduleStats, ["Max HP (%)"])
+      const flat = flatFromAll(["Max HP"])
+      const pct = pctFromAll(["Max HP (%)"])
       if (flat > 0 || pct > 0) return `${flat > 0 ? `+${flat}` : ""}${pct > 0 ? (flat > 0 ? ` (+${pct}%)` : `+${pct}%`) : ""}`
       return "0"
     }
 
     if (label === "ATK" || label === "MATK") {
-      const flat = tryGet(stats.extraStats, [label]) + tryGet(stats.moduleStats, [label])
-      const pct = tryGet(stats.purpleStats, ["Attack (%)", "Magic Attack (%)"]) + tryGet(stats.moduleStats, ["Attack (%)", "Magic Attack (%)"])
+      const flat = flatFromAll([label])
+      const pct = pctFromAll(["Attack (%)", "Magic Attack (%)"])
       if (flat > 0 || pct > 0) return `${flat > 0 ? `+${flat}` : ""}${pct > 0 ? (flat > 0 ? ` (+${pct}%)` : `+${pct}%`) : ""}`
       return "0"
     }
 
     if (label === "Agility" || label === "Strength" || label === "Intellect") {
-      const flat = tryGet(stats.extraStats, [label]) + tryGet(stats.moduleStats, [label]) + tryGet(stats.total, [label])
-      const pct = tryGet(stats.purpleStats, [`${label} (%)`]) + tryGet(stats.moduleStats, [`${label} (%)`])
+      const flat = flatFromAll([label])
+      const pct = pctFromAll([`${label} (%)`])
       if (flat > 0 || pct > 0) return `${flat > 0 ? `+${flat}` : ""}${pct > 0 ? (flat > 0 ? ` (+${pct}%)` : `+${pct}%`) : ""}`
       return "0"
     }
 
     if (label === "Endurance") {
-      const flat = tryGet(stats.extraStats, ["Endurance"]) + tryGet(stats.moduleStats, ["Endurance"])
+      const flat = flatFromAll(["Endurance"]) + tryGetSuffixed(stats.extraStats, "Endurance")
       return flat > 0 ? `+${flat}` : "0"
     }
 
     if (label === "Illusion Strength") {
-      return (stats.ext?.illu || 0) > 0 ? stats.ext.illu.toFixed(0) : "0"
+      const illu =
+        (stats.illuTotal ?? (
+          gearIllusionStrength +
+          (stats.ext?.illu || 0) +
+          flatFromAll(["Illusion Strength"]) +
+          tryGetSuffixed(stats.extraStats, "Illusion Strength")
+        ))
+      return illu > 0 ? `${Math.round(illu)}` : "0"
     }
 
     if (["Crit", "Haste", "Luck", "Mastery", "Versatility"].includes(label)) {
       const raw = stats.total[label] || 0
       const extKey = label === "Versatility" ? "vers" : label === "Mastery" ? "mast" : label === "Haste" ? "haste" : label === "Crit" ? "crit" : label === "Luck" ? "luck" : ""
       const extVal = (stats.ext as any)?.[extKey] || 0
-      const pct = getStatPercentCombat(label, raw) + extVal
+      const purplePct = stats.purpleStats?.[`${label} (%)`] || 0
+      const pct = getStatPercentCombat(label, raw) + extVal + purplePct
       return `${pct.toFixed(2)}%`
     }
 
     if (label === "Block") {
-      const block = tryGet(stats.extraStats, ["Block"]) + tryGet(stats.purpleStats, ["Block"]) + tryGet(stats.moduleStats, ["Block"])
+      const block = flatFromAll(["Block"]) + tryGetSuffixed(stats.extraStats, "Block")
       return block > 0 ? `+${block}` : "0"
     }
 
@@ -459,7 +551,7 @@ export function ProfileSection() {
   }
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", height: "100%", minHeight: "80vh" }}>
+    <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
       {/* Header with class/spec */}
       <div className="mb-4">
         <div className="text-2xl font-bold tracking-tight text-white mb-1">Profile</div>
@@ -474,8 +566,8 @@ export function ProfileSection() {
       </div>
 
       {/* Main layout: Stats left | Gear right */}
-      <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <div style={{ display: "flex", gap: 64, alignItems: "flex-start", marginLeft: 40 }}>
+      <div style={{ flex: 1, display: "flex", alignItems: "flex-start", justifyContent: "center", paddingTop: 6 }}>
+        <div ref={mainLayoutRef} style={{ display: "flex", gap: 64, alignItems: "flex-start" }}>
 
           {/* ── Left: Stats column ── */}
           <div style={{ display: "flex", flexDirection: "column", gap: 0, minWidth: 200 }}>

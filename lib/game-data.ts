@@ -856,5 +856,9 @@ export interface StatsResult {
   raid2pcBonus: { l: string; v: number; t: "aspd" | "cspd" | "stat_pct" | "mastery_crit" | "aspd_cond" | "armor_ignore" | "text"; note?: string } | null
   raid4pcBonus: { l: string; v: number; t: "aspd" | "cspd" | "stat_pct" | "mastery_crit" | "aspd_cond" | "armor_ignore" | "text" | "crit_dmg" | "haste_pct" | "main_stat_pct"; note?: string } | null
   set4pcHaste: number
+  illuBase?: number
+  illuGear?: number
+  illuPsychoscope?: number
+  illuTotal?: number
   psychoscopeEffects: import("@/lib/psychoscope-data").PsychoscopeEffects | null
 }

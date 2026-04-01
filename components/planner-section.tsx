@@ -349,6 +349,8 @@ export function PlannerSection() {
     legendaryTypes, legendaryVals,
     accentColor, imagines, setImagine, setAllImagines,
     modules, gearLib, setModules,
+    base, setBase,
+    ext, setExt,
     selectedTalents, setSelectedTalents,
     talentAspd, setTalentAspd,
     gearSets, setGearSets, importGearSets,
@@ -370,8 +372,9 @@ export function PlannerSection() {
   }
 
   function exportAll() {
+    const seasonLevel = ext.illu > 100 ? Math.round(ext.illu / 7) : Math.max(0, Math.min(100, Math.round(ext.illu || 0)))
     const payload = {
-      version: 3,
+      version: 4,
       build,
       spec,
       gear,
@@ -379,6 +382,9 @@ export function PlannerSection() {
       legendaryVals,
       imagines,
       modules,
+      base,
+      ext,
+      seasonLevel,
       gearLib,
       selectedTalents,
       talentAspd,
@@ -413,7 +419,7 @@ export function PlannerSection() {
           return
         }
 
-        // Detect our own export format (v2/v3 with gear/modules/etc.)
+        // Detect our own export format (v2/v3/v4 with gear/modules/etc.)
         if (parsed.version >= 2 || parsed.gear) {
           if (parsed.build) setBuild(parsed.build)
           if (parsed.spec) setSpec(parsed.spec)
@@ -422,6 +428,12 @@ export function PlannerSection() {
           if (parsed.legendaryVals) parsed.legendaryVals.forEach((v: number, i: number) => setLegendaryVal(i, v))
           if (parsed.modules && Array.isArray(parsed.modules)) setModules(parsed.modules)
           if (parsed.imagines && Array.isArray(parsed.imagines)) setAllImagines(parsed.imagines)
+          if (parsed.base && typeof parsed.base === "object") setBase(parsed.base)
+          if (parsed.ext && typeof parsed.ext === "object") setExt(parsed.ext)
+          if (typeof parsed.seasonLevel === "number") {
+            const seasonLv = Math.max(0, Math.min(100, Math.round(parsed.seasonLevel)))
+            setExt({ illu: seasonLv })
+          }
           if (parsed.selectedTalents && Array.isArray(parsed.selectedTalents)) setSelectedTalents(parsed.selectedTalents)
           if (typeof parsed.talentAspd === "number") setTalentAspd(parsed.talentAspd)
           if (parsed.gearSets && Array.isArray(parsed.gearSets)) importGearSets(parsed.gearSets)

@@ -148,6 +148,7 @@ export function calculateStats(
   
   const baseAgi = base.agi + 435 // untracked base agility (source unknown)
   let gearMainStat = 0
+  let gearIllu = 0
 
   gear.forEach((g, i) => {
     if (!g) return
@@ -166,6 +167,15 @@ export function calculateStats(
     if (g.perfection !== undefined && g.perfection < 100) {
       vals = applyPerfection(vals, Math.max(0, Math.min(100, g.perfection)), g.tier)
     }
+
+    // Illusion Strength from gear tier data (scaled by perfection where applicable)
+    if (tierVals) {
+      const illuVals = (g.perfection !== undefined && g.perfection < 100)
+        ? applyPerfection(tierVals, Math.max(0, Math.min(100, g.perfection)), g.tier)
+        : tierVals
+      gearIllu += illuVals.illu ?? 0
+    }
+
     if (g.p && g.p !== "-") total[g.p] = (total[g.p] ?? 0) + vals.p
     if (g.s && g.s !== "-") total[g.s] = (total[g.s] ?? 0) + vals.s
     if (g.r && g.r !== "-" && vals.r > 0) total[g.r] = (total[g.r] ?? 0) + vals.r
@@ -534,10 +544,22 @@ export function calculateStats(
   const set4pcHaste = (raid4pcBonus?.t === "haste_pct") ? raid4pcBonus.v : 0
   const cspd = hastePct * ratios.cspd + (purpleStats["Cast Speed (%)"] ?? 0) + ext.cspd + moduleCspd + extraTalentCspd + set2pcCspd
 
+  // Illusion Strength model:
+  // - Input 0..100 is treated as season level bonus (+N) and converted to base by N * 7
+  // - Input >100 is treated as already-raw base Illusion Strength
+  const illuInput = ext.illu ?? 0
+  const illuBase = illuInput > 100 ? illuInput : Math.max(0, Math.min(100, illuInput)) * 7
+  const illuPsychoscope = Object.entries(extraStats).reduce((sum, [k, v]) => {
+    if (k.startsWith("Illusion Strength (")) return sum + (Number(v) || 0)
+    return sum
+  }, 0)
+  const illuOther = Number(extraStats["Illusion Strength"] ?? 0)
+  const illuTotal = illuBase + gearIllu + illuPsychoscope + illuOther
+
   return {
     total, purpleStats, extraStats, moduleStats, powerCorePoints, appliedBonus, weaponEffects, aspd, cspd, talentAspd: talentAspdVal, ext: {
       crit: ext.crit, luck: ext.luck, haste: ext.haste, mast: ext.mast, vers: ext.vers, aspd: ext.aspd, cspd: ext.cspd, illu: ext.illu
-    }, raidArmorCount, gearMainStat, raid2pcBonus, raid4pcBonus, set4pcHaste, psychoscopeEffects: psyEffects
+    }, raidArmorCount, gearMainStat, raid2pcBonus, raid4pcBonus, set4pcHaste, illuBase, illuGear: gearIllu, illuPsychoscope, illuTotal, psychoscopeEffects: psyEffects
   }
 }
 
