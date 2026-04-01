@@ -128,6 +128,7 @@ export function StatsPanel() {
                   <span className="block text-[9px] text-[var(--text-dim)]">{raw.toFixed(0)} raw</span>
                 </div>
               </div>
+              <StatBar pct={pct} accent={accentColor} />
             </div>
           )
         })}
