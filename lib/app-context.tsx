@@ -1,5 +1,5 @@
 "use client"
-import { createContext, useContext, useState, useCallback, useEffect, useRef } from "react"
+import { createContext, useContext, useState, useCallback, useEffect, useRef, type Dispatch, type SetStateAction } from "react"
 import {
   GAME_DATA, SIGIL_DB, MODULE_DB, MODULE_THRESHOLDS,
   type GearSlot, type StatsResult, type Build, type GearLibItem,
@@ -692,7 +692,7 @@ interface AppState {
   importGearSets: (sets: GearSet[]) => void
 
   psychoscopeConfig: PsychoscopeConfig
-  setPsychoscopeConfig: (config: PsychoscopeConfig) => void
+  setPsychoscopeConfig: Dispatch<SetStateAction<PsychoscopeConfig>>
 
   switchSpec: (newSpec: string, newBuild: Build) => void
   specSnapshots: Record<string, SpecSnapshot>

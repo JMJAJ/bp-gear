@@ -633,11 +633,18 @@ export interface FactorSlotConfig {
   grade: number        // 1-10
 }
 
+export interface ProjectionBuildConfig {
+  branches: ("left" | "middle" | "right" | "none")[]
+  factorSlots: FactorSlotConfig[]
+}
+
 export interface PsychoscopeConfig {
   enabled: boolean    // master toggle — when false, all psychoscope effects are disabled
   projectionId: string
-  branches: ("left" | "right" | "none")[]
+  branches: ("left" | "middle" | "right" | "none")[]
   factorSlots: FactorSlotConfig[]
+  // Per deep-slumber snapshot so each projection keeps an independent build.
+  projectionConfigs?: Record<string, ProjectionBuildConfig>
   bondLevel: number  // 0-35
 }
 
@@ -646,6 +653,7 @@ export const DEFAULT_PSYCHOSCOPE_CONFIG: PsychoscopeConfig = {
   projectionId: "fantasia-impact",
   branches: ["none", "none", "none", "none"],
   factorSlots: Array.from({ length: 10 }, () => ({ factorName: "", grade: 1 })),
+  projectionConfigs: {},
   bondLevel: 35,
 }
 
@@ -653,7 +661,7 @@ export const DEFAULT_PSYCHOSCOPE_CONFIG: PsychoscopeConfig = {
 
 export interface SpecPriority {
   projectionId: string
-  branches: ("left" | "right" | "none")[]
+  branches: ("left" | "middle" | "right" | "none")[]
   factors: FactorSlotConfig[]
   note?: string
 }

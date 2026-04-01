@@ -19,12 +19,27 @@ import {
   type PsychoscopeNode,
   type PsychoscopeConfig,
   type FactorSlotConfig,
+  type ProjectionBuildConfig,
 } from "@/lib/psychoscope-data"
 
 // ── Tab types ──
 type MainTab = "mind_projections" | "factors"
 type ProjectionCategory = "deep-slumber" | "slumbering-dream"
 type FactorTab = "class" | "offensive" | "defensive"
+
+const createEmptyFactorSlots = (): FactorSlotConfig[] =>
+  Array.from({ length: 10 }, () => ({ factorName: "", grade: 1 }))
+
+const cloneFactorSlots = (slots?: FactorSlotConfig[]): FactorSlotConfig[] =>
+  Array.from({ length: 10 }, (_, i) => ({
+    factorName: slots?.[i]?.factorName ?? "",
+    grade: slots?.[i]?.grade ?? 1,
+  }))
+
+const createDefaultProjectionBuild = (): ProjectionBuildConfig => ({
+  branches: ["none", "none", "none", "none"],
+  factorSlots: createEmptyFactorSlots(),
+})
 
 // ── Shared tiny icon ──
 function Icon({ src, size = 20, className = "" }: { src: string; size?: number; className?: string }) {
@@ -123,6 +138,7 @@ function FactorSlot({
   isSelectedBranch,
   isOtherBranch,
   branchSide,
+  disabled,
 }: {
   node: PsychoscopeNode
   slot: FactorSlotConfig
@@ -137,10 +153,11 @@ function FactorSlot({
   isSelectedBranch?: boolean
   isOtherBranch?: boolean
   branchSide?: "left" | "right"
+  disabled?: boolean
 }) {
   const { bg, fg } = getFactorTypeColors(node.factorType)
 
-  // Branched factor styles — both sides always fully interactive (no opacity dim)
+  // Branched factor styles
   let borderColor = assigned ? fg : `${fg}44`
   let bgColor = bg
 
@@ -166,18 +183,20 @@ function FactorSlot({
   return (
     <div className="relative inline-block">
       <button
-        onClick={() => onToggle()}
-        className="flex items-center gap-1.5 px-2 py-1.5 rounded border transition-all hover:brightness-125"
+        onClick={() => { if (!disabled) onToggle() }}
+        disabled={disabled}
+        className={`flex items-center gap-1.5 px-2 py-1.5 rounded border transition-all ${disabled ? "cursor-not-allowed" : "hover:brightness-125"}`}
         style={{
           background: bgColor,
           borderColor,
-          minWidth: assigned ? 130 : 120,
+          minWidth: assigned ? 170 : 120,
+          opacity: disabled ? 0.45 : 1,
         }}
       >
         {assigned ? (
           <>
             <Icon src={assigned.icon} size={18} className="rounded shrink-0" />
-            <span className="text-xs font-bold text-white truncate max-w-[80px]">
+            <span className="text-xs font-bold text-white text-left leading-tight whitespace-normal">
               {assigned.name}
             </span>
             <span
@@ -326,7 +345,7 @@ function InteractiveTree({
   config: PsychoscopeConfig
   className: string
   accent: string
-  onBranchChange: (idx: number, choice: "left" | "right" | "none") => void
+  onBranchChange: (idx: number, choice: "left" | "middle" | "right" | "none") => void
   onFactorChange: (slotIdx: number, factorName: string, grade: number) => void
 }) {
   const rows = useMemo(() => parseNodeTree(projection.nodes), [projection.nodes])
@@ -362,10 +381,10 @@ function InteractiveTree({
   }, [rows])
 
   // Arrow color: show both sides' native colors (dimmed) when no choice is made yet
-  const getBranchColor = (idx: number, side: "left" | "right") => {
+  const getBranchColor = (idx: number, side: "left" | "middle" | "right") => {
     if (idx < 0) return "var(--text-dim)"
     const choice = config.branches[idx] ?? "none"
-    const nativeColor = side === "left" ? "#e5c229" : "#49A8FF"
+    const nativeColor = side === "left" ? "#e5c229" : side === "right" ? "#49A8FF" : "#d054e3"
     if (choice === "none") return `${nativeColor}50`   // both dimly colored before choosing
     if (choice === side) return nativeColor              // chosen side: full color
     return "var(--stat-bar-bg)"                                     // unchosen side: nearly invisible
@@ -427,7 +446,7 @@ function InteractiveTree({
                 <ArrowSplit
                   leftColor={getBranchColor(nextBI, "left")}
                   rightColor={getBranchColor(nextBI, "right")}
-                  middleColor={MIDDLE_COLOR}
+                  middleColor={getBranchColor(nextBI, "middle")}
                   hasMiddle={nextHasMiddle}
                 />
               )}
@@ -453,8 +472,9 @@ function InteractiveTree({
               <div className="flex items-start justify-center gap-8 w-full px-4">
                 {row.nodes.map((n, ni) => {
                   const side = n.branch as "left" | "middle" | "right"
-                  const isLeftOrRight = side === "left" || side === "right"
-                  const sel = isLeftOrRight && choice === side
+                  const isSelectable = side === "left" || side === "middle" || side === "right"
+                  const sel = isSelectable && choice === side
+                  const isDisabledChoice = isSelectable && choice !== "none" && choice !== side
 
                   let borderColor = "var(--panel-border)"
                   let bgColor = "#0a0a0a"
@@ -470,18 +490,21 @@ function InteractiveTree({
                     const nc = side === "left" ? "#e5c229" : "#49A8FF"
                     borderColor = `${nc}50`; opacity = 0.8
                   }
+                  if (isDisabledChoice) opacity = 0.35
 
                   const handleClick = () => {
-                    if (!isLeftOrRight) return
-                    onBranchChange(bi, choice === side ? "none" : (side as "left" | "right"))
+                    if (!isSelectable) return
+                    if (isDisabledChoice) return
+                    onBranchChange(bi, choice === side ? "none" : side)
                   }
 
                   return (
                     <button
                       key={ni}
                       onClick={handleClick}
-                      className="flex items-center gap-3 px-5 py-3 border-2 rounded-lg transition-all hover:brightness-125"
-                      style={{ borderColor, background: bgColor, opacity, minWidth: 180, cursor: isLeftOrRight ? "pointer" : "default" }}
+                      disabled={isDisabledChoice}
+                      className={`flex items-center gap-3 px-5 py-3 border-2 rounded-lg transition-all ${isDisabledChoice ? "cursor-not-allowed" : "hover:brightness-125"}`}
+                      style={{ borderColor, background: bgColor, opacity, minWidth: 180, cursor: !isSelectable ? "default" : isDisabledChoice ? "not-allowed" : "pointer" }}
                     >
                       {n.icon && <Icon src={n.icon} size={28} className="rounded" />}
                       <span className="text-sm font-bold text-white">{n.name}</span>
@@ -508,7 +531,7 @@ function InteractiveTree({
                 <ArrowMerge
                   leftColor={getBranchColor(bi, "left")}
                   rightColor={getBranchColor(bi, "right")}
-                  middleColor={MIDDLE_COLOR}
+                  middleColor={getBranchColor(bi, "middle")}
                   hasMiddle={hasMiddle}
                 />
               )}
@@ -551,7 +574,7 @@ function InteractiveTree({
                 <ArrowMerge
                   leftColor={getBranchColor(prevBI, "left")}
                   rightColor={getBranchColor(prevBI, "right")}
-                  middleColor={MIDDLE_COLOR}
+                  middleColor={getBranchColor(prevBI, "middle")}
                   hasMiddle={prevHasMiddle}
                 />
               )}
@@ -574,6 +597,7 @@ function InteractiveTree({
 
                   if (isPair) {
                     const side = n.branch as "left" | "right"
+                    const isLockedOther = pairChoice !== "none" && pairChoice !== side
                     return (
                       <FactorSlot
                         key={ni}
@@ -582,8 +606,12 @@ function InteractiveTree({
                         assigned={assigned}
                         available={available}
                         isOpen={openSlot === si}
-                        onToggle={() => setOpenSlot(openSlot === si ? null : si)}
+                        onToggle={() => {
+                          if (isLockedOther) return
+                          setOpenSlot(openSlot === si ? null : si)
+                        }}
                         onSelect={(name) => {
+                          if (isLockedOther) return
                           onFactorChange(si, name, slot.factorName ? slot.grade : 1)
                           setOpenSlot(null)
                         }}
@@ -593,6 +621,7 @@ function InteractiveTree({
                         isSelectedBranch={pairChoice === side}
                         isOtherBranch={pairChoice !== "none" && pairChoice !== side}
                         branchSide={side}
+                        disabled={isLockedOther}
                       />
                     )
                   }
@@ -624,7 +653,7 @@ function InteractiveTree({
                 <ArrowSplit
                   leftColor={getBranchColor(nextBI, "left")}
                   rightColor={getBranchColor(nextBI, "right")}
-                  middleColor={MIDDLE_COLOR}
+                  middleColor={getBranchColor(nextBI, "middle")}
                   hasMiddle={nextHasMiddle}
                 />
               )}
@@ -808,7 +837,7 @@ function ProjectionCard({
   accent: string
   config?: PsychoscopeConfig
   className?: string
-  onBranchChange?: (idx: number, choice: "left" | "right" | "none") => void
+  onBranchChange?: (idx: number, choice: "left" | "middle" | "right" | "none") => void
   onFactorChange?: (slotIdx: number, factorName: string, grade: number) => void
   interactive: boolean
 }) {
@@ -968,10 +997,25 @@ function FactorSummary({
     return infos
   }, [rows])
 
-  const totalSlots = slotInfos.filter(s => !s.isPair).length +
-    slotInfos.filter(s => s.isPair).length // branched pairs: each side is a slot
-  const filledSlots = slotInfos.filter(s => config.factorSlots[s.slotIdx]?.factorName).length
-  const emptySlots = slotInfos.filter(s => !config.factorSlots[s.slotIdx]?.factorName)
+  const disabledSlotIndices = useMemo(() => {
+    const disabled = new Set<number>()
+    let si = 0
+    rows.forEach((row) => {
+      if (row.type !== "factors") return
+      if (row.nodes.length === 2) {
+        const leftFilled = Boolean(config.factorSlots[si]?.factorName)
+        const rightFilled = Boolean(config.factorSlots[si + 1]?.factorName)
+        if (leftFilled && !rightFilled) disabled.add(si + 1)
+        if (rightFilled && !leftFilled) disabled.add(si)
+      }
+      si += row.nodes.length
+    })
+    return disabled
+  }, [rows, config.factorSlots])
+
+  const totalSlots = slotInfos.filter(s => !disabledSlotIndices.has(s.slotIdx)).length
+  const filledSlots = slotInfos.filter(s => !disabledSlotIndices.has(s.slotIdx) && config.factorSlots[s.slotIdx]?.factorName).length
+  const emptySlots = slotInfos.filter(s => !disabledSlotIndices.has(s.slotIdx) && !config.factorSlots[s.slotIdx]?.factorName)
 
   // Collect assigned factors with descriptions
   const assignedFactors = slotInfos
@@ -1074,37 +1118,112 @@ export function PsychoscopeSection() {
     deepSlumber.find(p => p.id === psychoscopeConfig.projectionId) ?? deepSlumber[0]
   const activeSlumber = slumbering[slumberIdx] ?? slumbering[0]
 
+  const pairedFactorSlots = useMemo(() => {
+    const map = new Map<number, number>()
+    let slotStart = 0
+    parseNodeTree(activeProj.nodes).forEach((row) => {
+      if (row.type !== "factors") return
+      if (row.nodes.length === 2) {
+        map.set(slotStart, slotStart + 1)
+        map.set(slotStart + 1, slotStart)
+      }
+      slotStart += row.nodes.length
+    })
+    return map
+  }, [activeProj])
+
+  useEffect(() => {
+    setPsychoscopeConfig((prev) => {
+      const factorSlots = cloneFactorSlots(prev.factorSlots)
+      let changed = false
+
+      for (const [left, right] of pairedFactorSlots.entries()) {
+        if (left > right) continue
+        if (factorSlots[left]?.factorName && factorSlots[right]?.factorName) {
+          factorSlots[right] = { factorName: "", grade: 1 }
+          changed = true
+        }
+      }
+
+      if (!changed) return prev
+
+      const projectionConfigs = { ...(prev.projectionConfigs ?? {}) }
+      projectionConfigs[prev.projectionId] = {
+        branches: [...prev.branches],
+        factorSlots: cloneFactorSlots(factorSlots),
+      }
+
+      return { ...prev, factorSlots, projectionConfigs }
+    })
+  }, [pairedFactorSlots, setPsychoscopeConfig])
+
   // Spec priority / recommended build
   const priority = SPEC_PRIORITIES[spec]
 
   const handleSelectProjection = useCallback(
     (id: string) => {
-      setPsychoscopeConfig({ ...psychoscopeConfig, projectionId: id })
+      setPsychoscopeConfig((prev) => {
+        const projectionConfigs = { ...(prev.projectionConfigs ?? {}) }
+        projectionConfigs[prev.projectionId] = {
+          branches: [...prev.branches],
+          factorSlots: cloneFactorSlots(prev.factorSlots),
+        }
+
+        const nextBuild = projectionConfigs[id] ?? createDefaultProjectionBuild()
+        projectionConfigs[id] = {
+          branches: [...nextBuild.branches],
+          factorSlots: cloneFactorSlots(nextBuild.factorSlots),
+        }
+
+        return {
+          ...prev,
+          projectionId: id,
+          branches: [...projectionConfigs[id].branches],
+          factorSlots: cloneFactorSlots(projectionConfigs[id].factorSlots),
+          projectionConfigs,
+        }
+      })
     },
-    [psychoscopeConfig, setPsychoscopeConfig],
+    [setPsychoscopeConfig],
   )
 
   const handleBranchChange = useCallback(
-    (idx: number, choice: "left" | "right" | "none") => {
-      const next = { ...psychoscopeConfig, branches: [...psychoscopeConfig.branches] }
-      next.branches[idx] = choice
-      setPsychoscopeConfig(next)
+    (idx: number, choice: "left" | "middle" | "right" | "none") => {
+      setPsychoscopeConfig((prev) => {
+        const branches = [...prev.branches]
+        branches[idx] = choice
+        const projectionConfigs = { ...(prev.projectionConfigs ?? {}) }
+        projectionConfigs[prev.projectionId] = {
+          branches: [...branches],
+          factorSlots: cloneFactorSlots(prev.factorSlots),
+        }
+        return { ...prev, branches, projectionConfigs }
+      })
     },
-    [psychoscopeConfig, setPsychoscopeConfig],
+    [setPsychoscopeConfig],
   )
 
   const handleFactorChange = useCallback(
     (slotIdx: number, factorName: string, grade: number) => {
-      console.log("handleFactorChange", { slotIdx, factorName, grade, currentSlots: psychoscopeConfig.factorSlots })
-      const next = {
-        ...psychoscopeConfig,
-        factorSlots: [...psychoscopeConfig.factorSlots],
-      }
-      next.factorSlots[slotIdx] = { factorName, grade }
-      console.log("next.factorSlots", next.factorSlots)
-      setPsychoscopeConfig(next)
+      setPsychoscopeConfig((prev) => {
+        const factorSlots = cloneFactorSlots(prev.factorSlots)
+        factorSlots[slotIdx] = { factorName, grade }
+
+        const pairedSlot = pairedFactorSlots.get(slotIdx)
+        if (pairedSlot !== undefined && factorName) {
+          factorSlots[pairedSlot] = { factorName: "", grade: 1 }
+        }
+
+        const projectionConfigs = { ...(prev.projectionConfigs ?? {}) }
+        projectionConfigs[prev.projectionId] = {
+          branches: [...prev.branches],
+          factorSlots: cloneFactorSlots(factorSlots),
+        }
+
+        return { ...prev, factorSlots, projectionConfigs }
+      })
     },
-    [psychoscopeConfig, setPsychoscopeConfig],
+    [pairedFactorSlots, setPsychoscopeConfig],
   )
 
   const handleLoadRecommended = useCallback(() => {
@@ -1114,22 +1233,43 @@ export function PsychoscopeSection() {
       ...base,
       ...Array.from({ length: Math.max(0, 10 - base.length) }, () => ({ factorName: "", grade: 1 })),
     ]
-    setPsychoscopeConfig({
-      ...psychoscopeConfig,
-      projectionId: priority.projectionId,
-      branches: [...priority.branches],
-      factorSlots: padded,
-      bondLevel: psychoscopeConfig.bondLevel,
+    setPsychoscopeConfig((prev) => {
+      const projectionConfigs = { ...(prev.projectionConfigs ?? {}) }
+      projectionConfigs[prev.projectionId] = {
+        branches: [...prev.branches],
+        factorSlots: cloneFactorSlots(prev.factorSlots),
+      }
+      projectionConfigs[priority.projectionId] = {
+        branches: [...priority.branches],
+        factorSlots: cloneFactorSlots(padded),
+      }
+      return {
+        ...prev,
+        projectionId: priority.projectionId,
+        branches: [...priority.branches],
+        factorSlots: cloneFactorSlots(padded),
+        projectionConfigs,
+        bondLevel: prev.bondLevel,
+      }
     })
-  }, [priority, setPsychoscopeConfig, psychoscopeConfig])
+  }, [priority, setPsychoscopeConfig])
 
   const handleClearAll = useCallback(() => {
-    setPsychoscopeConfig({
-      ...psychoscopeConfig,
-      branches: ["left", "left", "left", "left"],
-      factorSlots: Array.from({ length: 10 }, () => ({ factorName: "", grade: 1 })),
+    const cleared = createDefaultProjectionBuild()
+    setPsychoscopeConfig((prev) => {
+      const projectionConfigs = { ...(prev.projectionConfigs ?? {}) }
+      projectionConfigs[prev.projectionId] = {
+        branches: [...cleared.branches],
+        factorSlots: cloneFactorSlots(cleared.factorSlots),
+      }
+      return {
+        ...prev,
+        branches: [...cleared.branches],
+        factorSlots: cloneFactorSlots(cleared.factorSlots),
+        projectionConfigs,
+      }
     })
-  }, [psychoscopeConfig, setPsychoscopeConfig])
+  }, [setPsychoscopeConfig])
 
   const activeCls = CLASS_FACTORS[classIdx] ?? CLASS_FACTORS[0]
 
