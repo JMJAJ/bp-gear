@@ -35,9 +35,16 @@ const SECTION_TITLES: Record<string, string> = {
 }
 
 function AppShell() {
-  const { section, accentColor } = useApp()
+  const { section, accentColor, spec, setSection } = useApp()
   const [mobileNavOpen, setMobileNavOpen] = useState(false)
   const [mobileStatsOpen, setMobileStatsOpen] = useState(false)
+
+  // Auto-forward to planner if class is already chosen
+  useEffect(() => {
+    if (section === "classes" && spec) {
+      setSection("planner")
+    }
+  }, [section, spec, setSection])
 
   // Scale the entire UI so it looks identical on any physical screen width.
   // window.screen.width returns physical pixels regardless of OS DPI scaling.
