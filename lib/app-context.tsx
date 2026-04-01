@@ -556,6 +556,55 @@ export function calculateStats(
   const illuOther = Number(extraStats["Illusion Strength"] ?? 0)
   const illuTotal = illuBase + gearIllu + illuPsychoscope + illuOther
 
+  // ═══════════════════════════════════════════════════════════
+  // CONSOLE LOG: Stat Calculation Breakdown
+  // ═══════════════════════════════════════════════════════════
+  console.log("%c═══ STAT CALCULATIONS ═══", "color: #00ff00; font-weight: bold; font-size: 14px");
+  
+  const stats = ["Crit", "Haste", "Luck", "Mastery", "Versatility"];
+  stats.forEach(stat => {
+    const raw = total[stat];
+    const pct = getStatPercentCombat(stat, raw);
+    const purple = purpleStats[`${stat} (%)`] || 0;
+    const extVal = (ext as any)[stat.toLowerCase().substring(0, 4)] || 0;
+    const final = pct + purple + extVal;
+    
+    console.log(`\n%c${stat}`, "color: #ffaa00; font-weight: bold");
+    console.log(`  Base: ${base[stat.toLowerCase().substring(0, 4)] || 0}`);
+    console.log(`  Gear: ${raw - (base[stat.toLowerCase().substring(0, 4)] || 0)}`);
+    console.log(`  Raw Total: ${raw}`);
+    console.log(`  → ${pct.toFixed(2)}% (formula: ${GAME_DATA.CONSTANTS[stat].base} + ${raw}/(${raw}+${GAME_DATA.CONSTANTS[stat].c})×100)`);
+    if (purple > 0) console.log(`  + Purple: ${purple}%`);
+    if (extVal > 0) console.log(`  + External: ${extVal}%`);
+    console.log(`  %cFinal: ${final.toFixed(2)}%`, "color: #00ff00; font-weight: bold");
+  });
+
+  console.log(`\n%cAttack Speed`, "color: #ffaa00; font-weight: bold");
+  console.log(`  Haste%: ${hastePct.toFixed(2)}%`);
+  console.log(`  Ratio: ${aspdRatio}`);
+  console.log(`  → ${(hastePct * aspdRatio).toFixed(2)}%`);
+  if (purpleStats["Attack Speed (%)"] > 0) console.log(`  + Purple: ${purpleStats["Attack Speed (%)"]}%`);
+  if (moduleAspd > 0) console.log(`  + Module: ${moduleAspd}%`);
+  if (talentAspdVal > 0) console.log(`  + Talent: ${talentAspdVal}%`);
+  if (extraTalentAspd > 0) console.log(`  + Extra Talent: ${extraTalentAspd}%`);
+  if (set2pcAspd > 0) console.log(`  + 2pc Set: ${set2pcAspd}%`);
+  if (set2pcAspdCond > 0) console.log(`  + 2pc Conditional: ${set2pcAspdCond}%`);
+  if (ext.aspd > 0) console.log(`  + External: ${ext.aspd}%`);
+  console.log(`  %cFinal: ${aspd.toFixed(2)}%`, "color: #00ff00; font-weight: bold");
+
+  console.log(`\n%cCast Speed`, "color: #ffaa00; font-weight: bold");
+  console.log(`  Haste%: ${hastePct.toFixed(2)}%`);
+  console.log(`  Ratio: ${ratios.cspd}`);
+  console.log(`  → ${(hastePct * ratios.cspd).toFixed(2)}%`);
+  if (purpleStats["Cast Speed (%)"] > 0) console.log(`  + Purple: ${purpleStats["Cast Speed (%)"]}%`);
+  if (moduleCspd > 0) console.log(`  + Module: ${moduleCspd}%`);
+  if (extraTalentCspd > 0) console.log(`  + Extra Talent: ${extraTalentCspd}%`);
+  if (set2pcCspd > 0) console.log(`  + 2pc Set: ${set2pcCspd}%`);
+  if (ext.cspd > 0) console.log(`  + External: ${ext.cspd}%`);
+  console.log(`  %cFinal: ${cspd.toFixed(2)}%`, "color: #00ff00; font-weight: bold");
+
+  console.log("\n═══════════════════════════════════\n");
+
   return {
     total, purpleStats, extraStats, moduleStats, powerCorePoints, appliedBonus, weaponEffects, aspd, cspd, talentAspd: talentAspdVal, ext: {
       crit: ext.crit, luck: ext.luck, haste: ext.haste, mast: ext.mast, vers: ext.vers, aspd: ext.aspd, cspd: ext.cspd, illu: ext.illu
