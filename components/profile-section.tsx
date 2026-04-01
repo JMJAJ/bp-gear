@@ -166,6 +166,7 @@ function GearTooltip({ slot, slotIdx, g, legType = "-", legVal = 0, align = "cen
   const itemLevel = levelMatch ? parseInt(levelMatch[1]) : 0
   const wearingLevel = itemLevel >= 140 ? 60 : itemLevel >= 120 ? 50 : itemLevel >= 80 ? 40 : itemLevel >= 60 ? 30 : 0
   const isRaid = rawTierData?.raid ?? g.raid
+  const showPurpleStat = !isRaid && !!legType && legType !== "-" && legVal > 0
   const perfPct = perfection
 
   const isCompletelyRed = g.tier && (g.tier.includes("90") || g.tier.includes("110") || g.tier.includes("130") || g.tier.includes("150") || g.tier.includes("170"))
@@ -270,11 +271,11 @@ function GearTooltip({ slot, slotIdx, g, legType = "-", legVal = 0, align = "cen
         )}
 
         {/* Advanced Attributes */}
-        {tierData && (g.p && g.p !== "-" || g.s && g.s !== "-" || g.r && g.r !== "-" || (legType && legType !== "-" && legVal > 0)) && (
+        {tierData && (g.p && g.p !== "-" || g.s && g.s !== "-" || g.r && g.r !== "-" || showPurpleStat) && (
           <div style={{ marginBottom: 4 }}>
             {sectionTitle("Advanced Attributes")}
             {/* Purple stat — quality accent */}
-            {legType && legType !== "-" && legVal > 0 && (
+            {showPurpleStat && (
               attrRow(
                 ATTR_ICONS["ATK"],
                 legType,
