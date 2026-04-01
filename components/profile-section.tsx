@@ -67,8 +67,9 @@ function GearTooltip({ slot, slotIdx, g, legType = "-", legVal = 0, align = "cen
   const color = rarityColor(g.tier ?? "")
 
   const sigil = g.sigName ? SIGIL_DB.find(s => s.n === g.sigName) : null
-  const sigilLvl = parseInt(g.sigLvl) || 1
-  const sigilData = sigil?.d[sigilLvl] ?? sigil?.d[1]
+  const requestedSigilLvl = parseInt(g.sigLvl) || 1
+  const sigilLvl = sigil?.d[requestedSigilLvl] ? requestedSigilLvl : 1
+  const sigilData = sigil?.d[sigilLvl]
 
   const perfection = g.perfection ?? 100
 
@@ -311,7 +312,10 @@ function GearTooltip({ slot, slotIdx, g, legType = "-", legVal = 0, align = "cen
                 alt={sigil.n} width={20} height={20}
                 style={{ objectFit: "contain" }}
               />
-              <span style={{ fontSize: 12, fontWeight: 700, color: "#e5c229" }}>{sigil.n}</span>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flex: 1, gap: 8, minWidth: 0 }}>
+                <span style={{ fontSize: 12, fontWeight: 700, color: "#e5c229", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{sigil.n}</span>
+                <span style={{ fontSize: 10, color: "var(--text-dim)", fontWeight: 600, flexShrink: 0 }}>Lv. {sigilLvl}</span>
+              </div>
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
               {Object.entries(sigilData).map(([stat, val]) => (

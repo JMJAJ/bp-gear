@@ -120,7 +120,7 @@ function AppShell() {
               className="xl:hidden text-[9px] uppercase tracking-[1px] px-2 py-1 border border-[var(--panel-border)] transition-colors"
               style={{ color: mobileStatsOpen ? accentColor : "var(--text-dim)" }}
               onClick={() => setMobileStatsOpen(v => !v)}
-            >
+            > 
               Stats
             </button>
             <span className="text-[10px] text-[var(--panel-border)] hidden md:block">v0.5.1-alpha</span>
