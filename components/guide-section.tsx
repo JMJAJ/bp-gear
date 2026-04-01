@@ -84,8 +84,8 @@ export function GuideSection({ variant }: { variant?: "stormblade" }) {
         </Block>
 
         <Block title="Imagine Slots">
-          <KV k="Slot 1" v="Storm Goblin King (Luck) — 500 Luck flat at any tier" accent />
-          <KV k="Slot 2" v="Flamehorn (Luck) — 500 Luck flat at any tier" />
+          <KV k="Slot 1" v="Storm Goblin King — 500 Luck flat at any tier" accent />
+          <KV k="Slot 2" v="Flamehorn — 500 Luck flat at any tier" />
           <KV k="Upgrade Order" v="Phantom Arachnocrab/Celestial Flier if budget allows" />
         </Block>
 

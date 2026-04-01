@@ -305,21 +305,9 @@ function optimizeImagines(gear: GearSlot[], lt: string[], lv: number[], config: 
   let bestImg = config.imagines.map(x => ({ ...x }))
   let { score: bestScore, pcts: bestPcts } = scoreAllocation(gear, bestImg, config.modules, config, lt, lv)
 
-  const statImgs: Record<string, string[]> = {}
-  for (const key of imgKeys) {
-    const stat = GAME_DATA.IMAGINE.OPTIONS[key].stat
-    if (!statImgs[stat]) statImgs[stat] = []
-    statImgs[stat].push(key)
-  }
-  const bestPerStat: { key: string; stat: string }[] = []
-  for (const [stat, keys] of Object.entries(statImgs)) {
-    let bestKey = keys[0]; let bestVal = 0
-    for (const k of keys) { const v = GAME_DATA.IMAGINE.OPTIONS[k].vals[5] ?? 0; if (v > bestVal) { bestVal = v; bestKey = k } }
-    bestPerStat.push({ key: bestKey, stat })
-  }
-  for (let a = 0; a < bestPerStat.length; a++) {
-    for (let b = a; b < bestPerStat.length; b++) {
-      const testImg = [{ key: bestPerStat[a].key, idx: 5 }, { key: bestPerStat[b].key, idx: 5 }]
+  for (let a = 0; a < imgKeys.length; a++) {
+    for (let b = a; b < imgKeys.length; b++) {
+      const testImg = [{ key: imgKeys[a], idx: 5 }, { key: imgKeys[b], idx: 5 }]
       const { score } = scoreAllocation(gear, testImg, config.modules, config, lt, lv)
       if (score > bestScore) {
         bestScore = score; bestImg = testImg.map(x => ({ ...x }))

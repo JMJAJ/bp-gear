@@ -4,6 +4,7 @@ import {
   GAME_DATA, SIGIL_DB, MODULE_DB, MODULE_THRESHOLDS,
   type GearSlot, type StatsResult, type Build, type GearLibItem,
   getSlotType, getTierData, getDefaultTier, applyPerfection, getBasicAttrs, getPerfectionFactor,
+  getImagineOption, normalizeImagineKey,
 } from "@/lib/game-data"
 import { TALENT_DATA } from "@/lib/talent-data"
 import { type PsychoscopeConfig, DEFAULT_PSYCHOSCOPE_CONFIG, computePsychoscopeEffects } from "@/lib/psychoscope-data"
@@ -76,6 +77,13 @@ const defaultModules = (): ModuleSlot[] =>
   Array.from({ length: 4 }, () => ({ rarity: "Gold", a1: "", a1lv: 10, a2: "", a2lv: 10, a3: "", a3lv: 10 }))
 
 const defaultImageSlots = (): ImagineSlot[] => [{ key: "", idx: 0 }, { key: "", idx: 0 }]
+
+function normalizeImagineSlots(slots: ImagineSlot[]): ImagineSlot[] {
+  return slots.map((im) => ({
+    key: normalizeImagineKey(im?.key ?? ""),
+    idx: typeof im?.idx === "number" ? im.idx : 0,
+  }))
+}
 
 const defaultBase = (): BaseStats => ({ vers: 0, mast: 0, haste: 0, crit: 0, luck: 0, agi: 0 })
 const defaultBuffs = (): ExtBuffs => ({ crit: 0, luck: 0, haste: 0, mast: 0, vers: 0, aspd: 0, cspd: 0, illu: 0 })
@@ -197,8 +205,14 @@ export function calculateStats(
 
   imagines.forEach(im => {
     if (im.key) {
-      const imgData = GAME_DATA.IMAGINE.OPTIONS[im.key]
-      if (imgData) total[imgData.stat] = (total[imgData.stat] ?? 0) + imgData.vals[im.idx]
+      const imgData = getImagineOption(im.key)
+      if (imgData) {
+        for (const eff of imgData.effects) {
+          const val = eff.vals[im.idx] ?? eff.vals[eff.vals.length - 1] ?? 0
+          if (total[eff.stat] !== undefined) total[eff.stat] = (total[eff.stat] ?? 0) + val
+          else extraStats[eff.stat] = (extraStats[eff.stat] ?? 0) + val
+        }
+      }
     }
   })
 
@@ -362,12 +376,14 @@ export function calculateStats(
     appliedBonus = raidBonus
   }
   if (hasRaidWeapon && weaponBuff) {
-    if (weaponBuff.b1 && total[weaponBuff.b1] !== undefined) {
-      total[weaponBuff.b1] *= (1 + weaponBuff.b1v / 100)
+    // Weapon buff stat bonuses (e.g., "Luck +6%", "Haste +6%") are combat-only modifiers.
+    // They do NOT change the character panel stats display — confirmed by comparing
+    // in-game values (which exclude these) against the app output.
+    // They are tracked here only for display in "Weapon Buffs" and for DPS sim use.
+    if (weaponBuff.b1 && weaponBuff.b1v) {
       weaponEffects.push(`${weaponBuff.b1} +${weaponBuff.b1v}%`)
     }
-    if (weaponBuff.b2 && total[weaponBuff.b2] !== undefined) {
-      total[weaponBuff.b2] *= (1 + weaponBuff.b2v / 100)
+    if (weaponBuff.b2 && weaponBuff.b2v) {
       weaponEffects.push(`${weaponBuff.b2} +${weaponBuff.b2v}%`)
     }
     if (weaponBuff.other) weaponEffects.push(weaponBuff.other)
@@ -687,7 +703,16 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   const setImagine = useCallback((i: number, patch: Partial<ImagineSlot>) => {
-    setImagines(prev => { const n = [...prev]; n[i] = { ...n[i], ...patch }; return n })
+    setImagines(prev => {
+      const n = [...prev]
+      const nextKey = patch.key !== undefined ? normalizeImagineKey(patch.key) : n[i].key
+      n[i] = { ...n[i], ...patch, key: nextKey }
+      return n
+    })
+  }, [])
+
+  const setAllImagines = useCallback((next: ImagineSlot[]) => {
+    setImagines(normalizeImagineSlots(next))
   }, [])
 
   const updateModule = useCallback((i: number, patch: Partial<ModuleSlot>) => {
@@ -743,11 +768,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setGearState(set.gear.map(g => ({ ...g })))
     setLegendaryTypes([...set.legendaryTypes])
     setLegendaryVals([...set.legendaryVals])
-    setImagines(set.imagines.map(im => ({ ...im })))
+    setAllImagines(set.imagines.map(im => ({ ...im })))
     setModules(set.modules.map(m => ({ ...m })))
     setSelectedTalents([...set.selectedTalents])
     setTalentAspd(set.talentAspd)
-  }, [gearSets])
+  }, [gearSets, setAllImagines])
 
   const renameGearSet = useCallback((id: string, name: string) => {
     setGearSets(prev => prev.map(s => s.id === id ? { ...s, name } : s))
@@ -791,7 +816,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         setGearState(snap.gear.map(g => ({ ...g })))
         setLegendaryTypes([...snap.legendaryTypes])
         setLegendaryVals([...snap.legendaryVals])
-        setImagines(snap.imagines.map(im => ({ ...im })))
+        setAllImagines(snap.imagines.map(im => ({ ...im })))
         setModules(snap.modules.map(m => ({ ...m })))
         setSelectedTalents([...snap.selectedTalents])
         setTalentAspd(snap.talentAspd)
@@ -815,7 +840,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     // 3. Set new build and spec
     setBuildState(newBuild)
     setSpec(newSpec)
-  }, [spec, gear, legendaryTypes, legendaryVals, imagines, modules, selectedTalents, talentAspd, psychoscopeConfig, gearSets])
+  }, [spec, gear, legendaryTypes, legendaryVals, imagines, modules, selectedTalents, talentAspd, psychoscopeConfig, gearSets, setAllImagines])
 
   const recalculate = useCallback(() => {
     const className = getClassForSpec(spec)
@@ -870,7 +895,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         const lv = GAME_DATA.SLOTS.map((_, i) => saved.legendaryVals[i] ?? 0)
         setLegendaryVals(lv)
       }
-      if (saved.imagines && Array.isArray(saved.imagines)) setImagines(saved.imagines)
+      if (saved.imagines && Array.isArray(saved.imagines)) setAllImagines(saved.imagines)
       if (saved.modules && Array.isArray(saved.modules)) setModules(saved.modules)
       if (saved.base) setBaseState({ ...defaultBase(), ...saved.base })
       if (saved.ext) setExtState({ ...defaultBuffs(), ...saved.ext })
@@ -913,7 +938,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     gear, setGear: setGearState, updateGearSlot,
     legendaryTypes, legendaryVals, setLegendaryType, setLegendaryVal,
     imagines, setImagine,
-    modules, updateModule, setModules: setModules, setAllImagines: setImagines,
+    modules, updateModule, setModules: setModules, setAllImagines,
     base, setBase,
     ext, setExt,
     stats, recalculate,

@@ -9,22 +9,78 @@ export const GAME_DATA = {
 
   CONSTANTS: {
     "Versatility": { c: 11200, base: 0 },
-    "Mastery": { c: 19975, base: 6 },
-    "Haste": { c: 19975, base: 0 }, // +0.96% base Haste (idk source is just random/unknown)
-    "Crit": { c: 19975, base: 5 },
-    "Luck": { c: 19975, base: 5 },
+    "Mastery": { c: 19974, base: 6 },
+    "Haste": { c: 19974, base: 0 }, // +0.96% base Haste (idk source is just random/unknown)
+    "Crit": { c: 19974, base: 5 },
+    "Luck": { c: 19974, base: 5 },
   } as Record<string, { c: number; base: number }>,
 
   IMAGINE: {
     SLOT_IDS: ['1', '2'],
     OPTIONS: {
-      "Phantom Arachnocrab (Mastery)": { stat: "Mastery", vals: [3584, 4636, 5688, 6740, 7792, 8960] },
-      "Celestial Flier (Haste)": { stat: "Haste", vals: [3584, 4636, 5688, 6740, 7792, 8960] },
-      "Goblin King (Versatility)": { stat: "Versatility", vals: [3584, 4636, 5688, 6740, 7792, 8960] },
-      "Bluespine Lizard (Versatility)": { stat: "Versatility", vals: [2016, 2615, 3214, 3813, 4412, 5040] },
-      "Blackfire Foxen (Mastery)": { stat: "Mastery", vals: [2016, 2615, 3214, 3813, 4412, 5040] },
-      "Emerald Caprahorn (Haste)": { stat: "Haste", vals: [2016, 2615, 3214, 3813, 4412, 5040] },
-    } as Record<string, { stat: string; vals: number[] }>,
+      "Muku Chief": { effects: [{ stat: "Crit DMG (%)", vals: [10, 10, 10, 10, 10, 10] }] },
+      "Tempest Ogre": { effects: [] },
+      "Frost Ogre": { effects: [{ stat: "Resilience Break Efficiency (%)", vals: [20, 20, 20, 20, 20, 20] }] },
+      "Venobzzar Incubator": { effects: [{ stat: "All Main Stat (%)", vals: [6, 6, 6, 6, 6, 6] }] },
+      "Iron Fang": { effects: [{ stat: "All Resistance (%)", vals: [8, 8, 8, 8, 8, 8] }] },
+      "Celestial Flier": { effects: [{ stat: "Haste", vals: [3584, 4636, 5688, 6740, 7792, 8960] }] },
+      "Lizardman King": { effects: [] },
+      "Goblin King": { effects: [{ stat: "Versatility", vals: [3584, 4636, 5688, 6740, 7792, 8960] }] },
+      "Muku King": { effects: [{ stat: "Healing Output (%)", vals: [8, 8, 8, 8, 8, 8] }] },
+      "Inferno Ogre": { effects: [{ stat: "Healing Received (%)", vals: [8, 8, 8, 8, 8, 8] }, { stat: "Endurance (%)", vals: [5, 5, 5, 5, 5, 5] }] },
+      "Brigand Leader": { effects: [] },
+      "Storm Goblin King": { effects: [] },
+      "Golden Juggernaut": { effects: [{ stat: "Shield (%)", vals: [8, 8, 8, 8, 8, 8] }] },
+      "Phantom Arachnocrab": { effects: [{ stat: "Mastery", vals: [3584, 4636, 5688, 6740, 7792, 8960] }] },
+      "Void Ogre": { effects: [{ stat: "Max HP (%)", vals: [5, 5, 5, 5, 5, 5] }] },
+      "Shadow Captain": { effects: [{ stat: "Expertise Skill DMG (%)", vals: [6, 6, 6, 6, 6, 6] }, { stat: "Expertise Skill Healing (%)", vals: [6, 6, 6, 6, 6, 6] }] },
+      "Boarrier Tyrant": { effects: [{ stat: "Special Attack DMG (%)", vals: [6, 6, 6, 6, 6, 6] }, { stat: "Special Attack Healing (%)", vals: [6, 6, 6, 6, 6, 6] }] },
+      "Mighty Collosus": { effects: [{ stat: "Resilience Break Efficiency (%)", vals: [10, 10, 10, 10, 10, 10] }] },
+      "Muku Scout": { effects: [{ stat: "Adaptive Atk (%)", vals: [6, 6, 6, 6, 6, 6] }] },
+      "Void Arachnocrab": { effects: [{ stat: "Armor", vals: [450, 450, 450, 450, 450, 450] }] },
+      "Brigand Guard": { effects: [{ stat: "Endurance (%)", vals: [5, 5, 5, 5, 5, 5] }] },
+      "Brigand Scout Leader": { effects: [{ stat: "Agility (%)", vals: [4, 4, 4, 4, 4, 4] }] },
+      "Great Warhog": { effects: [{ stat: "Light Bonus (%)", vals: [3, 3, 3, 3, 3, 3] }] },
+      "Storm Goblin Warrior": { effects: [{ stat: "Wind Bonus (%)", vals: [3, 3, 3, 3, 3, 3] }] },
+      "Muku Vanguard": { effects: [{ stat: "Thunder Bonus (%)", vals: [3, 3, 3, 3, 3, 3] }] },
+      "Muku Warrior": { effects: [] },
+      "Inferno Goblin Mage": { effects: [{ stat: "Intellect (%)", vals: [4, 4, 4, 4, 4, 4] }] },
+      "Goblin Guard": { effects: [{ stat: "Block", vals: [200, 200, 200, 200, 200, 200] }] },
+      "Goblin Warrior": { effects: [] },
+      "Shadow Commander": { effects: [] },
+      "Jungle Goblin Warrior": { effects: [{ stat: "Strength (%)", vals: [4, 4, 4, 4, 4, 4] }] },
+      "Lizardman Mage": { effects: [{ stat: "Ice Bonus (%)", vals: [3, 3, 3, 3, 3, 3] }] },
+      "Lizardman Hunter": { effects: [] },
+      "Void Bzzar": { effects: [] },
+      "Airona": { effects: [{ stat: "All Main Stat (%)", vals: [6, 6, 6, 6, 6, 6] }] },
+      "Tina": { effects: [{ stat: "All Main Stat (%)", vals: [6, 6, 6, 6, 6, 6] }] },
+      "Olvera": { effects: [{ stat: "All Main Stat (%)", vals: [6, 6, 6, 6, 6, 6] }] },
+      "Tatta": { effects: [{ stat: "All Main Stat (%)", vals: [6, 6, 6, 6, 6, 6] }] },
+      "Basilisk": { effects: [{ stat: "All Main Stat (%)", vals: [6, 6, 6, 6, 6, 6] }] },
+      "Blackstone Captain": { effects: [{ stat: "Ultimate skill cooldown speed (%)", vals: [13, 13, 13, 13, 13, 13] }] },
+      "Goblin Chief": { effects: [{ stat: "Expertise Skill DMG (%)", vals: [9, 9, 9, 9, 9, 9] }, { stat: "Expertise Skill Healing (%)", vals: [9, 9, 9, 9, 9, 9] }] },
+      "Cabbage Kingpin (Main)": { effects: [{ stat: "All Main Stat (%)", vals: [3, 3, 3, 3, 3, 3] }, { stat: "All Main Stat (%)", vals: [3, 3, 3, 3, 3, 3] }] },
+      "Cabbage Kingpin (Versatility)": { effects: [{ stat: "All Main Stat (%)", vals: [3, 3, 3, 3, 3, 3] }, { stat: "Versatility", vals: [2464, 3187, 3910, 4634, 5357, 6160] }] },
+      "Cabbage Kingpin (Mastery)": { effects: [{ stat: "All Main Stat (%)", vals: [3, 3, 3, 3, 3, 3] }, { stat: "Mastery", vals: [2464, 3187, 3910, 4634, 5357, 6160] }] },
+      "Cabbage Kingpin (Haste)": { effects: [{ stat: "All Main Stat (%)", vals: [3, 3, 3, 3, 3, 3] }, { stat: "Haste", vals: [2464, 3187, 3910, 4634, 5357, 6160] }] },
+      "Cabbage Kingpin (All Elemental DMG)": { effects: [{ stat: "All Main Stat (%)", vals: [3, 3, 3, 3, 3, 3] }, { stat: "All Element Bonus (%)", vals: [2.25, 2.25, 2.25, 2.25, 2.25, 2.25] }] },
+      "Crimson Foxen": { effects: [{ stat: "Pet Attack Power (%)", vals: [12, 12, 12, 12, 12, 12] }] },
+      "Flamehorn": { effects: [{ stat: "Luck", vals: [2240, 2898, 3555, 4212, 4870, 5600] }] },
+      "Bluespine Lizard": { effects: [{ stat: "Versatility", vals: [2016, 2615, 3214, 3813, 4412, 5040] }] },
+      "Blackstone Commander": { effects: [{ stat: "Armor (%)", vals: [6, 6, 6, 6, 6, 6] }] },
+      "Blackstone Vanguard": { effects: [] },
+      "Goblin Shaman": { effects: [] },
+      "Goblin Trickster": { effects: [] },
+      "Gloomy Cabbage (min)": { effects: [{ stat: "Crit DMG (%)", vals: [5, 5, 5, 5, 5, 5] }] },
+      "Gloomy Cabbage (max)": { effects: [{ stat: "Crit DMG (%)", vals: [7, 7, 7, 7, 7, 7] }] },
+      "Ruthless Cabbage": { effects: [] },
+      "Blackfire Foxen": { effects: [{ stat: "Mastery", vals: [2016, 2615, 3214, 3813, 4412, 5040] }] },
+      "Emerald Caprahorn": { effects: [{ stat: "Haste", vals: [2016, 2615, 3214, 3813, 4412, 5040] }] },
+      "Rorola": { effects: [{ stat: "All Main Stat (%)", vals: [6, 6, 6, 6, 6, 6] }] },
+      "Boyce": { effects: [{ stat: "All Main Stat (%)", vals: [6, 6, 6, 6, 6, 6] }] },
+      "Dorothy": { effects: [{ stat: "All Main Stat (%)", vals: [6, 6, 6, 6, 6, 6] }] },
+      "Fafala": { effects: [{ stat: "All Main Stat (%)", vals: [6, 6, 6, 6, 6, 6] }] },
+    } as Record<string, { effects: Array<{ stat: string; vals: number[] }> }>,
   },
 
   LEGENDARY: ["-", "Attack Speed (%)", "Cast Speed (%)", "ATK/MATK", "Dmg Bonus", "Shield", "Healing Output", "Res Break", "All Res", "Armor", "Max HP"],
@@ -271,12 +327,15 @@ export const GAME_DATA = {
   // Physical item stats shown in the tooltip "Basic Attributes" section.
   // Keyed by tier string at 100/100 perfection; applyPerfection scales them.
   //
-  // Confirmed Lv140 datamined values:
-  //   weapon (Gold):    ATK 151 · mainStat 268 · endurance 1209
-  //   armor  (Raid):    armor 336 · mainStat 268 · endurance 1209
-  //   accessory (Gold): mainStat 268 · endurance 1209
+  // Confirmed values (from BPSR Gear Calculator v1.1.8):
+  //   Lv140 weapon (Gold):    ATK 151 · mainStat 268 · endurance 1209
+  //   Lv140 armor  (Gold):    armor 168 · mainStat 268 · endurance 1209
+  //   Lv140 armor  (Raid):    armor 336 · mainStat 268 · endurance 1209
+  //   Lv140 accessory (Gold): mainStat 268 · endurance 1209
+  //   Lv150 weapon (Raid):    ATK 162 · mainStat 288 · endurance 1296
+  //   Lv150 armor  (Raid):    armor 180 · mainStat 288 · endurance 1296
   //
-  // All other tiers have zeroes — fill in when datamined.
+  // All other tiers are estimated — fill in when datamined.
   BASIC_ATTRS: {
     // ── Lv40 ── (estimated: scaled from Lv140 using armor p-value ratio 100/756)
     "Lv40 Gold": {
@@ -333,7 +392,7 @@ export const GAME_DATA = {
     // ── Lv140 ── (datamined 100/100)
     "Lv140 Gold": {
       weapon:    { atk: 151, mainStat: 268, endurance: 1209 },
-      armor:     { armor: 336, mainStat: 268, endurance: 1209, hp: 0 },
+      armor:     { armor: 168, mainStat: 268, endurance: 1209, hp: 0 },
       accessory: { mainStat: 268, endurance: 1209 },
     },
     "Lv140 Raid": {
@@ -343,14 +402,14 @@ export const GAME_DATA = {
     },
     "Lv140 Far Sea": {
       weapon:    { atk: 151, mainStat: 268, endurance: 1209 },
-      armor:     { armor: 336, mainStat: 268, endurance: 1209, hp: 0 },
+      armor:     { armor: 168, mainStat: 268, endurance: 1209, hp: 0 },
       accessory: { mainStat: 268, endurance: 1209 },
     },
-    // ── Lv150 ── (estimated: ratio 828/756)
+    // ── Lv150 ── (confirmed from BPSR Gear Calculator v1.1.8)
     "Lv150 Raid": {
-      weapon:    { atk: 165, mainStat: 294, endurance: 1324 },
-      armor:     { armor: 368, mainStat: 294, endurance: 1324, hp: 0 },
-      accessory: { mainStat: 294, endurance: 1324 },
+      weapon:    { atk: 162, mainStat: 288, endurance: 1296 },
+      armor:     { armor: 180, mainStat: 288, endurance: 1296, hp: 0 },
+      accessory: { mainStat: 288, endurance: 1296 },
     },
     // ── Lv160 ── (estimated: ratio 954/756)
     "Lv160 Gold": {
@@ -391,6 +450,46 @@ export const GAME_DATA = {
     armor?:     { armor: number; mainStat: number; endurance: number; hp: number }
     accessory?: { mainStat: number; endurance: number }
   }>,
+}
+
+// Legacy IMAGINE labels kept for backward compatibility with older saved builds.
+export const IMAGINE_KEY_ALIASES: Record<string, string> = {
+  "Muku Chief (Crit)": "Muku Chief",
+  "Phantom Arachnocrab (Mastery)": "Phantom Arachnocrab",
+  "Celestial Flier (Haste)": "Celestial Flier",
+  "Goblin King (Versatility)": "Goblin King",
+  "Storm Goblin King (Luck)": "Storm Goblin King",
+  "Flamehorn (Luck)": "Flamehorn",
+  "Bluespine Lizard (Versatility)": "Bluespine Lizard",
+  "Blue Ridge Giant Lizard": "Bluespine Lizard",
+  "Blue Ridge Giant Lizard (Versatility)": "Bluespine Lizard",
+  "Blackfire Foxen (Mastery)": "Blackfire Foxen",
+  "Black Flame Earth Fox": "Blackfire Foxen",
+  "Black Flame Earth Fox (Mastery)": "Blackfire Foxen",
+  "Emerald Caprahorn (Haste)": "Emerald Caprahorn",
+  "Emerald Horn Ram": "Emerald Caprahorn",
+  "Emerald Horn Ram (Haste)": "Emerald Caprahorn",
+  "Genius Cabbage King (Main)": "Cabbage Kingpin (Main)",
+  "Genius Cabbage King (Versatility)": "Cabbage Kingpin (Versatility)",
+  "Genius Cabbage King (Mastery)": "Cabbage Kingpin (Mastery)",
+  "Genius Cabbage King (Haste)": "Cabbage Kingpin (Haste)",
+  "Genius Cabbage King (All Elemental DMG)": "Cabbage Kingpin (All Elemental DMG)",
+  "Muku Warrior (Crit)": "Muku Warrior",
+  "Goblin Warrior (Luck)": "Goblin Warrior",
+  "Lizardman Hunter (Luck)": "Lizardman Hunter",
+  "Melancholy Cabbage (min)": "Gloomy Cabbage (min)",
+  "Melancholy Cabbage (max)": "Gloomy Cabbage (max)",
+  "Melancholy Cabbage (min) (Crit)": "Gloomy Cabbage (min)",
+  "Melancholy Cabbage (max) (Crit)": "Gloomy Cabbage (max)",
+}
+
+export function normalizeImagineKey(key: string): string {
+  return IMAGINE_KEY_ALIASES[key] ?? key
+}
+
+export function getImagineOption(key: string): { effects: Array<{ stat: string; vals: number[] }> } | null {
+  const normalized = normalizeImagineKey(key)
+  return GAME_DATA.IMAGINE.OPTIONS[normalized] ?? null
 }
 
 export const SIGIL_DB = [

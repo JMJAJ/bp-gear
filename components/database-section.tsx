@@ -84,8 +84,16 @@ export function DatabaseSection() {
 
   // ── Imagines — derived from GAME_DATA.IMAGINE.OPTIONS ────────────────────
   const imagineRows = Object.entries(GAME_DATA.IMAGINE.OPTIONS).map(([name, opt]) => {
-    const v = opt.vals
-    return [name, opt.stat, v[0], v[1], v[2], v[3], v[4], v[5]]
+    const effects = opt.effects.length > 0
+      ? opt.effects
+        .map(e => {
+          const sameAcrossTiers = e.vals.every(v => v === e.vals[0])
+          if (sameAcrossTiers) return `${e.stat}: ${e.vals[0]}`
+          return `${e.stat}: T0 ${e.vals[0]} / T1 ${e.vals[1]} / T2 ${e.vals[2]} / T3 ${e.vals[3]} / T4 ${e.vals[4]} / T5 ${e.vals[5]}`
+        })
+        .join(" | ")
+      : "No passive stat effect"
+    return [name, effects]
   })
 
   // ── Weapon Tiers ─────────────────────────────────────────────────────────
@@ -315,10 +323,10 @@ No restrictions on Weapon or if the stat isn't listed for the slot.`}</FormulaBl
       {/* ── Imagines ───────────────────────────────────────────────────────── */}
       <CollapsibleSection title="Imagines (Summons)">
         <Table
-          headers={["Imagine", "Stat", "T0", "T1", "T2", "T3", "T4", "T5"]}
+          headers={["Imagine", "Passive Effects"]}
           rows={imagineRows}
         />
-        <Note>Raw stat values shown. Converted to % using the stat formula above. Two imagine slots available.</Note>
+        <Note>Shows passive effects from DATA-Imagines in v1.1.8. Active-skill effects are not applied as permanent planner stats.</Note>
       </CollapsibleSection>
 
       {/* ── Modules ────────────────────────────────────────────────────────── */}
