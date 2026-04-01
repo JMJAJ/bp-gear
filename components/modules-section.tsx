@@ -1,4 +1,5 @@
 "use client"
+import { useState } from "react"
 import { useApp } from "@/lib/app-context"
 import { MODULE_DB, AFFIX_DB, MODULE_THRESHOLDS } from "@/lib/game-data"
 
@@ -19,6 +20,139 @@ function nextThreshold(pts: number): number | null {
     if (pts < t) return t
   }
   return null
+}
+
+function ModuleReference({ accentColor }: { accentColor: string }) {
+  const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>({
+    Extreme: true,
+    Focus: false,
+    Speed: false,
+    Standard: false,
+    Defense: false,
+    Healer: false,
+  })
+
+  const toggleCategory = (cat: string) => {
+    setExpandedCategories(prev => ({ ...prev, [cat]: !prev[cat] }))
+  }
+
+  // Group modules by category
+  const modulesByCategory = MODULE_DB.reduce((acc, mod) => {
+    if (!acc[mod.cat]) acc[mod.cat] = []
+    acc[mod.cat].push(mod)
+    return acc
+  }, {} as Record<string, typeof MODULE_DB>)
+
+  const categoryOrder = ["Extreme", "Focus", "Speed", "Standard", "Defense", "Healer"]
+
+  return (
+    <div className="border border-border bg-card">
+      <div className="px-4 py-3 border-b border-border">
+        <div className="text-xs uppercase tracking-[1.5px] font-bold mb-1" style={{ color: accentColor }}>
+          Module Reference
+        </div>
+        <div className="text-xs text-[var(--text-dim)]">
+          Level Thresholds: Lv1=1pt · Lv2=4pt · Lv3=8pt · Lv4=12pt · Lv5=16pt · Lv6=20pt
+        </div>
+      </div>
+
+      <div className="divide-y divide-[#0d0d0d]">
+        {categoryOrder.map(cat => {
+          const modules = modulesByCategory[cat]
+          if (!modules) return null
+          const isExpanded = expandedCategories[cat]
+
+          return (
+            <div key={cat}>
+              <button
+                onClick={() => toggleCategory(cat)}
+                className="w-full px-4 py-2.5 flex items-center justify-between hover:bg-white/[0.02] transition-colors"
+              >
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold uppercase tracking-[1px]" style={{ color: accentColor }}>
+                    {cat}
+                  </span>
+                  <span className="text-xs text-[var(--text-dim)]">
+                    ({modules.length} module{modules.length !== 1 ? 's' : ''})
+                  </span>
+                </div>
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 12 12"
+                  fill="none"
+                  className="transition-transform"
+                  style={{ transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)' }}
+                >
+                  <path d="M2 4L6 8L10 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                </svg>
+              </button>
+
+              {isExpanded && (
+                <div className="px-4 pb-4 space-y-3">
+                  {modules.map(mod => (
+                    <ModuleCard key={mod.name} module={mod} accentColor={accentColor} />
+                  ))}
+                </div>
+              )}
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+function ModuleCard({ module, accentColor }: { module: typeof MODULE_DB[0]; accentColor: string }) {
+  return (
+    <div className="border border-[#1a1a1a] bg-[#050505] rounded-sm">
+      <div className="px-3 py-2 border-b border-[#1a1a1a]">
+        <span className="text-sm font-bold text-white">{module.name}</span>
+      </div>
+      <div className="p-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+          {module.s.map((stats, idx) => {
+            const level = idx + 1
+            const pts = MODULE_THRESHOLDS[idx] ?? 0
+            const isMaxLevel = level === 6
+            const isMidLevel = level >= 4
+
+            return (
+              <div
+                key={idx}
+                className="border border-[#1a1a1a] bg-[#0a0a0a] px-2.5 py-2 rounded-sm"
+              >
+                <div className="flex items-center justify-between mb-1.5">
+                  <span
+                    className="text-xs font-bold uppercase tracking-[0.5px]"
+                    style={{ color: isMaxLevel ? accentColor : isMidLevel ? 'var(--text-mid)' : 'var(--text-dim)' }}
+                  >
+                    Level {level}
+                  </span>
+                  <span className="text-xs text-[var(--text-dim)]">
+                    {pts}pt{pts !== 1 ? 's' : ''}
+                  </span>
+                </div>
+                <div className="space-y-0.5">
+                  {Object.entries(stats).map(([stat, value]) => (
+                    <div key={stat} className="flex justify-between items-baseline text-xs">
+                      <span className="text-[var(--text-mid)]">{stat}</span>
+                      <span
+                        className="font-semibold ml-2"
+                        style={{ color: isMaxLevel ? accentColor : 'var(--text-mid)' }}
+                      >
+                        {value > 0 ? '+' : ''}{value}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+    </div>
+  )
 }
 
 export function ModulesSection() {
@@ -154,51 +288,8 @@ export function ModulesSection() {
         </div>
       )}
 
-      {/* Module reference table */}
-      <div className="border border-border bg-card p-4">
-        <div className="text-xs uppercase tracking-[1.5px] font-bold mb-3" style={{ color: accentColor }}>
-          Module Reference · Lv Thresholds: 1=1pt · 2=4pt · 3=8pt · 4=12pt · 5=16pt · 6=20pt
-        </div>
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse text-xs">
-            <thead>
-              <tr className="border-b border-border">
-                {["Module","Cat","Lv.6 (20pt)","Lv.5 (16pt)","Lv.4 (12pt)","Lv.3 (8pt)","Lv.2 (4pt)","Lv.1 (1pt)"].map(h => (
-                  <th key={h} className="text-left text-xs uppercase tracking-[0.5px] text-[var(--text-dim)] font-semibold px-2 py-2 whitespace-nowrap">
-                    {h}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {MODULE_DB.map(m => (
-                <tr key={m.name} className="border-b border-[#0d0d0d] hover:bg-white/[0.01]">
-                  <td className="px-2 py-1.5 text-white font-medium whitespace-nowrap">{m.name}</td>
-                  <td className="px-2 py-1.5 text-[var(--text-dim)] whitespace-nowrap">{m.cat}</td>
-                  <td className="px-2 py-1.5 text-xs" style={{ color: accentColor }}>
-                    {Object.entries(m.s[5]).map(([k,v]) => `${k}: ${v}`).join(", ")}
-                  </td>
-                  <td className="px-2 py-1.5 text-xs" style={{ color: `${accentColor}cc` }}>
-                    {Object.entries(m.s[4]).map(([k,v]) => `${k}: ${v}`).join(", ")}
-                  </td>
-                  <td className="px-2 py-1.5 text-[var(--text-mid)] text-xs">
-                    {Object.entries(m.s[3]).map(([k,v]) => `${k}: ${v}`).join(", ")}
-                  </td>
-                  <td className="px-2 py-1.5 text-muted-foreground text-xs">
-                    {Object.entries(m.s[2]).map(([k,v]) => `${k}: ${v}`).join(", ")}
-                  </td>
-                  <td className="px-2 py-1.5 text-[var(--text-dim)] text-xs">
-                    {Object.entries(m.s[1]).map(([k,v]) => `${k}: ${v}`).join(", ")}
-                  </td>
-                  <td className="px-2 py-1.5 text-[var(--text-dim)] text-xs">
-                    {Object.entries(m.s[0]).map(([k,v]) => `${k}: ${v}`).join(", ")}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+      {/* Module reference */}
+      <ModuleReference accentColor={accentColor} />
     </div>
   )
 }
