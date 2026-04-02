@@ -47,8 +47,22 @@ const SPEC_WEIGHTS: Record<string, Record<string, number>> = {
   "Concerto":    { Crit: 1.1, Haste: 1.1, Mastery: 0.9, Luck: 0.8, Versatility: 0.7 },
 }
 
-const STAT_KEYS = ["Versatility", "Mastery", "Haste", "Crit", "Luck"] as const
-const STAT_SHORT: Record<string, string> = { Versatility: "vers", Mastery: "mast", Haste: "haste", Crit: "crit", Luck: "luck" }
+const STAT_KEYS = ["Crit", "Haste", "Luck", "Mastery","Versatility"] as const
+const STAT_SHORT: Record<string, string> = {Crit: "crit", Haste: "haste", Luck: "luck", Mastery: "mast", Versatility: "vers"}
+
+type ModuleRollProfile = "blue-budget" | "purple-average" | "gold-average" | "gold-high" | "gold-perfect"
+
+const MODULE_ROLL_PROFILES: Record<ModuleRollProfile, {
+  label: string
+  rarity: ModuleSlot["rarity"]
+  slotLevels: number[]
+}> = {
+  "blue-budget": { label: "Basic (Blue) budget", rarity: "Blue", slotLevels: [7] },
+  "purple-average": { label: "Advanced (Purple) average", rarity: "Purple", slotLevels: [6, 5] },
+  "gold-average": { label: "Excellent (Gold) average", rarity: "Gold", slotLevels: [6, 5, 3] },
+  "gold-high": { label: "Excellent (Gold) high roll", rarity: "Gold", slotLevels: [8, 7, 4] },
+  "gold-perfect": { label: "Excellent (Gold) perfect", rarity: "Gold", slotLevels: [10, 10, 5] },
+}
 
 // ═══════════════════════════════════════════════════════════
 // OPTIMIZER ENGINE
@@ -56,7 +70,8 @@ const STAT_SHORT: Record<string, string> = { Versatility: "vers", Mastery: "mast
 
 interface OptConfig {
   spec: string; build: string; className: string | null; mainStat: string
-  targetLevel: number; raidMode: "auto" | "0" | "2" | "4"
+  targetLevel: number; raidMode: "auto" | "0" | "2" | "4" | "6"
+  useFarSeaWeapon: boolean
   mode: "smart" | "targets"
   targets: { vers: number; mast: number; haste: number; crit: number; luck: number }
   weights: Record<string, number>
@@ -65,6 +80,7 @@ interface OptConfig {
   base: any; ext: any
   legendaryTypes: string[]; legendaryVals: number[]
   selectedTalents: string[]; talentAspd: number
+  moduleProfile: ModuleRollProfile
   optPurple: boolean; optImagines: boolean; optModules: boolean
   psychoscopeConfig?: any
 }
@@ -98,6 +114,78 @@ function isRaidEligible(slotIdx: number): boolean {
   return (GAME_DATA.RAID_SLOTS as readonly string[]).includes(GAME_DATA.SLOTS[slotIdx])
 }
 
+function getBestFarSeaTier(targetLevel: number): string | null {
+  const farSea = Object.keys(GAME_DATA.WEAPON_TIERS)
+    .filter((tier) => tier.includes("Far Sea"))
+    .map((tier) => {
+      const m = tier.match(/Lv(\d+)/i)
+      return { tier, level: m ? parseInt(m[1], 10) : 0 }
+    })
+    .sort((a, b) => a.level - b.level)
+
+  if (farSea.length === 0) return null
+
+  const exact = farSea.find((t) => t.level === targetLevel)
+  if (exact) return exact.tier
+
+  const lower = [...farSea].reverse().find((t) => t.level <= targetLevel)
+  if (lower) return lower.tier
+
+  return farSea[0].tier
+}
+
+function sumStatValues(map: Record<string, number> | undefined, keys: string[]): number {
+  if (!map) return 0
+  return keys.reduce((sum, key) => sum + (map[key] ?? 0), 0)
+}
+
+function getOffensiveBonusPct(res: ReturnType<typeof calculateStats>, pcts: Record<string, number>): number {
+  const critRatePct = Math.max(0, Math.min(100, pcts.Crit ?? 0))
+  const luckRatePct = Math.max(0, Math.min(100, pcts.Luck ?? 0))
+
+  const critDmgPct =
+    sumStatValues(res.extraStats, ["Crit DMG (%)"]) +
+    sumStatValues(res.moduleStats, ["Crit DMG (%)"])
+
+  const luckDmgPct =
+    sumStatValues(res.extraStats, ["Lucky Strike DMG Multiplier (%)"]) +
+    sumStatValues(res.moduleStats, ["Lucky Strike DMG Multiplier (%)"])
+
+  let bonusPct = 0
+
+  // Convert crit/luck damage multipliers into expected average damage gain.
+  bonusPct += (critRatePct * critDmgPct) / 100
+  bonusPct += (luckRatePct * luckDmgPct) / 100
+
+  bonusPct +=
+    sumStatValues(res.purpleStats, ["DMG Bonus vs Bosses (%)", "Melee Damage Bonus (%)", "Ranged Damage Bonus (%)", "Attack (%)", "Magic Attack (%)"]) +
+    sumStatValues(res.extraStats, [
+      "DMG Bonus vs Bosses (%)", "Melee Damage Bonus (%)", "Ranged Damage Bonus (%)",
+      "Special Attack DMG (%)", "Special Attack Elemental DMG (%)", "Expertise Skill DMG (%)",
+      "Physical DMG (%)", "Magical DMG (%)", "All Element Bonus (%)", "DMG Bonus vs Elites (%)",
+      "Adaptive Atk (%)", "Adaptive ATK (%)", "Attack (%)", "Magic Attack (%)", "Top Stat (%)",
+    ]) +
+    sumStatValues(res.moduleStats, [
+      "DMG Bonus vs Bosses (%)", "Melee Damage Bonus (%)", "Ranged Damage Bonus (%)",
+      "Special Attack DMG (%)", "Special Attack Elemental DMG (%)", "Expertise Skill DMG (%)",
+      "Physical DMG (%)", "Magical DMG (%)", "All Element Bonus (%)", "DMG Bonus vs Elites (%)",
+      "Adaptive Atk (%)", "Adaptive ATK (%)", "Attack (%)", "Magic Attack (%)", "Top Stat (%)",
+    ])
+
+  // Stack-based module bonuses are modeled as an average sustained stack count.
+  bonusPct += (res.moduleStats?.["DMG (%) / stack"] ?? 0) * 4
+
+  const speedPct =
+    sumStatValues(res.purpleStats, ["Attack Speed (%)", "Cast Speed (%)"]) +
+    sumStatValues(res.extraStats, ["Attack Speed (%)", "Cast Speed (%)"]) +
+    sumStatValues(res.moduleStats, ["Attack Speed (%)", "Cast Speed (%)"])
+
+  // Speed improves throughput but not always linearly, so keep this contribution softer.
+  bonusPct += speedPct * 0.35
+
+  return Math.max(0, bonusPct)
+}
+
 /** Compute optimization score for a given gear configuration */
 function scoreAllocation(
   gear: GearSlot[], imagines: { key: string; idx: number }[], modules: any[],
@@ -113,8 +201,10 @@ function scoreAllocation(
     const raw = res.total[stat] ?? 0
     const extKey = STAT_SHORT[stat]
     const extVal = (res.ext as Record<string, number>)[extKey] ?? 0
-    pcts[stat] = getStatPercentCombat(stat, raw) + extVal
+    const purpleVal = res.purpleStats?.[`${stat} (%)`] ?? 0
+    pcts[stat] = getStatPercentCombat(stat, raw) + extVal + purpleVal
   }
+  const offensiveBonusPct = getOffensiveBonusPct(res, pcts)
   if (config.mode === "targets") {
     const t = config.targets
     const diff =
@@ -123,12 +213,13 @@ function scoreAllocation(
       Math.abs(pcts.Haste - t.haste) * 1.5 + Math.pow(Math.max(0, Math.abs(pcts.Haste - t.haste) - 1), 2) * 0.5 +
       Math.abs(pcts.Crit - t.crit) * 1.5 + Math.pow(Math.max(0, Math.abs(pcts.Crit - t.crit) - 1), 2) * 0.5 +
       Math.abs(pcts.Luck - t.luck) * 1.5 + Math.pow(Math.max(0, Math.abs(pcts.Luck - t.luck) - 1), 2) * 0.5
-    return { score: -diff, pcts }
+    return { score: -diff + offensiveBonusPct / 1000, pcts }
   }
   // Smart mode: weighted multiplicative score
   const w = config.weights
   let score = 1
   for (const stat of STAT_KEYS) score *= (1 + (w[stat] ?? 1.0) * pcts[stat] / 100)
+  score *= (1 + offensiveBonusPct / 300)
   // Raid set bonus value
   const raidArmorCount = RAID_ARMOR_INDICES.filter(i => gear[i]?.raid).length
   if (gear[0]?.raid && raidArmorCount >= 2) score *= 1.02
@@ -162,10 +253,14 @@ function generateGreedyGear(config: OptConfig, raidArmorCount: number) {
   // Weapon always raid if not locked
   if (!config.lockedSlots[0]) {
     const slotType = getSlotType(0)
-    const raidTier = getTierForLevel(slotType, config.targetLevel, true)
+    const raidTier = config.useFarSeaWeapon
+      ? getBestFarSeaTier(config.targetLevel)
+      : getTierForLevel(slotType, config.targetLevel, true)
     if (raidTier) {
       gear[0] = { ...gear[0], tier: raidTier, raid: true, p: specStats[0], s: specStats[1], r: "-",
         sigName: config.currentGear[0]?.sigName ?? "", sigLvl: config.currentGear[0]?.sigLvl ?? "1" }
+      lt[0] = "-"
+      lv[0] = 0
     }
   }
 
@@ -343,22 +438,25 @@ function getDpsAffixes(className: string | null): string[] {
   })
 }
 
-/** Build a module layout from a set of affix names, evenly distributed at max level */
-function buildModuleLayout(affixes: string[]): ModuleSlot[] {
+/** Build a module layout from a set of affix names and a realistic module roll profile */
+function buildModuleLayout(affixes: string[], profile: ModuleRollProfile): ModuleSlot[] {
+  const profileCfg = MODULE_ROLL_PROFILES[profile]
+  const slotsPerModule = profileCfg.rarity === "Gold" ? 3 : profileCfg.rarity === "Purple" ? 2 : 1
   const n = affixes.length
-  // 12 total affix positions (4 modules × 3 each), max level 9 per position
-  const slotsPerAffix = Math.floor(12 / n)
-  const extra = 12 - slotsPerAffix * n
+  const totalSlots = 4 * slotsPerModule
+  const slotsPerAffix = Math.floor(totalSlots / n)
+  const extra = totalSlots - slotsPerAffix * n
   const assignment: string[] = []
   for (let i = 0; i < n; i++) {
     const count = slotsPerAffix + (i < extra ? 1 : 0)
     for (let j = 0; j < count; j++) assignment.push(affixes[i])
   }
+
   return Array.from({ length: 4 }, (_, mi): ModuleSlot => ({
-    rarity: "Gold",
-    a1: assignment[mi * 3] ?? "", a1lv: 9,
-    a2: assignment[mi * 3 + 1] ?? "", a2lv: 9,
-    a3: assignment[mi * 3 + 2] ?? "", a3lv: 9,
+    rarity: profileCfg.rarity,
+    a1: assignment[mi * slotsPerModule] ?? "", a1lv: profileCfg.slotLevels[0] ?? 1,
+    a2: slotsPerModule >= 2 ? (assignment[mi * slotsPerModule + 1] ?? "") : "", a2lv: profileCfg.slotLevels[1] ?? 1,
+    a3: slotsPerModule >= 3 ? (assignment[mi * slotsPerModule + 2] ?? "") : "", a3lv: profileCfg.slotLevels[2] ?? 1,
   }))
 }
 
@@ -381,11 +479,14 @@ function optimizeModules(
   let { score: bestScore, pcts: bestPcts } = scoreAllocation(gear, imagines, bestModules, config, lt, lv)
 
   const dpsAffixes = getDpsAffixes(config.className)
+  const profileCfg = MODULE_ROLL_PROFILES[config.moduleProfile]
+  const totalSlots = (profileCfg.rarity === "Gold" ? 3 : profileCfg.rarity === "Purple" ? 2 : 1) * 4
+  const maxDistinctAffixes = Math.min(4, dpsAffixes.length, totalSlots)
 
-  for (let n = 2; n <= Math.min(4, dpsAffixes.length); n++) {
+  for (let n = 1; n <= maxDistinctAffixes; n++) {
     const combos = combinations(dpsAffixes, n)
     for (const combo of combos) {
-      const testModules = buildModuleLayout(combo)
+      const testModules = buildModuleLayout(combo, config.moduleProfile)
       const { score, pcts } = scoreAllocation(gear, imagines, testModules, config, lt, lv)
       if (score > bestScore) {
         bestScore = score
@@ -399,7 +500,7 @@ function optimizeModules(
 
 /** Main optimizer: runs multiple strategies across raid configs and picks the best */
 function runOptimize(config: OptConfig): OptResult {
-  const raidCounts = config.raidMode === "auto" ? [0, 2, 4] : [parseInt(config.raidMode)]
+  const raidCounts = config.raidMode === "auto" ? [0, 2, 4, 6] : [parseInt(config.raidMode)]
   let globalBest: OptResult | null = null
 
   for (const raidCount of raidCounts) {
@@ -451,12 +552,14 @@ function runOptimize(config: OptConfig): OptResult {
 let _savedState = {
   mode: "smart" as "smart" | "targets",
   targetLevel: 160,
-  raidMode: "auto" as "auto" | "0" | "2" | "4",
+  raidMode: "auto" as "auto" | "0" | "2" | "4" | "6",
+  useFarSeaWeapon: false,
   targets: { vers: 0, mast: 50, haste: 20, crit: 20, luck: 5 },
   lockedSlots: Array(11).fill(false) as boolean[],
   optPurple: true,
   optImagines: false,
   optModules: false,
+  moduleProfile: "gold-average" as ModuleRollProfile,
   customWeights: null as Record<string, number> | null,
 }
 
@@ -471,12 +574,14 @@ export function OptimizerSection() {
 
   const [mode, _setMode] = useState<"smart" | "targets">(() => _savedState.mode)
   const [targetLevel, _setTargetLevel] = useState(() => _savedState.targetLevel)
-  const [raidMode, _setRaidMode] = useState<"auto" | "0" | "2" | "4">(() => _savedState.raidMode)
+  const [raidMode, _setRaidMode] = useState<"auto" | "0" | "2" | "4" | "6">(() => _savedState.raidMode)
+  const [useFarSeaWeapon, _setUseFarSeaWeapon] = useState(() => _savedState.useFarSeaWeapon)
   const [targets, _setTargets] = useState(() => _savedState.targets)
   const [lockedSlots, _setLockedSlots] = useState<boolean[]>(() => _savedState.lockedSlots)
   const [optPurple, _setOptPurple] = useState(() => _savedState.optPurple)
   const [optImagines, _setOptImagines] = useState(() => _savedState.optImagines)
   const [optModules, _setOptModules] = useState(() => _savedState.optModules)
+  const [moduleProfile, _setModuleProfile] = useState<ModuleRollProfile>(() => _savedState.moduleProfile)
   const [customWeights, _setCustomWeights] = useState<Record<string, number> | null>(() => _savedState.customWeights)
   const [running, setRunning] = useState(false)
   const [result, setResult] = useState<OptResult | null>(null)
@@ -484,7 +589,8 @@ export function OptimizerSection() {
 
   const setMode = (v: "smart" | "targets") => { _setMode(v); _savedState.mode = v }
   const setTargetLevel = (v: number) => { _setTargetLevel(v); _savedState.targetLevel = v }
-  const setRaidMode = (v: "auto" | "0" | "2" | "4") => { _setRaidMode(v); _savedState.raidMode = v }
+  const setRaidMode = (v: "auto" | "0" | "2" | "4" | "6") => { _setRaidMode(v); _savedState.raidMode = v }
+  const setUseFarSeaWeapon = (v: boolean) => { _setUseFarSeaWeapon(v); _savedState.useFarSeaWeapon = v }
   const setTargets = (upd: typeof targets | ((prev: typeof targets) => typeof targets)) => {
     _setTargets(prev => { const next = typeof upd === "function" ? upd(prev) : upd; _savedState.targets = next; return next })
   }
@@ -494,11 +600,13 @@ export function OptimizerSection() {
   const setOptPurple = (v: boolean) => { _setOptPurple(v); _savedState.optPurple = v }
   const setOptImagines = (v: boolean) => { _setOptImagines(v); _savedState.optImagines = v }
   const setOptModules = (v: boolean) => { _setOptModules(v); _savedState.optModules = v }
+  const setModuleProfile = (v: ModuleRollProfile) => { _setModuleProfile(v); _savedState.moduleProfile = v }
   const setCustomWeights = (v: Record<string, number> | null) => { _setCustomWeights(v); _savedState.customWeights = v }
 
   const className = getClassForSpec(spec)
   const mainStat = className ? GAME_DATA.CLASSES[className].main : "Strength"
   const weights = customWeights ?? SPEC_WEIGHTS[spec] ?? { Versatility: 0.6, Mastery: 1.0, Haste: 1.0, Crit: 1.0, Luck: 1.0 }
+  const moduleProfileCfg = MODULE_ROLL_PROFILES[moduleProfile]
 
   const availableLevels = useMemo(() => {
     const wLevels = getUniqueTierLevels("weapon")
@@ -513,7 +621,10 @@ export function OptimizerSection() {
     const pcts: Record<string, number> = {}
     for (const stat of STAT_KEYS) {
       const raw = res.total[stat] ?? 0
-      pcts[stat] = getStatPercentCombat(stat, raw) + ((res.ext as Record<string, number>)[STAT_SHORT[stat]] ?? 0)
+      pcts[stat] =
+        getStatPercentCombat(stat, raw) +
+        ((res.ext as Record<string, number>)[STAT_SHORT[stat]] ?? 0) +
+        (res.purpleStats?.[`${stat} (%)`] ?? 0)
     }
     return pcts
   }, [gear, imagines, modules, spec, base, ext, legendaryTypes, legendaryVals, selectedTalents, talentAspd, className, psychoscopeConfig])
@@ -523,16 +634,16 @@ export function OptimizerSection() {
     setTimeout(() => {
       try {
         const res = runOptimize({
-          spec, build, className, mainStat, targetLevel, raidMode, mode,
+          spec, build, className, mainStat, targetLevel, raidMode, useFarSeaWeapon, mode,
           targets, weights, lockedSlots, currentGear: gear, imagines, modules,
           base, ext, legendaryTypes, legendaryVals, selectedTalents, talentAspd,
-          optPurple, optImagines, optModules, psychoscopeConfig,
+          moduleProfile, optPurple, optImagines, optModules, psychoscopeConfig,
         })
         setResult(res); setStatus("Optimization complete!")
       } catch (e: any) { setStatus(`Error: ${e.message}`) }
       setRunning(false)
     }, 50)
-  }, [spec, build, className, mainStat, targetLevel, raidMode, mode, targets, weights, lockedSlots, gear, imagines, modules, base, ext, legendaryTypes, legendaryVals, selectedTalents, talentAspd, optPurple, optImagines, optModules, psychoscopeConfig])
+  }, [spec, build, className, mainStat, targetLevel, raidMode, useFarSeaWeapon, mode, targets, weights, lockedSlots, gear, imagines, modules, base, ext, legendaryTypes, legendaryVals, selectedTalents, talentAspd, moduleProfile, optPurple, optImagines, optModules, psychoscopeConfig])
 
   const applyResult = useCallback(() => {
     if (!result) return
@@ -584,10 +695,11 @@ export function OptimizerSection() {
           <label className="block text-xs uppercase tracking-[0.8px] text-[var(--text-dim)] mb-1">Raid Armor Pieces</label>
           <select value={raidMode} onChange={e => setRaidMode(e.target.value as any)}
             className="w-full text-xs px-2 py-1.5 border border-border bg-card text-white focus:border-[#444] outline-none">
-            <option value="auto">Auto (test 0/2/4)</option>
+            <option value="auto">Auto (test 0/2/4/6)</option>
             <option value="0">0 (no raid armor)</option>
             <option value="2">2pc set bonus</option>
             <option value="4">4pc set bonus</option>
+            <option value="6">6pc (max raid stats)</option>
           </select>
         </div>
         <div>
@@ -670,6 +782,7 @@ export function OptimizerSection() {
           { val: optPurple, set: setOptPurple, label: "Optimize Purple Stats" },
           { val: optImagines, set: setOptImagines, label: "Optimize Imagines" },
           { val: optModules, set: setOptModules, label: "Optimize Modules" },
+          { val: useFarSeaWeapon, set: setUseFarSeaWeapon, label: "Use Far Sea weapon (no purple)" },
         ].map(({ val, set, label }) => (
           <label key={label} className="flex items-center gap-2 cursor-pointer text-xs text-[var(--text-mid)]">
             <input type="checkbox" checked={val} onChange={e => set(e.target.checked)} style={{ accentColor }} />
@@ -678,10 +791,28 @@ export function OptimizerSection() {
         ))}
       </div>
 
+      {optModules && (
+        <div className="mb-5">
+          <label className="block text-xs uppercase tracking-[0.8px] text-[var(--text-dim)] mb-1">Module Roll Profile</label>
+          <select
+            value={moduleProfile}
+            onChange={e => setModuleProfile(e.target.value as ModuleRollProfile)}
+            className="w-full md:w-80 text-xs px-2 py-1.5 border border-border bg-card text-white focus:border-[#444] outline-none"
+          >
+            {Object.entries(MODULE_ROLL_PROFILES).map(([key, cfg]) => (
+              <option key={key} value={key}>{cfg.label}</option>
+            ))}
+          </select>
+          <div className="text-xs text-[var(--text-dim)] mt-1">
+            Uses realistic link-point presets per module rarity instead of forcing all slots to max.
+          </div>
+        </div>
+      )}
+
       {/* Active Configuration Summary */}
       <div className="mb-5 border border-border bg-[#080808] p-3">
         <div className="text-xs uppercase tracking-[0.8px] text-[var(--text-dim)] mb-2">Active Configuration</div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
           {/* Psychoscope */}
           <div>
             <div className="text-xs uppercase tracking-[0.5px] text-[var(--text-dim)] mb-1">Psychoscope</div>
@@ -706,6 +837,16 @@ export function OptimizerSection() {
             })()}
           </div>
 
+          {/* Imagines */}
+          <div>
+            <div className="text-xs uppercase tracking-[0.5px] text-[var(--text-dim)] mb-1">Imagines</div>
+            {(() => {
+              const active = imagines.filter(im => im.key)
+              if (active.length === 0) return <div className="text-xs text-[var(--text-dim)] italic">None configured</div>
+              return <div className="text-xs text-[var(--text-mid)]">{active.map(im => `${im.key} (Lv${im.idx + 1})`).join(", ")}</div>
+            })()}
+          </div>
+
           {/* Talents */}
           <div>
             <div className="text-xs uppercase tracking-[0.5px] text-[var(--text-dim)] mb-1">Talents</div>
@@ -717,6 +858,12 @@ export function OptimizerSection() {
             ) : (
               <div className="text-xs text-[var(--text-dim)] italic">None selected</div>
             )}
+          </div>
+
+          {/* Weapon preference */}
+          <div>
+            <div className="text-xs uppercase tracking-[0.5px] text-[var(--text-dim)] mb-1">Weapon Preference</div>
+            <div className="text-xs text-[var(--text-mid)]">{useFarSeaWeapon ? "Far Sea enabled" : "Standard raid weapon"}</div>
           </div>
         </div>
         <div className="text-xs text-[var(--text-dim)] mt-2">
@@ -792,6 +939,24 @@ export function OptimizerSection() {
             </div>
           </div>
 
+          {/* Imagine layout (when imagine optimization is enabled) */}
+          {optImagines && (
+            <div className="mb-4">
+              <div className="text-xs uppercase tracking-[0.5px] text-[var(--text-dim)] mb-1">Optimized Imagines</div>
+              {result.imagines.filter(im => im.key).length > 0 ? (
+                <div className="flex flex-wrap gap-1.5">
+                  {result.imagines.filter(im => im.key).map((im, idx) => (
+                    <span key={`${im.key}-${idx}`} className="text-xs px-2 py-0.5 border border-[#333] bg-muted text-[var(--text-mid)]">
+                      {im.key} (Lv{im.idx + 1})
+                    </span>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-xs text-[var(--text-dim)] italic">No imagine change suggested.</div>
+              )}
+            </div>
+          )}
+
           {/* Module layout (when module optimization is enabled) */}
           {optModules && (() => {
             const affixSet = new Set<string>()
@@ -810,7 +975,9 @@ export function OptimizerSection() {
                     )
                   })}
                 </div>
-                <div className="text-xs text-[var(--text-dim)] mt-1">4 modules × 3 affixes, all at max level (10)</div>
+                <div className="text-xs text-[var(--text-dim)] mt-1">
+                  Profile: {moduleProfileCfg.label} ({moduleProfileCfg.rarity}; slot points {moduleProfileCfg.slotLevels.join("/")})
+                </div>
               </div>
             )
           })()}
@@ -831,7 +998,7 @@ export function OptimizerSection() {
         <strong className="text-[var(--text-dim)]">How it works:</strong>{" "}
         {mode === "smart" ? (
           <>Smart mode uses a weighted multiplicative scoring function that naturally accounts for diminishing returns.
-            Higher weights prioritize that stat. Tests {raidMode === "auto" ? "0/2/4pc raid configurations" : `${raidMode}pc raid`} with
+            Higher weights prioritize that stat. Tests {raidMode === "auto" ? "0/2/4/6pc raid configurations" : `${raidMode}pc raid`} with
             5 restarts × 800 hill-climbing iterations each.</>
         ) : (
           <>Target mode minimizes distance to your percentages using quadratic penalties.

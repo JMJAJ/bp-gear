@@ -12,19 +12,41 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 import { Checkbox } from "@/components/ui/checkbox"
 
 export function GearSetsSection() {
   const {
-    gearSets, saveGearSet, deleteGearSet, loadGearSet, renameGearSet,
+    gearSets, saveGearSet, deleteGearSet, loadGearSet, applyGearSet, updateGearSet, renameGearSet, importGearSets,
     accentColor,
+    spec,
   } = useApp()
+
+  type SharedSetSummary = {
+    shareCode: string
+    name: string
+    spec: string
+    uploaderName: string | null
+    createdAt: string
+  }
 
   const [newSetName, setNewSetName] = useState("")
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editName, setEditName] = useState("")
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [setToDelete, setSetToDelete] = useState<GearSet | null>(null)
+  const [shareCodeInput, setShareCodeInput] = useState("")
+  const [loadingSharedSet, setLoadingSharedSet] = useState(false)
+  const [uploadingSetId, setUploadingSetId] = useState<string | null>(null)
+  const [browseDialogOpen, setBrowseDialogOpen] = useState(false)
+  const [loadingUploadedSets, setLoadingUploadedSets] = useState(false)
+  const [uploadedSets, setUploadedSets] = useState<SharedSetSummary[]>([])
+  const [sharedStatus, setSharedStatus] = useState<{ kind: "ok" | "err"; message: string } | null>(null)
   const [dontShowDeleteWarning, setDontShowDeleteWarning] = useState(() => {
     if (typeof window !== 'undefined') {
       return localStorage.getItem('dontShowDeleteWarning') === 'true'
@@ -74,10 +96,156 @@ export function GearSetsSection() {
     return d.toLocaleDateString() + " " + d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
   }
 
+  const normalizeShareCode = (value: string) => value.trim().toUpperCase()
+
+  const fetchUploadedSets = async () => {
+    setLoadingUploadedSets(true)
+    try {
+      const res = await fetch("/api/shared-sets?limit=40")
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        throw new Error(data.error ?? data.message ?? `HTTP ${res.status}`)
+      }
+      setUploadedSets(Array.isArray(data.sets) ? data.sets : [])
+    } catch (err) {
+      setSharedStatus({
+        kind: "err",
+        message: err instanceof Error ? err.message : "Failed to browse uploaded sets",
+      })
+    } finally {
+      setLoadingUploadedSets(false)
+    }
+  }
+
+  const openBrowseDialog = async () => {
+    setBrowseDialogOpen(true)
+    await fetchUploadedSets()
+  }
+
+  const handleUploadSet = async (set: GearSet) => {
+    setUploadingSetId(set.id)
+    setSharedStatus(null)
+
+    try {
+      const res = await fetch("/api/shared-sets", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ gearSet: set, spec }),
+      })
+
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        throw new Error(data.error ?? data.message ?? `HTTP ${res.status}`)
+      }
+
+      const shareCode = typeof data.shareCode === "string" ? data.shareCode : ""
+      if (!shareCode) {
+        throw new Error("Server returned no share code")
+      }
+
+      setShareCodeInput(shareCode)
+
+      let copied = false
+      if (typeof navigator !== "undefined" && navigator.clipboard?.writeText) {
+        try {
+          await navigator.clipboard.writeText(shareCode)
+          copied = true
+        } catch {
+          copied = false
+        }
+      }
+
+      setSharedStatus({
+        kind: "ok",
+        message: copied
+          ? `Uploaded \"${set.name}\". Share code ${shareCode} copied to clipboard.`
+          : `Uploaded \"${set.name}\". Share code: ${shareCode}`,
+      })
+    } catch (err) {
+      setSharedStatus({
+        kind: "err",
+        message: err instanceof Error ? err.message : "Failed to upload set",
+      })
+    } finally {
+      setUploadingSetId(null)
+    }
+  }
+
+  const handleLoadSharedSetByCode = async (rawCode: string) => {
+    const code = normalizeShareCode(rawCode)
+    if (!code) return
+
+    setLoadingSharedSet(true)
+    setSharedStatus(null)
+
+    try {
+      const res = await fetch(`/api/shared-sets?code=${encodeURIComponent(code)}`)
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        throw new Error(data.error ?? data.message ?? `HTTP ${res.status}`)
+      }
+
+      const remoteSet = data.gearSet as GearSet | undefined
+      if (!remoteSet || !Array.isArray(remoteSet.gear)) {
+        throw new Error("Invalid shared set payload")
+      }
+
+      const localSet: GearSet = {
+        id: `set_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
+        name: remoteSet.name || `Shared ${code}`,
+        gear: remoteSet.gear.map(g => ({ ...g })),
+        legendaryTypes: [...remoteSet.legendaryTypes],
+        legendaryVals: [...remoteSet.legendaryVals],
+        imagines: remoteSet.imagines.map(im => ({ ...im })),
+        modules: remoteSet.modules.map(m => ({ ...m })),
+        selectedTalents: [...remoteSet.selectedTalents],
+        talentAspd: remoteSet.talentAspd,
+        createdAt: new Date().toISOString(),
+      }
+
+      importGearSets([localSet])
+      applyGearSet(localSet)
+      setShareCodeInput(code)
+
+      setSharedStatus({
+        kind: "ok",
+        message: `Loaded shared set ${code} into your local library and applied it to planner state.`,
+      })
+    } catch (err) {
+      setSharedStatus({
+        kind: "err",
+        message: err instanceof Error ? err.message : "Failed to load shared set",
+      })
+    } finally {
+      setLoadingSharedSet(false)
+    }
+  }
+
+  const handleLoadSharedSet = async () => {
+    await handleLoadSharedSetByCode(shareCodeInput)
+  }
+
+  const handleUpdateSet = (set: GearSet) => {
+    updateGearSet(set.id)
+    setSharedStatus({
+      kind: "ok",
+      message: `Updated \"${set.name}\" with your current planner settings.`,
+    })
+  }
+
   return (
     <div className="flex flex-col gap-4">
       <div className="mb-2">
-        <div className="text-2xl font-bold tracking-tight text-white mb-1">Gear Sets</div>
+        <div className="flex items-center justify-between gap-3 mb-1">
+          <div className="text-2xl font-bold tracking-tight text-white">Gear Sets</div>
+          <button
+            onClick={openBrowseDialog}
+            className="px-3 py-1.5 text-xs font-bold uppercase tracking-[1px] border rounded transition-all"
+            style={{ borderColor: accentColor, color: accentColor }}
+          >
+            Browse Uploaded
+          </button>
+        </div>
         <div className="text-xs text-[var(--text-dim)] max-w-xl leading-5">
           Save your current gear configuration as a set for easy comparison in the DPS Simulator.
           Select multiple sets to overlay their DPS curves and see which performs better.
@@ -106,6 +274,82 @@ export function GearSetsSection() {
           </button>
         </div>
       </div>
+
+      {/* Browse uploaded sets dialog */}
+      <Dialog open={browseDialogOpen} onOpenChange={setBrowseDialogOpen}>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Shared Sets</DialogTitle>
+          </DialogHeader>
+
+          {/* Share code input */}
+          <div className="flex gap-2 mb-4">
+            <input
+              type="text"
+              value={shareCodeInput}
+              onChange={e => setShareCodeInput(e.target.value)}
+              placeholder="Enter share code..."
+              className="flex-1 bg-card border border-[#333] px-3 py-2 text-sm rounded text-white focus:border-[#555] outline-none"
+              onKeyDown={e => e.key === "Enter" && handleLoadSharedSet()}
+            />
+            <button
+              onClick={handleLoadSharedSet}
+              disabled={!normalizeShareCode(shareCodeInput) || loadingSharedSet}
+              className="px-4 py-2 text-xs font-bold uppercase tracking-[1px] border rounded transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+              style={{ borderColor: accentColor, color: accentColor }}
+            >
+              {loadingSharedSet ? "Loading..." : "Load"}
+            </button>
+          </div>
+
+          {sharedStatus && (
+            <div
+              className="mb-4 text-xs"
+              style={{ color: sharedStatus.kind === "ok" ? accentColor : "#f87171" }}
+            >
+              {sharedStatus.message}
+            </div>
+          )}
+
+          {/* Uploaded sets list */}
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-xs text-muted-foreground uppercase tracking-wider font-bold">Recently Uploaded</h3>
+            <button
+              onClick={fetchUploadedSets}
+              disabled={loadingUploadedSets}
+              className="px-2.5 py-1.5 text-xs font-bold uppercase tracking-[0.5px] border border-[#333] text-[var(--text-mid)] hover:text-white hover:border-[#555] rounded transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              {loadingUploadedSets ? "Refreshing..." : "Refresh"}
+            </button>
+          </div>
+
+          {loadingUploadedSets ? (
+            <div className="text-xs text-[var(--text-dim)]">Loading uploaded sets...</div>
+          ) : uploadedSets.length > 0 ? (
+            <div className="divide-y divide-[#1a1a1a] border border-[#2a2a2a] rounded-md overflow-hidden">
+              {uploadedSets.map((item) => (
+                <div key={item.shareCode} className="px-3 py-2.5 flex items-center gap-3 hover:bg-[#0d0d0d] transition-colors">
+                  <div className="flex-1 min-w-0">
+                    <div className="text-sm font-semibold text-white truncate">{item.name}</div>
+                    <div className="text-xs text-[var(--text-dim)] mt-0.5">
+                      Code: {item.shareCode} • {item.spec || "Unknown spec"} • {formatDate(item.createdAt)}
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => handleLoadSharedSetByCode(item.shareCode)}
+                    disabled={loadingSharedSet}
+                    className="px-2.5 py-1.5 text-xs font-bold uppercase tracking-[0.5px] border border-[#333] text-[var(--text-mid)] hover:text-white hover:border-[#555] rounded transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                  >
+                    Load
+                  </button>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-xs text-[var(--text-dim)]">No uploaded sets found yet.</div>
+          )}
+        </DialogContent>
+      </Dialog>
 
       {/* Saved sets list */}
       {gearSets.length > 0 ? (
@@ -162,10 +406,23 @@ export function GearSetsSection() {
                 {/* Actions */}
                 <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                   <button
+                    onClick={() => handleUploadSet(set)}
+                    disabled={uploadingSetId === set.id}
+                    className="px-2.5 py-1.5 text-xs font-bold uppercase tracking-[0.5px] border border-[#333] text-[var(--text-mid)] hover:text-white hover:border-[#555] rounded transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                  >
+                    {uploadingSetId === set.id ? "Uploading..." : "Upload"}
+                  </button>
+                  <button
                     onClick={() => loadGearSet(set.id)}
                     className="px-2.5 py-1.5 text-xs font-bold uppercase tracking-[0.5px] border border-[#333] text-[var(--text-mid)] hover:text-white hover:border-[#555] rounded transition-colors"
                   >
                     Load
+                  </button>
+                  <button
+                    onClick={() => handleUpdateSet(set)}
+                    className="px-2.5 py-1.5 text-xs font-bold uppercase tracking-[0.5px] border border-[#333] text-[var(--text-mid)] hover:text-white hover:border-[#555] rounded transition-colors"
+                  >
+                    Update
                   </button>
                   <button
                     onClick={() => { setEditingId(set.id); setEditName(set.name) }}

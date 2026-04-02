@@ -563,16 +563,27 @@ export function calculateStats(
   console.log("%c═══ STAT CALCULATIONS ═══", "color: #00ff00; font-weight: bold; font-size: 14px");
   
   const stats = ["Crit", "Haste", "Luck", "Mastery", "Versatility"];
+  type PercentStatKey = "crit" | "haste" | "luck" | "mast" | "vers"
+  const baseKeyByStat: Record<string, PercentStatKey> = {
+    Crit: "crit",
+    Haste: "haste",
+    Luck: "luck",
+    Mastery: "mast",
+    Versatility: "vers",
+  };
+
   stats.forEach(stat => {
     const raw = total[stat];
     const pct = getStatPercentCombat(stat, raw);
     const purple = purpleStats[`${stat} (%)`] || 0;
-    const extVal = (ext as any)[stat.toLowerCase().substring(0, 4)] || 0;
+    const baseKey = baseKeyByStat[stat];
+    const extVal = ext[baseKey] || 0;
+    const baseVal = base[baseKey] || 0;
     const final = pct + purple + extVal;
     
     console.log(`\n%c${stat}`, "color: #ffaa00; font-weight: bold");
-    console.log(`  Base: ${base[stat.toLowerCase().substring(0, 4)] || 0}`);
-    console.log(`  Gear: ${raw - (base[stat.toLowerCase().substring(0, 4)] || 0)}`);
+    console.log(`  Base: ${baseVal}`);
+    console.log(`  Gear: ${raw - baseVal}`);
     console.log(`  Raw Total: ${raw}`);
     console.log(`  → ${pct.toFixed(2)}% (formula: ${GAME_DATA.CONSTANTS[stat].base} + ${raw}/(${raw}+${GAME_DATA.CONSTANTS[stat].c})×100)`);
     if (purple > 0) console.log(`  + Purple: ${purple}%`);
@@ -689,6 +700,8 @@ interface AppState {
   saveGearSet: (name: string) => void
   deleteGearSet: (id: string) => void
   loadGearSet: (id: string) => void
+  applyGearSet: (gearSet: GearSet) => void
+  updateGearSet: (id: string) => void
   renameGearSet: (id: string, name: string) => void
   importGearSets: (sets: GearSet[]) => void
 
@@ -834,9 +847,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setGearSets(prev => prev.filter(s => s.id !== id))
   }, [])
 
-  const loadGearSet = useCallback((id: string) => {
-    const set = gearSets.find(s => s.id === id)
-    if (!set) return
+  const applyGearSet = useCallback((set: GearSet) => {
     setGearState(set.gear.map(g => ({ ...g })))
     setLegendaryTypes([...set.legendaryTypes])
     setLegendaryVals([...set.legendaryVals])
@@ -844,7 +855,30 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setModules(set.modules.map(m => ({ ...m })))
     setSelectedTalents([...set.selectedTalents])
     setTalentAspd(set.talentAspd)
-  }, [gearSets, setAllImagines])
+  }, [setAllImagines])
+
+  const loadGearSet = useCallback((id: string) => {
+    const set = gearSets.find(s => s.id === id)
+    if (!set) return
+    applyGearSet(set)
+  }, [gearSets, applyGearSet])
+
+  const updateGearSet = useCallback((id: string) => {
+    setGearSets(prev => prev.map(s => {
+      if (s.id !== id) return s
+      return {
+        ...s,
+        gear: gear.map(g => ({ ...g })),
+        legendaryTypes: [...legendaryTypes],
+        legendaryVals: [...legendaryVals],
+        imagines: imagines.map(im => ({ ...im })),
+        modules: modules.map(m => ({ ...m })),
+        selectedTalents: [...selectedTalents],
+        talentAspd,
+        createdAt: new Date().toISOString(),
+      }
+    }))
+  }, [gear, legendaryTypes, legendaryVals, imagines, modules, selectedTalents, talentAspd])
 
   const renameGearSet = useCallback((id: string, name: string) => {
     setGearSets(prev => prev.map(s => s.id === id ? { ...s, name } : s))
@@ -1019,7 +1053,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     getAllowedForSlot,
     selectedTalents, setSelectedTalents,
     talentAspd, setTalentAspd,
-    gearSets, setGearSets, saveGearSet, deleteGearSet, loadGearSet, renameGearSet, importGearSets,
+    gearSets, setGearSets, saveGearSet, deleteGearSet, loadGearSet, applyGearSet, updateGearSet, renameGearSet, importGearSets,
     psychoscopeConfig, setPsychoscopeConfig,
     switchSpec, specSnapshots,
   }
