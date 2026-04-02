@@ -1,7 +1,8 @@
 "use client"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useApp, type GearSet } from "@/lib/app-context"
 import { getGearSetColorByIndex } from "@/lib/gear-set-colors"
+import { DEFAULT_PSYCHOSCOPE_CONFIG } from "@/lib/psychoscope-data"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -32,8 +33,25 @@ export function GearSetsSection() {
     name: string
     spec: string
     uploaderName: string | null
+    uploaderId: string | null
     createdAt: string
   }
+
+  const getOrCreateUploaderId = (): string => {
+    let id = localStorage.getItem('uploaderId')
+    if (!id) {
+      id = `user_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`
+      localStorage.setItem('uploaderId', id)
+    }
+    return id
+  }
+
+  const [uploaderId, setUploaderId] = useState('')
+
+  // Load uploaderId after mount to avoid SSR hydration mismatch
+  useEffect(() => {
+    setUploaderId(getOrCreateUploaderId())
+  }, [])
 
   const [newSetName, setNewSetName] = useState("")
   const [editingId, setEditingId] = useState<string | null>(null)
@@ -46,6 +64,8 @@ export function GearSetsSection() {
   const [browseDialogOpen, setBrowseDialogOpen] = useState(false)
   const [loadingUploadedSets, setLoadingUploadedSets] = useState(false)
   const [uploadedSets, setUploadedSets] = useState<SharedSetSummary[]>([])
+  const [deletingShareCode, setDeletingShareCode] = useState<string | null>(null)
+  const [updatingShareCode, setUpdatingShareCode] = useState<string | null>(null)
   const [sharedStatus, setSharedStatus] = useState<{ kind: "ok" | "err"; message: string } | null>(null)
   const [dontShowDeleteWarning, setDontShowDeleteWarning] = useState(() => {
     if (typeof window !== 'undefined') {
@@ -130,7 +150,7 @@ export function GearSetsSection() {
       const res = await fetch("/api/shared-sets", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ gearSet: set, spec }),
+        body: JSON.stringify({ gearSet: set, spec, uploaderId }),
       })
 
       const data = await res.json().catch(() => ({}))
@@ -200,6 +220,7 @@ export function GearSetsSection() {
         modules: remoteSet.modules.map(m => ({ ...m })),
         selectedTalents: [...remoteSet.selectedTalents],
         talentAspd: remoteSet.talentAspd,
+        psychoscopeConfig: remoteSet.psychoscopeConfig ? { ...remoteSet.psychoscopeConfig } : { ...DEFAULT_PSYCHOSCOPE_CONFIG },
         createdAt: new Date().toISOString(),
       }
 
@@ -229,8 +250,60 @@ export function GearSetsSection() {
     updateGearSet(set.id)
     setSharedStatus({
       kind: "ok",
-      message: `Updated \"${set.name}\" with your current planner settings.`,
+      message: `Updated "${set.name}" with your current planner settings.`,
     })
+  }
+
+  const handleDeleteUploadedSet = async (shareCode: string) => {
+    setDeletingShareCode(shareCode)
+    setSharedStatus(null)
+
+    try {
+      const res = await fetch(`/api/shared-sets?code=${encodeURIComponent(shareCode)}&uploaderId=${encodeURIComponent(uploaderId)}`, {
+        method: "DELETE",
+      })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        throw new Error(data.error ?? data.message ?? `HTTP ${res.status}`)
+      }
+
+      setUploadedSets(prev => prev.filter(s => s.shareCode !== shareCode))
+      setSharedStatus({ kind: "ok", message: `Deleted shared set ${shareCode}.` })
+    } catch (err) {
+      setSharedStatus({
+        kind: "err",
+        message: err instanceof Error ? err.message : "Failed to delete shared set",
+      })
+    } finally {
+      setDeletingShareCode(null)
+    }
+  }
+
+  const handleUpdateUploadedSet = async (shareCode: string, localSet: GearSet) => {
+    setUpdatingShareCode(shareCode)
+    setSharedStatus(null)
+
+    try {
+      const res = await fetch("/api/shared-sets", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ shareCode, uploaderId, gearSet: localSet, spec }),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        throw new Error(data.error ?? data.message ?? `HTTP ${res.status}`)
+      }
+
+      setUploadedSets(prev => prev.map(s => s.shareCode === shareCode ? { ...s, name: localSet.name } : s))
+      setSharedStatus({ kind: "ok", message: `Updated shared set ${shareCode} with "${localSet.name}".` })
+    } catch (err) {
+      setSharedStatus({
+        kind: "err",
+        message: err instanceof Error ? err.message : "Failed to update shared set",
+      })
+    } finally {
+      setUpdatingShareCode(null)
+    }
   }
 
   return (
@@ -327,23 +400,49 @@ export function GearSetsSection() {
             <div className="text-xs text-[var(--text-dim)]">Loading uploaded sets...</div>
           ) : uploadedSets.length > 0 ? (
             <div className="divide-y divide-[#1a1a1a] border border-[#2a2a2a] rounded-md overflow-hidden">
-              {uploadedSets.map((item) => (
+              {uploadedSets.map((item) => {
+                const isOwner = item.uploaderId && item.uploaderId === uploaderId
+                const matchingLocalSet = gearSets.find(s => s.name === item.name)
+                return (
                 <div key={item.shareCode} className="px-3 py-2.5 flex items-center gap-3 hover:bg-[#0d0d0d] transition-colors">
                   <div className="flex-1 min-w-0">
                     <div className="text-sm font-semibold text-white truncate">{item.name}</div>
                     <div className="text-xs text-[var(--text-dim)] mt-0.5">
                       Code: {item.shareCode} • {item.spec || "Unknown spec"} • {formatDate(item.createdAt)}
+                      {isOwner && <span className="ml-2 text-[var(--accent-color)]">(yours)</span>}
                     </div>
                   </div>
-                  <button
-                    onClick={() => handleLoadSharedSetByCode(item.shareCode)}
-                    disabled={loadingSharedSet}
-                    className="px-2.5 py-1.5 text-xs font-bold uppercase tracking-[0.5px] border border-[#333] text-[var(--text-mid)] hover:text-white hover:border-[#555] rounded transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-                  >
-                    Load
-                  </button>
+                  <div className="flex items-center gap-1">
+                    {isOwner && (
+                      <>
+                        <button
+                          onClick={() => handleDeleteUploadedSet(item.shareCode)}
+                          disabled={deletingShareCode === item.shareCode}
+                          className="px-2 py-1.5 text-xs font-bold uppercase tracking-[0.5px] border border-[#333] text-[var(--text-mid)] hover:text-red-400 hover:border-red-500/40 rounded transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                        >
+                          {deletingShareCode === item.shareCode ? "Deleting..." : "Delete"}
+                        </button>
+                        {matchingLocalSet && (
+                          <button
+                            onClick={() => handleUpdateUploadedSet(item.shareCode, matchingLocalSet)}
+                            disabled={updatingShareCode === item.shareCode}
+                            className="px-2 py-1.5 text-xs font-bold uppercase tracking-[0.5px] border border-[#333] text-[var(--text-mid)] hover:text-white hover:border-[#555] rounded transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                          >
+                            {updatingShareCode === item.shareCode ? "Updating..." : "Update"}
+                          </button>
+                        )}
+                      </>
+                    )}
+                    <button
+                      onClick={() => handleLoadSharedSetByCode(item.shareCode)}
+                      disabled={loadingSharedSet}
+                      className="px-2.5 py-1.5 text-xs font-bold uppercase tracking-[0.5px] border border-[#333] text-[var(--text-mid)] hover:text-white hover:border-[#555] rounded transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                    >
+                      Load
+                    </button>
+                  </div>
                 </div>
-              ))}
+              )})}
             </div>
           ) : (
             <div className="text-xs text-[var(--text-dim)]">No uploaded sets found yet.</div>

@@ -33,6 +33,7 @@ export interface GearSet {
   modules: ModuleSlot[]
   selectedTalents: string[]
   talentAspd: number
+  psychoscopeConfig: PsychoscopeConfig
   createdAt: string
 }
 
@@ -230,6 +231,7 @@ export function calculateStats(
   // Power Core modules
   const powerCorePoints: Record<string, number> = {}
   modules.forEach(mod => {
+    if (mod.enabled === false) return
     const affixes = [
       { key: mod.a1, lv: mod.a1lv },
       { key: mod.a2, lv: mod.a2lv },
@@ -838,10 +840,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       modules: modules.map(m => ({ ...m })),
       selectedTalents: [...selectedTalents],
       talentAspd,
+      psychoscopeConfig: { ...psychoscopeConfig },
       createdAt: new Date().toISOString(),
     }
     setGearSets(prev => [...prev, newSet])
-  }, [gear, legendaryTypes, legendaryVals, imagines, modules, selectedTalents, talentAspd])
+  }, [gear, legendaryTypes, legendaryVals, imagines, modules, selectedTalents, talentAspd, psychoscopeConfig])
 
   const deleteGearSet = useCallback((id: string) => {
     setGearSets(prev => prev.filter(s => s.id !== id))
@@ -852,9 +855,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setLegendaryTypes([...set.legendaryTypes])
     setLegendaryVals([...set.legendaryVals])
     setAllImagines(set.imagines.map(im => ({ ...im })))
-    setModules(set.modules.map(m => ({ ...m })))
+    setModules(set.modules.map(m => ({ ...m, enabled: m.enabled ?? true })))
     setSelectedTalents([...set.selectedTalents])
     setTalentAspd(set.talentAspd)
+    setPsychoscopeConfig(set.psychoscopeConfig ? { ...set.psychoscopeConfig } : { ...DEFAULT_PSYCHOSCOPE_CONFIG })
   }, [setAllImagines])
 
   const loadGearSet = useCallback((id: string) => {
@@ -875,10 +879,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         modules: modules.map(m => ({ ...m })),
         selectedTalents: [...selectedTalents],
         talentAspd,
+        psychoscopeConfig: { ...psychoscopeConfig },
         createdAt: new Date().toISOString(),
       }
     }))
-  }, [gear, legendaryTypes, legendaryVals, imagines, modules, selectedTalents, talentAspd])
+  }, [gear, legendaryTypes, legendaryVals, imagines, modules, selectedTalents, talentAspd, psychoscopeConfig])
 
   const renameGearSet = useCallback((id: string, name: string) => {
     setGearSets(prev => prev.map(s => s.id === id ? { ...s, name } : s))
@@ -923,7 +928,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         setLegendaryTypes([...snap.legendaryTypes])
         setLegendaryVals([...snap.legendaryVals])
         setAllImagines(snap.imagines.map(im => ({ ...im })))
-        setModules(snap.modules.map(m => ({ ...m })))
+        setModules(snap.modules.map(m => ({ ...m, enabled: m.enabled ?? true })))
         setSelectedTalents([...snap.selectedTalents])
         setTalentAspd(snap.talentAspd)
         setPsychoscopeConfig({ ...snap.psychoscopeConfig })
@@ -1002,7 +1007,14 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         setLegendaryVals(lv)
       }
       if (saved.imagines && Array.isArray(saved.imagines)) setAllImagines(saved.imagines)
-      if (saved.modules && Array.isArray(saved.modules)) setModules(saved.modules)
+      if (saved.modules && Array.isArray(saved.modules)) {
+        // Migrate: add enabled: true if missing from old saves
+        const migratedModules = saved.modules.map((mod: any) => ({
+          ...mod,
+          enabled: mod.enabled ?? true,
+        }))
+        setModules(migratedModules)
+      }
       if (saved.base) setBaseState({ ...defaultBase(), ...saved.base })
       if (saved.ext) setExtState({ ...defaultBuffs(), ...saved.ext })
       if (saved.accent) { setAccentState(saved.accent); document.documentElement.style.setProperty("--accent", ACCENT_MAP[saved.accent as AccentColor]) }

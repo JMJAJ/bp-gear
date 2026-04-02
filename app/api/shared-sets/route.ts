@@ -39,6 +39,7 @@ const postSchema = z.object({
   gearSet: gearSetSchema,
   spec: z.string().max(80).optional(),
   uploaderName: z.string().trim().min(1).max(40).optional(),
+  uploaderId: z.string().trim().min(1).max(64).optional(),
 })
 
 type DbRow = {
@@ -46,6 +47,7 @@ type DbRow = {
   name: string
   spec: string
   uploader_name: string | null
+  uploader_id: string | null
   gear_set: z.infer<typeof gearSetSchema>
   created_at: Date
 }
@@ -55,8 +57,11 @@ type DbSummaryRow = {
   name: string
   spec: string
   uploader_name: string | null
+  uploader_id: string | null
   created_at: Date
 }
+
+const SHARE_CODE_REGEX = /^[ABCDEFGHJKLMNPQRSTUVWXYZ23456789]+$/
 
 const SHARE_CODE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
 
@@ -85,9 +90,15 @@ async function ensureSchema(): Promise<void> {
           name STRING NOT NULL,
           spec STRING NOT NULL DEFAULT '',
           uploader_name STRING,
+          uploader_id STRING,
           gear_set JSONB NOT NULL,
           created_at TIMESTAMPTZ NOT NULL DEFAULT now()
         )
+      `)
+
+      // Add uploader_id column if it doesn't exist (for existing tables)
+      await pool.query(`
+        ALTER TABLE shared_gear_sets ADD COLUMN IF NOT EXISTS uploader_id STRING
       `)
 
       await pool.query(`
@@ -115,7 +126,7 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    const { gearSet, spec, uploaderName } = parsed.data
+    const { gearSet, spec, uploaderName, uploaderId } = parsed.data
     const pool = getCockroachPool()
 
     for (let attempt = 0; attempt < 6; attempt += 1) {
@@ -123,10 +134,10 @@ export async function POST(req: NextRequest) {
       try {
         await pool.query(
           `
-            INSERT INTO shared_gear_sets (share_code, name, spec, uploader_name, gear_set)
-            VALUES ($1, $2, $3, $4, $5::JSONB)
+            INSERT INTO shared_gear_sets (share_code, name, spec, uploader_name, uploader_id, gear_set)
+            VALUES ($1, $2, $3, $4, $5, $6::JSONB)
           `,
-          [shareCode, gearSet.name, spec ?? "", uploaderName ?? null, JSON.stringify(gearSet)],
+          [shareCode, gearSet.name, spec ?? "", uploaderName ?? null, uploaderId ?? null, JSON.stringify(gearSet)],
         )
 
         return NextResponse.json({
@@ -143,6 +154,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ error: "Unable to generate unique share code" }, { status: 500 })
   } catch (err) {
+    console.error("[shared-sets POST error]", err)
     const msg = err instanceof Error ? err.message : "Unknown error"
     return NextResponse.json({ error: "Failed to upload shared set", message: msg }, { status: 500 })
   }
@@ -163,7 +175,7 @@ export async function GET(req: NextRequest) {
 
       const result = await pool.query<DbSummaryRow>(
         `
-          SELECT share_code, name, spec, uploader_name, created_at
+          SELECT share_code, name, spec, uploader_name, uploader_id, created_at
           FROM shared_gear_sets
           ORDER BY created_at DESC
           LIMIT $1
@@ -177,6 +189,7 @@ export async function GET(req: NextRequest) {
           name: row.name,
           spec: row.spec,
           uploaderName: row.uploader_name,
+          uploaderId: row.uploader_id,
           createdAt: row.created_at.toISOString(),
         })),
       })
@@ -184,7 +197,7 @@ export async function GET(req: NextRequest) {
 
     const result = await pool.query<DbRow>(
       `
-        SELECT share_code, name, spec, uploader_name, gear_set, created_at
+        SELECT share_code, name, spec, uploader_name, uploader_id, gear_set, created_at
         FROM shared_gear_sets
         WHERE share_code = $1
         LIMIT 1
@@ -202,11 +215,96 @@ export async function GET(req: NextRequest) {
       name: row.name,
       spec: row.spec,
       uploaderName: row.uploader_name,
+      uploaderId: row.uploader_id,
       createdAt: row.created_at.toISOString(),
       gearSet: row.gear_set,
     })
   } catch (err) {
+    console.error("[shared-sets GET error]", err)
     const msg = err instanceof Error ? err.message : "Unknown error"
     return NextResponse.json({ error: "Failed to load shared set", message: msg }, { status: 500 })
+  }
+}
+
+export async function DELETE(req: NextRequest) {
+  try {
+    await ensureSchema()
+
+    const code = req.nextUrl.searchParams.get("code")?.trim().toUpperCase()
+    const uploaderId = req.nextUrl.searchParams.get("uploaderId")?.trim()
+
+    if (!code || !uploaderId) {
+      return NextResponse.json({ error: "Missing code or uploaderId" }, { status: 400 })
+    }
+
+    if (!SHARE_CODE_REGEX.test(code)) {
+      return NextResponse.json({ error: "Invalid share code format" }, { status: 400 })
+    }
+
+    const pool = getCockroachPool()
+    const result = await pool.query(
+      `
+        DELETE FROM shared_gear_sets
+        WHERE share_code = $1 AND uploader_id = $2
+        RETURNING share_code
+      `,
+      [code, uploaderId],
+    )
+
+    if (result.rowCount === 0) {
+      return NextResponse.json({ error: "Set not found or not owned by you" }, { status: 404 })
+    }
+
+    return NextResponse.json({ success: true, shareCode: code })
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : "Unknown error"
+    return NextResponse.json({ error: "Failed to delete shared set", message: msg }, { status: 500 })
+  }
+}
+
+const putSchema = z.object({
+  shareCode: z.string().trim().min(1).max(16).regex(SHARE_CODE_REGEX, "Invalid share code format"),
+  uploaderId: z.string().trim().min(1).max(64),
+  gearSet: gearSetSchema,
+  spec: z.string().max(80).optional(),
+})
+
+export async function PUT(req: NextRequest) {
+  try {
+    await ensureSchema()
+
+    const parsed = putSchema.safeParse(await req.json())
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: "Invalid payload", details: parsed.error.flatten() },
+        { status: 400 },
+      )
+    }
+
+    const { shareCode, uploaderId, gearSet, spec } = parsed.data
+    const pool = getCockroachPool()
+
+    const result = await pool.query(
+      `
+        UPDATE shared_gear_sets
+        SET name = $1, spec = $2, gear_set = $3::JSONB
+        WHERE share_code = $4 AND uploader_id = $5
+        RETURNING share_code
+      `,
+      [gearSet.name, spec ?? "", JSON.stringify(gearSet), shareCode, uploaderId],
+    )
+
+    if (result.rowCount === 0) {
+      return NextResponse.json({ error: "Set not found or not owned by you" }, { status: 404 })
+    }
+
+    return NextResponse.json({
+      success: true,
+      shareCode,
+      name: gearSet.name,
+    })
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : "Unknown error"
+    return NextResponse.json({ error: "Failed to update shared set", message: msg }, { status: 500 })
   }
 }

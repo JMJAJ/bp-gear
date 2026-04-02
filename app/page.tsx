@@ -130,7 +130,7 @@ function AppShell() {
             > 
               Stats
             </button>
-            <span className="text-[10px] text-[var(--panel-border)] hidden md:block">v0.5.1-alpha</span>
+            <span className="text-[10px] text-[var(--panel-border)] hidden md:block">v0.5.6-alpha</span>
           </div>
         </header>
 
