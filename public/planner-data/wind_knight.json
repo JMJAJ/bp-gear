@@ -1,0 +1,414 @@
+{
+  "kind": "talents",
+  "class": "Wind Knight",
+  "talents": [
+    {
+      "name": "Swift Shadow",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_sup_aggregation.webp",
+      "id": "swift_shadow",
+      "desc": "Every 50 points of Courage consumed reduces the CD of Spiral Thrust, Breach Pursuit, and Falcon Toss by 1s."
+    },
+    {
+      "name": "Power Conversion",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_strtran.webp",
+      "id": "power_conversion",
+      "desc": "Every 8 Strength grants 1 ATK."
+    },
+    {
+      "name": "Vulnerable Strike",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_icenucleus.webp",
+      "id": "vulnerable_strike",
+      "desc": "Dealing DMG grants a fixed 30% chance to apply Vulnerability to the enemy. Vulnerability: Increases the DMG you deal to the target by 10% for 5s."
+    },
+    {
+      "name": "Sharp",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_sharpget.webp",
+      "id": "sharp",
+      "desc": "Dealing DMG with Special Attacks grants Sharp."
+    },
+    {
+      "name": "Sharp Expansion",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/changqiang459.webp",
+      "id": "sharp_expansion",
+      "desc": "Sharp cap +1."
+    },
+    {
+      "name": "Wind Rift Diffusion",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_teardelay.webp",
+      "id": "wind_rift_diffusion",
+      "desc": "Expertise and Ultimates deal 10% more DMG to targets inflicted with Rend, and when hitting Rend targets, deal 1 additional hit of 75% DMG."
+    },
+    {
+      "name": "Wind Tear",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_tearget.webp",
+      "id": "wind_tear",
+      "desc": "When Gale Thrust deals DMG, apply Rend to targets."
+    },
+    {
+      "name": "Quickshot Meteor",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_winddancecount.webp",
+      "id": "quickshot_meteor",
+      "desc": "Gale Thrust is enhanced, increasing hit counts by 2. Reduces Gale Thrust's Courage consumption by 20%."
+    },
+    {
+      "name": "Sharp Expansion",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/changqiang459.webp",
+      "id": "sharp_expansion_1",
+      "desc": "Sharp cap +1."
+    },
+    {
+      "name": "Swift Blade",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_backhitpro.webp",
+      "id": "swift_blade",
+      "desc": "When Valor Cyclone deals DMG, it has a fixed 7% chance to evolve Basic Attacks into Swift Blade."
+    },
+    {
+      "name": "Zephyr Waltz Agility",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_sharpenergyre.webp",
+      "id": "zephyr_waltz_agility",
+      "desc": "Additional Courage recovery: Recovers 1 extra point of Courage per second for every 2 stacks of Sharp."
+    },
+    {
+      "name": "Wind Chaser",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_sharpspeed.webp",
+      "id": "wind_chaser",
+      "desc": "During the casting of Valor Cyclone, for every 20 points of Courage consumed, increase the DMG of Valor Cyclone by 4%, up to 20%."
+    },
+    {
+      "name": "Vortex Strike",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_windspiral.webp",
+      "id": "vortex_strike",
+      "desc": "After every 2 casts of Drake Cannon, your Spiral Thrust evolves into Vortex Strike."
+    },
+    {
+      "name": "Instantaneous Crit",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_momentcri.webp",
+      "id": "instantaneous_crit",
+      "desc": "While Chasing Step is active, Instant Edge and Sharp Impact have their critical rate doubled."
+    },
+    {
+      "name": "Spear Thrust",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_spearrush.webp",
+      "id": "spear_thrust",
+      "desc": "When Skyfall lands a Lucky Strike, it triggers Spear Thrust, once every 2s. Dealing DMG with Spear Thrust restores 8 points of Courage. This effect triggers only once, even if multiple targets are hit."
+    },
+    {
+      "name": "Wind Fury",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_tyrannical.webp",
+      "id": "wind_fury",
+      "desc": "Casting Sharp Impact grants Wind Fury."
+    },
+    {
+      "name": "Sharp Expansion",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/changqiang459.webp",
+      "id": "sharp_expansion_2",
+      "desc": "Sharp cap +1."
+    },
+    {
+      "name": "Air Dance Strike",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_flycriluck.webp",
+      "id": "air_dance_strike",
+      "desc": "Sharp Impact and its enhanced skill (Typhoon: Sharp Impact) increase the Courage restored by the next ​Galeform​ by 50%. Casting Sharp Impact immediately grants 3 Sharp, and casting its enhanced skill Typhoon: Sharp Impact immediately grants 6 Sharp."
+    },
+    {
+      "name": "Sharp Expansion",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/changqiang459.webp",
+      "id": "sharp_expansion_3",
+      "desc": "Sharp cap +1."
+    },
+    {
+      "name": "Tornado Dance",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_tornadoget.webp",
+      "id": "tornado_dance",
+      "desc": "During Wind Fury, DMG dealt by Instant Edge and Azure Sever triggers Tornado (triggered at most once when hitting multiple targets)."
+    },
+    {
+      "name": "Chasing Step",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_ruthless.webp",
+      "id": "chasing_step",
+      "desc": "When a Crit is achieved by Skyfall or Falcon Toss, a Chasing Step is triggered."
+    },
+    {
+      "name": "Divine Wind Support",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_sharpenergyre02.webp",
+      "id": "divine_wind_support",
+      "desc": "When Falcon Toss and its enhanced skill (Azure Sever), or Instant Edge hits 1 target, the DMG gains a 10% Wind bonus."
+    },
+    {
+      "name": "Combat Expertise",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_sup_melee02.webp",
+      "id": "combat_expertise",
+      "desc": "As the battle goes on, grants continuously increasing ATK. Every 10s, ATK +2.5%, up to 10%. Cleared after battle."
+    },
+    {
+      "name": "Momentum Surge",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_sharpeffectup.webp",
+      "id": "momentum_surge",
+      "desc": "Increases Sharp effect by 1%, and for each enemy within 12m, additionally increases by 1%, up to 3%."
+    },
+    {
+      "name": "Catcher",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_tank_bk01.webp",
+      "id": "catcher",
+      "desc": "In combat, for every 1 enemy target defeated (party-wide effect), ATK +50 for 30s, up to 500."
+    },
+    {
+      "name": "Wind Split Technique",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_teargetenergy.webp",
+      "id": "wind_split_technique",
+      "desc": "When Rend deals DMG, it has a fixed 50% chance to grant 2 points of Courage."
+    },
+    {
+      "name": "Tempestrike",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_sharpenergyre03.webp",
+      "id": "tempestrike",
+      "desc": "When Galeform ends, it applies the Tempestrike. Every 50 points of Courage consumed during Galeform extends the duration of Tempestrike by 1s."
+    },
+    {
+      "name": "Divine Concealment",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_sup_control01.webp",
+      "id": "divine_concealment",
+      "desc": "Consuming Courage increases Haste by 1% and Speed by 2% for 5s, stacking up to 5 times."
+    },
+    {
+      "name": "Valor",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_tank_violent03.webp",
+      "id": "valor",
+      "desc": "Increases Max Courage by 30."
+    },
+    {
+      "name": "Skyward Spec",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_flyhitget.webp",
+      "id": "skyward_spec",
+      "desc": "Replaces Special Attack with Skyfall and enhances the skill. When having Sharp, gains ATK based on the max number of Sharp. Skyfall and Instant Edge can chain together, skipping the aerial cast delay. High Luck and critical rate enable Skyfall to trigger a low-cost Instant Edge."
+    },
+    {
+      "name": "Vanguard Spec",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_backhitget.webp",
+      "id": "vanguard_spec",
+      "desc": "Further enhances Gale Thrust. Casting Gale Thrust grants a 20% fixed chance to cause Basic Attacks to evolve into Swift Blade, with an additional 5% chance per stack of Sharp. Maximize Courage gain and expenditure to reduce the CD of Expertise skills. Haste increases Courage generation and the casting speed of core Expertise skills."
+    },
+    {
+      "name": "Battle Cry",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_skill_300001.webp",
+      "id": "battle_cry",
+      "desc": "Typhoon Cleave raises the banner spear, granting Inspire to allies. Afterward, a follow-up leap can be launched, dealing Attack Damage to the enemies within range and knocking them airborne, while restoring 100 Courage. Inspire: Lasts for 10s. All allies gain 10% Haste (only one effect can be active at a time). You restore 10 Courage per second and 1 Sharp every 2s."
+    },
+    {
+      "name": "Swift",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/changqiang435.webp",
+      "id": "swift",
+      "desc": "Each 1% Haste provides 1% Attack Speed."
+    },
+    {
+      "name": "Sharp Expansion",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/changqiang436.webp",
+      "id": "sharp_expansion_4",
+      "desc": "Sharp cap +1."
+    },
+    {
+      "name": "Long Lance Sharp Blade",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/changqiang437.webp",
+      "id": "long_lance_sharp_blade",
+      "desc": "When Strength reaches 300 points, Expertise Skill damage +7%."
+    },
+    {
+      "name": "Sharp",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/changqiang438.webp",
+      "id": "sharp_1",
+      "desc": "When Strength reaches 500 points, the additional ATK from Sharp increases to 6%."
+    },
+    {
+      "name": "Break Pursuit Advancement",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/changqiang439.webp",
+      "id": "break_pursuit_advancement",
+      "desc": "Within 15s after Casting the Ultimate, Casting Breach Pursuit will not start CD. This effect is removed after the duration ends or after Casting 3 times Breach Pursuit."
+    },
+    {
+      "name": "Wind Spiral",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/changqiang440.webp",
+      "id": "wind_spiral",
+      "desc": "When Gale Thrust deals DMG, it has a fixed 25% chance to grant 1 stack of Wind Spiral for 20s, stacking up to 10 times. Wind Spiral: When casting Spiral Thrust or Valor Cyclone, it triggers a Spiral Explosion, dealing Attack DMG equal to 200% ATK to nearby enemies. Each Spiral Explosion reduces Wind Spiral stacks by 1."
+    },
+    {
+      "name": "Vigor Spike",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/changqiang441.webp",
+      "id": "vigor_spike",
+      "desc": "When Sharp reaches full amount and the caster is in combat, enters Vigor Spike state, effective up to once every 30s."
+    },
+    {
+      "name": "Fearless Gale",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/changqiang442.webp",
+      "id": "fearless_gale",
+      "desc": "After casting Spiral Thrust or Breach Pursuit or Valor Cyclone, the next Gale Thrust will not consume Courage. This effect is removed after leaving combat."
+    },
+    {
+      "name": "Whispering Breeze",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/changqiang443.webp",
+      "id": "whispering_breeze",
+      "desc": "When Courage is below or equal to 50%, reduces the Energy Valor Cyclone consumes by 2. When Courage is above 50%, increases the DMG Valor Cyclone deals by 12%."
+    },
+    {
+      "name": "Rapid Drake Cannon",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/changqiang444.webp",
+      "id": "rapid_drake_cannon",
+      "desc": "Using Swift Blade grants it a fixed 10% chance to evolve Basic Attack into Drake Cannon in 10s. Each failure to evolve increases the chance by 10% until success."
+    },
+    {
+      "name": "Rupture",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/changqiang445.webp",
+      "id": "rupture",
+      "desc": "When Valor Cyclone deals DMG, it has a fixed 50% chance to inflict Rupture."
+    },
+    {
+      "name": "Spiral Tear",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/changqiang446.webp",
+      "id": "spiral_tear",
+      "desc": "Spiral Thrust and Vortex Strike deals 30% more DMG to the targets with Rend."
+    },
+    {
+      "name": "Fortitude",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/changqiang447.webp",
+      "id": "fortitude",
+      "desc": "During Valor Cyclone, gains Super Armor and reduces DMG taken by 20%. When Valor Cyclone deals DMG, restores HP equal to 10% ATK."
+    },
+    {
+      "name": "Swift Breeze",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/changqiang448.webp",
+      "id": "swift_breeze",
+      "desc": "Each 1% Haste accelerates the REG SPD of Courage by 2%."
+    },
+    {
+      "name": "Breath of Wind",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/changqiang449.webp",
+      "id": "breath_of_wind",
+      "desc": "Skills that consume Courage (Spiral Thrust and its enhanced skills, Valor Cyclone, Falcon Toss and its enhanced skills, Gale Thrust) gain 6% Wind Bonus."
+    },
+    {
+      "name": "Wind Rise",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/changqiang450.webp",
+      "id": "wind_rise",
+      "desc": "When Valor Cyclone deals DMG, increases the critical rate of Drake Cannon and Vortex Strike by 7%. The effect lasts 5s and stacks up to 7 times."
+    },
+    {
+      "name": "Strong Attack",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/changqiang451.webp",
+      "id": "strong_attack",
+      "desc": "When Valor Cyclone deals DMG, reduces the CD of Ultimate by 0.5s (which can only be triggers once on multiple hits)."
+    },
+    {
+      "name": "Spiral Flame",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/changqiang452.webp",
+      "id": "spiral_flame",
+      "desc": "Using Vortex Strike, increases Haste by 25% for 10s."
+    },
+    {
+      "name": "Dragon's Fury Flame",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/changqiang453.webp",
+      "id": "dragon_s_fury_flame",
+      "desc": "The Crit chance of ​Drake Cannon​ and ​Vortex Strike​ is doubled. Increases the Crit DMG of Drake Cannon and Vortex Strike by 8%. Each 1% Haste grants 0.5% Crit DMG for Drake Cannon​ and ​Vortex Strike​."
+    },
+    {
+      "name": "Wind Gate Drake Cannon",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/changqiang454.webp",
+      "id": "wind_gate_drake_cannon",
+      "desc": "Every 22 triggers of Valor Cyclone allows Basic Attack to evolve into Drake Cannon in 10s."
+    },
+    {
+      "name": "Bird Advancement",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/changqiang455.webp",
+      "id": "bird_advancement",
+      "desc": "Increases the charge of Falcon Toss by 1. Reduces Courage consumed by Falcon Toss by 50%."
+    },
+    {
+      "name": "Sharp Advancement",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/changqiang456.webp",
+      "id": "sharp_advancement",
+      "desc": "Enhances the effectiveness of Wind Fury by 50%. When Instant Edge consumes Chasing Step, doubles the charge efficiency of Sharp Impact."
+    },
+    {
+      "name": "Spear Recovery",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/changqiang457.webp",
+      "id": "spear_recovery",
+      "desc": "Spear Thrust reduces the CD of Falcon Toss by 2s (which can only be triggers once on multiple hits)."
+    },
+    {
+      "name": "Sharp Long Breath",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/changqiang458.webp",
+      "id": "sharp_long_breath",
+      "desc": "During Wind Fury, Falcon Toss evolves into Azure Sever once."
+    },
+    {
+      "name": "Sharp Expansion",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/changqiang459.webp",
+      "id": "sharp_expansion_5",
+      "desc": "Sharp cap +1."
+    },
+    {
+      "name": "Skyfall",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/changqiang460.webp",
+      "id": "skyfall",
+      "desc": "When dealing DMG, Skyfall gains a fixed 15% chance to grant 1 stack of Sharp."
+    },
+    {
+      "name": "Pursuit Power",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/changqiang461.webp",
+      "id": "pursuit_power",
+      "desc": "Chasing Step consumed increases Strength by 10%. The effect lasts 10s and stacks up to 2 times."
+    },
+    {
+      "name": "Exceptional Elegance",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/changqiang462.webp",
+      "id": "exceptional_elegance",
+      "desc": "During Galeform, increases the DMG dealt by Instant Edge and Skyfall by 25%."
+    },
+    {
+      "name": "Typhoon: Sharp Impact",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/changqiang463.webp",
+      "id": "typhoon_sharp_impact",
+      "desc": "Sharp Impact is enhanced, evolving into Typhoon: Sharp Impact."
+    },
+    {
+      "name": "Instant Edge Break Style",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/changqiang464.webp",
+      "id": "instant_edge_break_style",
+      "desc": "Instant Edge consumes 1 more Sharp. Increases the DMG dealt by Instant Edge by 90%."
+    },
+    {
+      "name": "Wind Swirl Strike",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/changqiang465.webp",
+      "id": "wind_swirl_strike",
+      "desc": "Increases the DMG dealt by Tornado by 30%. Increases the DMG dealt by Spear Thrust by 30%."
+    },
+    {
+      "name": "Sharp Pursuit",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/changqiang466.webp",
+      "id": "sharp_pursuit",
+      "desc": "When Instant Edge consumes Chasing Step, grants 1 stack of Sharp."
+    },
+    {
+      "name": "Instant Edge Combo",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/changqiang467.webp",
+      "id": "instant_edge_combo",
+      "desc": "Instant Edge has a fixed 25% chance to trigger one extra instance of DMG (if Lucky Strike chance exceeds 25%, that becomes the new trigger chance). This extra DMG equals Instant Edge DMG x current Lucky Strike DMG multiplier%, and is affected by all relevant Instant Edge DMG bonuses."
+    },
+    {
+      "name": "Break Style",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/changqiang468.webp",
+      "id": "break_style",
+      "desc": "When dealing Crit DMG, Expertise ignore the targets' 50% Armor."
+    },
+    {
+      "name": "Sharp Echo",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/changqiang469.webp",
+      "id": "sharp_echo",
+      "desc": "If Sharp isn't at Max stacks, increases the DMG dealt by Skyfall by 25%."
+    },
+    {
+      "name": "Kamikaze Luck",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/changqiang470.webp",
+      "id": "kamikaze_luck",
+      "desc": "For each 1 stack of Sharp consumed, gains 3 points of Courage. Increases Lucky Strike final DMG by 50%."
+    }
+  ]
+}

@@ -352,6 +352,7 @@ export function PlannerSection() {
     base, setBase,
     ext, setExt,
     selectedTalents, setSelectedTalents,
+    talentNodeSelections, setTalentNodeSelections,
     talentAspd, setTalentAspd,
     gearSets, setGearSets, importGearSets,
     psychoscopeConfig, setPsychoscopeConfig,
@@ -366,6 +367,7 @@ export function PlannerSection() {
     setAllImagines([{ key: "", idx: 0 }, { key: "", idx: 0 }])
     setModules(Array.from({ length: 4 }, () => ({ rarity: "Gold", a1: "", a1lv: 10, a2: "", a2lv: 10, a3: "", a3lv: 10 })))
     setSelectedTalents([])
+    setTalentNodeSelections({ class: {}, spec: {} })
     setTalentAspd(0)
     setGearSets([])
     setConfirmClear(false)
@@ -387,6 +389,7 @@ export function PlannerSection() {
       seasonLevel,
       gearLib,
       selectedTalents,
+      talentNodeSelections,
       talentAspd,
       gearSets,
       psychoscopeConfig,
@@ -435,6 +438,9 @@ export function PlannerSection() {
             setExt({ illu: seasonLv })
           }
           if (parsed.selectedTalents && Array.isArray(parsed.selectedTalents)) setSelectedTalents(parsed.selectedTalents)
+          if (parsed.talentNodeSelections && typeof parsed.talentNodeSelections === "object") {
+            setTalentNodeSelections(parsed.talentNodeSelections)
+          }
           if (typeof parsed.talentAspd === "number") setTalentAspd(parsed.talentAspd)
           if (parsed.gearSets && Array.isArray(parsed.gearSets)) importGearSets(parsed.gearSets)
           if (parsed.psychoscopeConfig) {

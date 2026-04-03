@@ -1,0 +1,408 @@
+{
+  "kind": "talents",
+  "class": "Marksman",
+  "talents": [
+    {
+      "name": "Photon Limit",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_lightenergy.webp",
+      "id": "photon_limit",
+      "desc": "Increases Max Photon Energy by 20, extending the duration of Photon Reforge. Unaffected when Wildpack Spec is active. If Falconry Spec is activated, the effect becomes: Max Photon Energy -20 but Photon Reforge state can be entered more quickly."
+    },
+    {
+      "name": "Agility Conversion",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_speedtran.webp",
+      "id": "agility_conversion",
+      "desc": "Every 10 Agility grants 4 Haste."
+    },
+    {
+      "name": "Vulnerable Strike",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_icenucleus.webp",
+      "id": "vulnerable_strike",
+      "desc": "Dealing DMG grants a fixed 30% chance to apply Vulnerability to the enemy. Vulnerability: Increases the DMG you deal to the target by 10% for 5s."
+    },
+    {
+      "name": "Wolf Pact",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_wolfget.webp",
+      "id": "wolf_pact",
+      "desc": "Tames a Wild Wolf to fight alongside you. Storm Arrow has a 30% fixed chance to trigger Coordinated Attack. Wild Wolf A Wild Wolf fights alongside you. Basic Attack: Sweeps the enemy, dealing Attack Damage equal to 60% ATK (which scales with the Level/Tier of your Basic Attack). Coordinated Attack: Wild Wolf leaps to the enemy and bites, dealing Attack Damage equal to 100% ATK (which scales with the Level/Tier of your Basic Attack)."
+    },
+    {
+      "name": "Psychic Surge",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_lightattackre.webp",
+      "id": "psychic_surge",
+      "desc": "For every 15 Special Attacks cast, Photon Energy granted by the next cast of Arrow Rain +100%."
+    },
+    {
+      "name": "Battle Howl",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_wolfroar.webp",
+      "id": "battle_howl",
+      "desc": "While Wildcall is active, the Wild Wolf is bound to deal Crit DMG on hit."
+    },
+    {
+      "name": "Direwolf's Hunger",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_wolfspeedup.webp",
+      "id": "direwolf_s_hunger",
+      "desc": "When the Wild Wolf deals Crit DMG, you and your Beast gain 2% Haste for 10s. This effect stacks up to 5 times. When Haste exceeds 35%, every extra 1% of Haste grants 0.2% ATK."
+    },
+    {
+      "name": "Meditation",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_lightenergycost.webp",
+      "id": "meditation",
+      "desc": "While in Photon Reforge, Photon Energy drain per second is reduced from 25 to 20, allowing the effect to last longer. Unaffected when Wildpack Spec is active. If Falconry Spec is activated, the effect becomes: Photon Energy regeneration is increased from 2 to 3 points per second, reducing the time required to enter Photon Reforge."
+    },
+    {
+      "name": "Phantom Wolfstrike",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_wolfswoop.webp",
+      "id": "phantom_wolfstrike",
+      "desc": "When Wild Wolf launches a Coordinated Attack, or Tail Sweep, there is a fixed 30% chance to summon a Phantom Direwolf using Pounce and Bite to attack the current enemy. Pounce and Bite inflicts Bleed, and if the target is already suffered from Bleed, Pounce and Bite deals Crit DMG."
+    },
+    {
+      "name": "Direwolf Bite",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_wolfbleed.webp",
+      "id": "direwolf_bite",
+      "desc": "Wild Wolf's Coordinated Attack has a 50% fixed chance to inflict Bleed."
+    },
+    {
+      "name": "Demon Wolf Twin",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_wolfonce.webp",
+      "id": "demon_wolf_twin",
+      "desc": "When Storm Arrow deals DMG in battle, it has a fixed 10% chance to summon a Wild Wolf for 8s. This effect can occur once every 40s."
+    },
+    {
+      "name": "Photon Reforge Lore",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_resetbite.webp",
+      "id": "photon_reforge_lore",
+      "desc": "While Photon Reforge is active, the Wild Wolf's Coordinated Attack nullifies the target's Armor."
+    },
+    {
+      "name": "Twin Arrows",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_doublearrowfly.webp",
+      "id": "twin_arrows",
+      "desc": "Luminary Bolt additionally causes a Photon Explosion, dealing Attack Damage equal to 1,500% ATK (which scales with the Level/Tier of Ultimate), and also knocks targets airborne and increases the DMG you deal to them by 5% for 10s."
+    },
+    {
+      "name": "Tracer Arrows",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_extralightarrow.webp",
+      "id": "tracer_arrows",
+      "desc": "While Photon Reforge is active, for each Companion on the battlefield, Storm Arrow fires 1 extra Lightseeker Arrow."
+    },
+    {
+      "name": "Radiant Spirit",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_lightfull.webp",
+      "id": "radiant_spirit",
+      "desc": "Extends the duration of Focus by 3s."
+    },
+    {
+      "name": "Swift",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_thunderbird.webp",
+      "id": "swift",
+      "desc": "Applies Swiftness to the Falcon when casting Lightning Strike. Swiftness: Increases Attack SPD by 10%. This effect lasts 8s and stacks up to 3 times."
+    },
+    {
+      "name": "Radiant Sharpshooter",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_lightenergy02.webp",
+      "id": "radiant_sharpshooter",
+      "desc": "Reduces Max Photon Energy by 20."
+    },
+    {
+      "name": "Falcon Raid",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_thunderbird02.webp",
+      "id": "falcon_raid",
+      "desc": "For every 3 instances of Crit DMG dealt by Special Attacks, the Falcon instantly launches Lightning Strike."
+    },
+    {
+      "name": "Meteor",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_skyhitcri.webp",
+      "id": "meteor",
+      "desc": "When the Falcon strikes, grants you a fixed 30% chance to gain 1 stack of Weak Point Aim. Using Quadraflare leaves behind a Radiance Rift midair. Radiance Rift fires Photon Arrows equal to the current number of Weak Point Aim stacks."
+    },
+    {
+      "name": "Piercing Shot",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_skycri.webp",
+      "id": "piercing_shot",
+      "desc": "Increases the Crit of Double Arrow and Quadraflare by 7%."
+    },
+    {
+      "name": "Falcon's Heart",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_birdingnoredef.webp",
+      "id": "falcon_s_heart",
+      "desc": "The Falcon ignores 30% of the target's Armor."
+    },
+    {
+      "name": "Lightfall",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_skyhitcrilight.webp",
+      "id": "lightfall",
+      "desc": "Each 1% critical rate increases Crit DMG by 0.3%. When Double Arrow or Quadraflare deals Crit DMG, 2 Photon Energy is restored."
+    },
+    {
+      "name": "Focused Shot",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_sup_heal01.webp",
+      "id": "focused_shot",
+      "desc": "Every target hit grants 1% Light DMG bonus. The bonus lasts 3s and can layerup to 4 times."
+    },
+    {
+      "name": "Valiant Heart",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_petdamboss.webp",
+      "id": "valiant_heart",
+      "desc": "Companions deal 15% more DMG to Elites or stronger enemies."
+    },
+    {
+      "name": "Overcharge",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_thirddamup.webp",
+      "id": "overcharge",
+      "desc": "When Basic Attacks deal DMG, there is a 5% fixed chance to instantly grant Special Attack 1 charge, up to the maximum charge limit."
+    },
+    {
+      "name": "Wildpack Spec",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_petbig.webp",
+      "id": "wildpack_spec",
+      "desc": "Further enhances Storm Arrow and the Wild Wolf's power. Storm Arrow always deals 300% Crit DMG on critical hits. While Photon Reforge is active, the chance for the Wild Wolf to trigger Coordinated Attack is increased to 100%. The Wild Wolf becomes empowered, and Haste allows both you and the wolf to attack more frequently."
+    },
+    {
+      "name": "Arrow Barrage",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_threetargetarrow.webp",
+      "id": "arrow_barrage",
+      "desc": "Basic Attacks have a fixed 20% chance to fire one arrow at each of up to 3 enemies near the target."
+    },
+    {
+      "name": "Sundering Arrow",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_splitarrow.webp",
+      "id": "sundering_arrow",
+      "desc": "Basic Attacks have a fixed 15% chance to trigger Split Arrow, once per second."
+    },
+    {
+      "name": "Falconry Spec",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_skyhitget.webp",
+      "id": "falconry_spec",
+      "desc": "Replaces Special Attack with Double Arrow and enhances the ability to use this skill. Regenerates 2 Photon Energy per second. Each 1% Haste grants 1% CD decrease toDouble Arrow. You can tame aFalcon to assist you in battle. Falcon always follows the caster. When the caster deals DMG with Class Skills, the Falcon has a fixed 23% chance to swiftly strike the target (guaranteed on Crit), dealing Attack DMG equal to 130% ATK to the enemy (which scales with the Level/Tier of Basic Attack). Additionally, when the strike count of the Falcon exceeds 5, the next strike of the Falcon combines all excess strikes and DMG. The Falcon responds to the caster's attacks. Haste and Crit increase its strike frequency, and after learning Lightning Strike, the Falcon deals significantly more DMG."
+    },
+    {
+      "name": "Wolf Dancer",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_bleedbow.webp",
+      "id": "wolf_dancer",
+      "desc": "After you use Arrow Rain, the Wild Wolf continuously performs Tail Sweep until the Arrow Rain ends. Wild Wolf's Tail Sweep is bound to deal Crit DMG and to inflict Bleed."
+    },
+    {
+      "name": "Explosive Arrow",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_bowarrow.webp",
+      "id": "explosive_arrow",
+      "desc": "When a Basic Attack or Special Attack deals DMG, it has a fixed 10% chance to fire an Explosive Arrow, once every 3s."
+    },
+    {
+      "name": "Rapid Shot",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gongjian1132.webp",
+      "id": "rapid_shot",
+      "desc": "Every 5% Haste provides an additional 1% attack speed."
+    },
+    {
+      "name": "Beast Power",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gongjian1133.webp",
+      "id": "beast_power",
+      "desc": "Companion's damage +10%."
+    },
+    {
+      "name": "Dexterity",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gongjian1134.webp",
+      "id": "dexterity",
+      "desc": "When Agility reaches 500 points, attack speed +5%."
+    },
+    {
+      "name": "Quick Shot",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gongjian1135.webp",
+      "id": "quick_shot",
+      "desc": "Attack Speed +3%"
+    },
+    {
+      "name": "Wolf Sharp Strike",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gongjian1136.webp",
+      "id": "wolf_sharp_strike",
+      "desc": "In the state of Photon Reforge, Wolf Crit DMG +50%."
+    },
+    {
+      "name": "Beast Tidal Power",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gongjian1137.webp",
+      "id": "beast_tidal_power",
+      "desc": "Increases Light Bonus by 3%. For 5s after casting Torrent Volley or its enhanced form Lumi Torrent, increases Light Bonus by 10%."
+    },
+    {
+      "name": "Arrow Rain Acceleration",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gongjian1138.webp",
+      "id": "arrow_rain_acceleration",
+      "desc": "Each time you summon 1 Wolf or Phantom Wolf, the remaining CD of Arrow Rain -0.5s."
+    },
+    {
+      "name": "Life Hunt",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gongjian1139.webp",
+      "id": "life_hunt",
+      "desc": "For each additional Bleed effect on the target, Wolf deals +3% damage to it."
+    },
+    {
+      "name": "Wolf Fang Pact",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gongjian1140.webp",
+      "id": "wolf_fang_pact",
+      "desc": "Wild Wolf's Coordinated Attack reduces the remaining CD of Storm Arrow by 1 second."
+    },
+    {
+      "name": "Light and Shadow Drain",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gongjian1141.webp",
+      "id": "light_and_shadow_drain",
+      "desc": "Lightseeker Arrow has a fixed 50% chance to apply Bleed to the target."
+    },
+    {
+      "name": "Wolf Evolution",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gongjian1142.webp",
+      "id": "wolf_evolution",
+      "desc": "Wild Wolf evolves into its Adult Form, increases DMG by 30%, DMG Range by 50%."
+    },
+    {
+      "name": "Legendary Beast",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gongjian1143.webp",
+      "id": "legendary_beast",
+      "desc": "Casting Wildcall summons a Legendary Companion based on current Photon Energy: If Photon Energy is below 50%, summons Legendary Eagle. If Photon Energy reaches 50% or more, summons Legendary Boar."
+    },
+    {
+      "name": "Lumi Torrent",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gongjian1144.webp",
+      "id": "lumi_torrent",
+      "desc": "While in Photon Reforge state, Torrent Volley continuously charges. After 30s of charging, Torrent Volley evolves into Lumi Torrent. Upon casting Lumi Torrent, immediately gain full Photon Energy."
+    },
+    {
+      "name": "Wild Call CD",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gongjian1145.webp",
+      "id": "wild_call_cd",
+      "desc": "For each Lightseeker Arrow fired, reduces the remaining CD of Wildcall by 0.3s (when Haste exceeds 30%, each extra 1% Haste reduces an additional 0.005s, up to 0.8s)."
+    },
+    {
+      "name": "Mastery of Bleed",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gongjian1146.webp",
+      "id": "mastery_of_bleed",
+      "desc": "Each 1% Mastery grants 3% Bleed DMG."
+    },
+    {
+      "name": "Light Chasing Sharp",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gongjian1147.webp",
+      "id": "light_chasing_sharp",
+      "desc": "While Photon Reforge is active, reduces Storm Arrow CD by 50%."
+    },
+    {
+      "name": "Arrow of Light",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gongjian1148.webp",
+      "id": "arrow_of_light",
+      "desc": "Arrow Rain and Lightseeker Arrow are bound to deal Crit DMG."
+    },
+    {
+      "name": "Light Intent",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gongjian1149.webp",
+      "id": "light_intent",
+      "desc": "Increases Max Photon Energy by 20."
+    },
+    {
+      "name": "Wolf's Bite",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gongjian1150.webp",
+      "id": "wolf_s_bite",
+      "desc": "Wild Wolf deals additionally 30% DMG to targets with current HP less than or equal to 35%."
+    },
+    {
+      "name": "Stomp",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gongjian1151.webp",
+      "id": "stomp",
+      "desc": "Casting Wildcall again within 10s of its initial cast commands all beasts on the field to immediately cast Stomp."
+    },
+    {
+      "name": "Steel Beak",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gongjian1152.webp",
+      "id": "steel_beak",
+      "desc": "When the caster and the Falcon deal Crit DMG, inflicts 1 stack of Steel Beak to the target. Every 10 stacks of Steel Beak trigger Lightning Strike, up to once every 3s."
+    },
+    {
+      "name": "Phantom Falcon",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gongjian1153.webp",
+      "id": "phantom_falcon",
+      "desc": "Triggering Implosion 5 times summons a Phantom Falcon to charge at the target."
+    },
+    {
+      "name": "Focused Concentration",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gongjian1154.webp",
+      "id": "focused_concentration",
+      "desc": "Throughout the duration of Focus, gains 0.5% Crit and 1% Crit DMG every 0.5s, stacking up to 15 times."
+    },
+    {
+      "name": "Dual Arrow Mastery",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gongjian1155.webp",
+      "id": "dual_arrow_mastery",
+      "desc": "When a Special Attack deals Crit DMG, reduces the remaining CD of Blast Shot and Powerdraw by 1 second."
+    },
+    {
+      "name": "Sharp Double Arrow I",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gongjian1156.webp",
+      "id": "sharp_double_arrow_i",
+      "desc": "Increases the Crit DMG of Double Arrow and Quadraflare by 15%."
+    },
+    {
+      "name": "Light Energy Stasis",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gongjian1157.webp",
+      "id": "light_energy_stasis",
+      "desc": "When Radiance Barrage hits a target, it applies Light Energy Stasis to them. Photon Stagnation: movement speed -30%. Being hit by Powerdraw is bound to deal Crit DMG. Lasts for 5s."
+    },
+    {
+      "name": "Falcon Break",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gongjian1158.webp",
+      "id": "falcon_break",
+      "desc": "The Falcon ignores 20% of the target's Armor, and 40% when dealing Crit DMG."
+    },
+    {
+      "name": "Eagle Eye",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gongjian1159.webp",
+      "id": "eagle_eye",
+      "desc": "When Photon Energy is above 50%, casting Radiance Barrage counts as Photon Reforge."
+    },
+    {
+      "name": "Celestial Eagle",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gongjian1160.webp",
+      "id": "celestial_eagle",
+      "desc": "While Focus is active, Radiance Barrage summons 1 Celestial Eagle at the target's location."
+    },
+    {
+      "name": "Radiant Charge",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gongjian1161.webp",
+      "id": "radiant_charge",
+      "desc": "When an arrow fired from Radiance Rift deals DMG for 1 time, increases the DMG of the next Blast Shot by 20%, up to a maximum of 100%."
+    },
+    {
+      "name": "Light Prism",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gongjian1162.webp",
+      "id": "light_prism",
+      "desc": "When Lightning Strike hits a target, it triggers Light Prism. Light Prism: Deals area damage equal to 100% ATK to up to 5 surrounding enemy targets, and additionally applies 3 stacks of Steel Beak."
+    },
+    {
+      "name": "Lightning Strike",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gongjian1163.webp",
+      "id": "lightning_strike",
+      "desc": "Increases Lightning Strike DMG by 30%."
+    },
+    {
+      "name": "Energy Gathering Power",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gongjian1164.webp",
+      "id": "energy_gathering_power",
+      "desc": "Powerdraw CD -50%. When Photon Energy is above 50%, casting Powerdraw counts as Photon Reforge."
+    },
+    {
+      "name": "Steel Beak Strike",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gongjian1165.webp",
+      "id": "steel_beak_strike",
+      "desc": "When Powerdraw hits a target, it applies 2 stacks of Steel Beak. If it deals Crit DMG, it applies 5 stacks of Steel Beak."
+    },
+    {
+      "name": "Steel Beak Gathering",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gongjian1166.webp",
+      "id": "steel_beak_gathering",
+      "desc": "When Celestial Eagle hits a target, it prevents the target's Steel Beak from naturally decaying."
+    },
+    {
+      "name": "Chain Explosion",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gongjian1167.webp",
+      "id": "chain_explosion",
+      "desc": "Blast Shot Upon detonation, inflicts 10 stacks of Steel Beak on all targets hit."
+    }
+  ]
+}

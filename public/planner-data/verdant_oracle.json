@@ -1,0 +1,426 @@
+{
+  "kind": "talents",
+  "class": "Verdant Oracle",
+  "talents": [
+    {
+      "name": "Brimming Vitality",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_sup_grassenergyup.webp",
+      "id": "brimming_vitality",
+      "desc": "Increases Energy REG SPD by 20%."
+    },
+    {
+      "name": "Intellect Conversion",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_inttran.webp",
+      "id": "intellect_conversion",
+      "desc": "Every 10 points of Intellect provides 1 point of MATK."
+    },
+    {
+      "name": "Inspiration",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_sup_encourage.webp",
+      "id": "inspiration",
+      "desc": "Applies Inspiration to yourself and allies within 30 meters."
+    },
+    {
+      "name": "Regen Bud",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/fahuan571.webp",
+      "id": "regen_bud",
+      "desc": "Casting a Special Attack grants 1 Regen Bud. Initial cap of Regen Buds: 4. When an Expertise Skill or Ultimate generates healing, 2 Regen Buds are consumed to throw a Nourishing Seed, triggering up to once per second. When an Expertise Skill or Ultimate deals DMG, 2 Regen Buds are consumed to shoot a Wild Seed, once per second."
+    },
+    {
+      "name": "Breath of Buds",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_dps_luckyconversion.webp",
+      "id": "breath_of_buds",
+      "desc": "Increases Max Regen Bud by 4."
+    },
+    {
+      "name": "Nature Shield",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_sup_healshield.webp",
+      "id": "nature_shield",
+      "desc": "When Wild Bloom heals a target, it also applies Nature Shield to them. Targets with Nature Shield restore HP when hit, with the amount equal to 10% of your ATK. This effect can occur up to once per second."
+    },
+    {
+      "name": "Arcane of Green",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_sup_grassdammastery.webp",
+      "id": "arcane_of_green",
+      "desc": "When Feral Seed deals DMG, it increases the DMG dealt by Infusion, Wild Bloom, Stag Charge in the next 10s by 20%."
+    },
+    {
+      "name": "Healing Breath",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_sup_starlight.webp",
+      "id": "healing_breath",
+      "desc": "When a Special Attack, Expertise Skill, or Ultimate generates Healing, there is a 20% to trigger Healing Chain. For every 2% Luck, the chance +1%."
+    },
+    {
+      "name": "Wild Blessing",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_sup_shieldlimit.webp",
+      "id": "wild_blessing",
+      "desc": "Wild Bloom now holds up to 2 charges. Wild Bloom's Energy cost -15%."
+    },
+    {
+      "name": "Flourish",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_skill_330101.webp",
+      "id": "flourish",
+      "desc": "When Infusion, Feral Seed, or Wild Bloom deals DMG, 30% chance to reduce the CD of the Ultimate by 1s, once per second."
+    },
+    {
+      "name": "Smite Spec",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_sup_aoyitrigger.webp",
+      "id": "smite_spec",
+      "desc": "Further enhances the ability to use Wild Bloom. Wild Bloom, Regen Pulse, and ​Nature Ward​ grant Symbiotic Mark to allies. Symbiotic Mark: Lasts for 10s. All of the caster's DMG will heal allies with Symbiotic Mark for 45% of the DMG dealt. Increases the final DMG of Lucky Strikes by 50%. When overhealing a target with Symbiotic Mark, if the overheal reaches 30% of their Max HP, the excess healing is converted into a regeneration effect lasting for 10s. This effect can trigger only once every 30s. Healing of Stillness: If the caster deals no DMG to enemies for 5s, each hit of the caster's Basic Attack will heal up to 10 allies (party members prioritized), with the 4-hit combo restoring 12.6% Max HP in total. Capable of converting attacks into healing. Lucky Strikes from attacks trigger various healing effects, enhancing healing while increasing DMG dealt."
+    },
+    {
+      "name": "Double Infusion",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_dps_luckyconversion.webp",
+      "id": "double_infusion",
+      "desc": "After casting Stag Charge, the number of channels for the next Infusion +100%."
+    },
+    {
+      "name": "Final Bloomwheel",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_sup_heal02.webp",
+      "id": "final_bloomwheel",
+      "desc": "When Wild Bloom deals DMG, reduces the remaining CD of Infusion by 1s. If the DMG triggers a Lucky Strike, the Resistance becomes 3s."
+    },
+    {
+      "name": "Verdant Root",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_sup_grassarea.webp",
+      "id": "verdant_root",
+      "desc": "While in battle state, standing still for 2s creates a Grass Domain. Grass Domain: While inside the Grass Domain, your Haste +10%. Upon exiting the Grass Domain, your Movement SPD +50% for 0.5s, and Grass Domain disappears."
+    },
+    {
+      "name": "Full Bloom",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_sup_burstforth.webp",
+      "id": "full_bloom",
+      "desc": "Casting Life Bloom grants a fixed 50% chance to reduce the CD of Blossom Charge and Regen Pulse by 2s."
+    },
+    {
+      "name": "Healing Infusion",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_sup_melee01.webp",
+      "id": "healing_infusion",
+      "desc": "Every 5 uses of Life Bloom enhances the next direct healing Expertise Skill by 100%."
+    },
+    {
+      "name": "Verdant Duet",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_sup_healringdouble.webp",
+      "id": "verdant_duet",
+      "desc": "Life Bloom has a fixed 20% chance to heal 1 additional time."
+    },
+    {
+      "name": "Floral Whisper",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_sup_heal04.webp",
+      "id": "floral_whisper",
+      "desc": "Healing Expertise generate 20% more healing, but healing from Life Bloom -50%."
+    },
+    {
+      "name": "Lifeforce Extension",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_sup_grace.webp",
+      "id": "lifeforce_extension",
+      "desc": "Increases the Healing of Healing Chain by 10%. For every 7% Mastery, Healing Chain jumps 1 additional time. Healing Chain restores 1% of an ally's Max HP with each tick."
+    },
+    {
+      "name": "Nourish Essence",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_sup_healconversion.webp",
+      "id": "nourish_essence",
+      "desc": "When Life Bloom generates healing, 50% chance to apply Nourish."
+    },
+    {
+      "name": "Endless Blossom",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_dps_sacrifice04.webp",
+      "id": "endless_blossom",
+      "desc": "When casting Blossom Charge, Grove Wish, or Regen Pulse, 20% chance that the next cast of Life Bloom within 5s consumes no Energy."
+    },
+    {
+      "name": "Stag Charge",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_sup_grassdeer.webp",
+      "id": "stag_charge",
+      "desc": "After triggering a total of 10 Nourishing Seeds or Wild Seeds, Wild Bloom evolves into Stag Charge. Casting Stag Charge instants grants 3 Regen Buds."
+    },
+    {
+      "name": "Wings of Revival",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_sup_heal05.webp",
+      "id": "wings_of_revival",
+      "desc": "When an ally within 20 meters takes DMG exceeding 30% of their HP, Revival triggers, which can affect the same target up to once every 45s. Revival: Restores HP equal to 50% of the DMG taken over 5s."
+    },
+    {
+      "name": "Natural Bloom",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_sup_melee03.webp",
+      "id": "natural_bloom",
+      "desc": "When healing an ally with lower than 30% HP, Natural Bloom triggers, instantly restoring HP equal to 200% ATK to them. This effect can occur up to once every 30s."
+    },
+    {
+      "name": "Healing Pulse",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_sup_killhealring.webp",
+      "id": "healing_pulse",
+      "desc": "When an enemy within 10 meters that you are engaged with is defeated (effective within a team), generates a Healing Pulse. This can only occur once every 10s."
+    },
+    {
+      "name": "Gift of Life",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_sup_aid.webp",
+      "id": "gift_of_life",
+      "desc": "When an enemy within 10 meters that you are engaged with is defeated (effective within a team), generates a Healing Orb. This can only occur once every 2s."
+    },
+    {
+      "name": "Bud Acquisition",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_sup_killgrassenergy.webp",
+      "id": "bud_acquisition",
+      "desc": "When an enemy within 10 meters that you are engaged with is defeated (effective within a team), generates an Engram Orb, which grants 1 Regen Bud upon pickup."
+    },
+    {
+      "name": "Defensive Blessing",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_sup_seedtrriger.webp",
+      "id": "defensive_blessing",
+      "desc": "Inspiration provides the target with an additional 380 Armor."
+    },
+    {
+      "name": "Flowers Ascension",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_sup_flowerlimit.webp",
+      "id": "flowers_ascension",
+      "desc": "When Wild Seed deals DMG or Nourishing Seed generates healing, you gain a 10% Forest DMG bonus for the next 8s."
+    },
+    {
+      "name": "Lifebind Spec",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_sup_healringget.webp",
+      "id": "lifebind_spec",
+      "desc": "Replace Special Attack with Life Bloom and enhances the skill. Life Bloom generates 20% more healing. Casting Life Bloom grants 1 additional Regen Bud. Whenever safety allows, aim to cast as many healing skills as possible. Haste increases cast speed, and Mastery enhances healing potency."
+    },
+    {
+      "name": "Thorn",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_dps_lucky04.webp",
+      "id": "thorn",
+      "desc": "When Wild Seed hits a target, it inflicts Thorn on them. Verdant DMG dealt by players to targets with Thorn +20%."
+    },
+    {
+      "name": "Vital Surge",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_sup_aoyiguide.webp",
+      "id": "vital_surge",
+      "desc": "Replace Ultimate, Divine Circle Bloom with Vital Surge."
+    },
+    {
+      "name": "Verdant Blessing",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_sup_shieldlimit.webp",
+      "id": "verdant_blessing",
+      "desc": "When HP of an ally with Inspiration drops below 20%, Blessing triggers. Blessing: Grants a Nature Shield and reduces the DMG taken by 35% for 8s, once every 60s."
+    },
+    {
+      "name": "Bloomheal",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_sup_aoyiguide.webp",
+      "id": "bloomheal",
+      "desc": "Replace Ultimate, Divine Circle Bloom with Bloomheal."
+    },
+    {
+      "name": "Dancing Seed",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/fahuan536.webp",
+      "id": "dancing_seed",
+      "desc": "When a DMG-type Expertise Skill triggers Lucky Strike, next Wild Seed launches 1 more projectile. For every 5 Nourishing Seeds thrown, next Nourishing Seed throws 1 more projectile."
+    },
+    {
+      "name": "Energy Surge",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/fahuan537.webp",
+      "id": "energy_surge",
+      "desc": "Every 2% haste provides 1% energy natural recovery efficiency."
+    },
+    {
+      "name": "Regeneration Bud",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/fahuan538.webp",
+      "id": "regeneration_bud",
+      "desc": "When dealing damage with Basic Attacks, 10% chance to gain 1 Regen Bud."
+    },
+    {
+      "name": "Omnipotent Breath",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/fahuan539.webp",
+      "id": "omnipotent_breath",
+      "desc": "When Intellect reaches 500, versatility +4%."
+    },
+    {
+      "name": "Shelter",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/fahuan540.webp",
+      "id": "shelter",
+      "desc": "Within 5s after Casting Infusion, the damage absorption of the Nature Shield added by Wild Bloom or Nature Ward is doubled."
+    },
+    {
+      "name": "Pulse Breath",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/fahuan541.webp",
+      "id": "pulse_breath",
+      "desc": "If equipped with Regen Pulse skill, Nature Ward and Ultimates will trigger Regen Pulse when their CDs are completed."
+    },
+    {
+      "name": "Feral Seed Symbiosis",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/fahuan542.webp",
+      "id": "feral_seed_symbiosis",
+      "desc": "When active Symbiotic Marks reach 5 or more, ​Feral Seed​ and Wild Seed DMG increases by 100%."
+    },
+    {
+      "name": "Wild Protection",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/fahuan543.webp",
+      "id": "wild_protection",
+      "desc": "The charge count of Nature Ward +1. The charge time of Nature Ward decreases by 5s."
+    },
+    {
+      "name": "Wide-area Thorns",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/fahuan544.webp",
+      "id": "wide_area_thorns",
+      "desc": "Successful hit of Feral Seed on the targets with Thorn spreads Thorn to other units within 10 meters."
+    },
+    {
+      "name": "Thornbreaker",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/fahuan545.webp",
+      "id": "thornbreaker",
+      "desc": "Infusion and Stag Charge deal double DMG to Thorned targets, but the healing conversion of Infusion and Stag Charge is halved."
+    },
+    {
+      "name": "Pulse Duality",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/fahuan546.webp",
+      "id": "pulse_duality",
+      "desc": "When Regen Pulse is actively used, it spreads twice."
+    },
+    {
+      "name": "Swift Shelter",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/fahuan547.webp",
+      "id": "swift_shelter",
+      "desc": "Each use or trigger of Regen Pulse, reduces the CD of Nature Ward by 2s."
+    },
+    {
+      "name": "Pulse Retrospect",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/fahuan548.webp",
+      "id": "pulse_retrospect",
+      "desc": "Regen Pulse returns to your position after it reaches the max distance. Regen Pulse now deals DMG to enemies."
+    },
+    {
+      "name": "Swift Bud",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/fahuan549.webp",
+      "id": "swift_bud",
+      "desc": "Each Regen Bud gained, reduces the CD of Feral Seed by 1 second."
+    },
+    {
+      "name": "Breath of Symbiosis",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/fahuan550.webp",
+      "id": "breath_of_symbiosis",
+      "desc": "Symbiotic Mark enhances Healingiveness by 2%. Each 5% Mastery enhances Healingiveness by 1%."
+    },
+    {
+      "name": "Symbiosis Extension",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/fahuan551.webp",
+      "id": "symbiosis_extension",
+      "desc": "Each Wild Seed fired extends the duration of activated Symbiotic Mark by 1s."
+    },
+    {
+      "name": "Pulse Echo",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/fahuan552.webp",
+      "id": "pulse_echo",
+      "desc": "When dealing DMG, Infusion grants 1 stack of Pulse Echo. Pulse Echo: Increases DMG dealt of Regen Pulse by 20%, which lasts 12s and stacks up to 5 times."
+    },
+    {
+      "name": "Luck Damage",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/fahuan553.webp",
+      "id": "luck_damage",
+      "desc": "Lucky Strike DMG Multiplier +5%. Every 1% Luck grants 1% Lucky Strike DMG Multiplier."
+    },
+    {
+      "name": "Verdant Impact",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/fahuan554.webp",
+      "id": "verdant_impact",
+      "desc": "For every 20 stacks of Pulse Echo gained, the next actively cast Regen Pulse triggers a Blossom Charge at both the nearest enemy and the Ally with lowest HP."
+    },
+    {
+      "name": "Wild Luck",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/fahuan555.webp",
+      "id": "wild_luck",
+      "desc": "When Wild Bloom or Regen Pulse deal DMG, grants a chance (equal to the half percentage of Luck) to gain 1 Regen Bud. If the target is affected by Thorn, doubles the chance."
+    },
+    {
+      "name": "Verdant Nourishment",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/fahuan556.webp",
+      "id": "verdant_nourishment",
+      "desc": "If you're affected with Nourish, reduces all DMG taken by 10%. If the targets are affected by Nourish, enhances their Healing Received from yourself by 5%. If the stack of Nourish is above or equal to 3, additionally enhances Healing Received by 3%."
+    },
+    {
+      "name": "Ultimate Inspiration",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/fahuan557.webp",
+      "id": "ultimate_inspiration",
+      "desc": "Doubles the effectiveness of Inspiration."
+    },
+    {
+      "name": "Life Bloom",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/fahuan558.webp",
+      "id": "life_bloom",
+      "desc": "Using Blossom Charge enhances the next Life Bloom, skipping the cast and increasing the Healing by 50%."
+    },
+    {
+      "name": "Vitality",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/fahuan559.webp",
+      "id": "vitality",
+      "desc": "Nourish can stack up to 5 times. Each use of Life Bloom grants the targets with Nourish 1 stack of Nourish."
+    },
+    {
+      "name": "Flourishing Progress",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/fahuan560.webp",
+      "id": "flourishing_progress",
+      "desc": "When holding 2 or more Regen Buds, casting Blossom Charge for damage or healing always triggers a corresponding seed (without costing Regen Buds) and grants 1 Regen Bud."
+    },
+    {
+      "name": "Blooming Reincarnation",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/fahuan561.webp",
+      "id": "blooming_reincarnation",
+      "desc": "Casting Life Bloom increases Life Bloom's healing by 20% and its Energy consumed by 10% for 4s. This effect can stack up to 5 times."
+    },
+    {
+      "name": "Energy Arcane",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/fahuan562.webp",
+      "id": "energy_arcane",
+      "desc": "During Growth Arcane, increases Energy REG SPD by 50%. Increases Grove Wish's Crit by 10%"
+    },
+    {
+      "name": "Transcendence",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/fahuan563.webp",
+      "id": "transcendence",
+      "desc": "Every 60 self-heals from Nourish grants Transcendence."
+    },
+    {
+      "name": "Flourishing Flower",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/fahuan564.webp",
+      "id": "flourishing_flower",
+      "desc": "Within Grass Domain, Flower Stalk appeared 50% earlier."
+    },
+    {
+      "name": "Tricolor Revelation",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/fahuan565.webp",
+      "id": "tricolor_revelation",
+      "desc": "Consumes Moonlight Solace to launch Flower Dance - Tricolor Revelation. Flower Dance - Tricolor Revelation: Grants all effects of Flower Stalks, once every 60s."
+    },
+    {
+      "name": "Flower Time Dance",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/fahuan566.webp",
+      "id": "flower_time_dance",
+      "desc": "Every 45s, generates 1 Flower Stalk in the following order: Crimson Insight, Golden Devotion, and Moonlight Solace."
+    },
+    {
+      "name": "Bud to Blossom",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/fahuan567.webp",
+      "id": "bud_to_blossom",
+      "desc": "When a Flower Stalk appears, grants 1 Regen Bud every 2s for 10s."
+    },
+    {
+      "name": "Inspire and Strengthen",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/fahuan568.webp",
+      "id": "inspire_and_strengthen",
+      "desc": "Inspiration grants 100 bonus Intellect, Strength, Agility, and Endurance."
+    },
+    {
+      "name": "Energy Expansion",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/fahuan569.webp",
+      "id": "energy_expansion",
+      "desc": "Increases Max Energy by 20. Using Blossom Charge restores 30% lost Energy."
+    },
+    {
+      "name": "Rescue",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/fahuan570.webp",
+      "id": "rescue",
+      "desc": "Healing Expertise restore 25% more HP to the targets with HP below 50%."
+    },
+    {
+      "name": "Instant Bloom",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/fahuan571.webp",
+      "id": "instant_bloom",
+      "desc": "Every 5 uses of Life Bloom accelerates the using of Grove Wish or Regen Pulse by 100% and increases their Healing by 50% in 15s."
+    }
+  ]
+}

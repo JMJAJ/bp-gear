@@ -1,0 +1,408 @@
+{
+  "kind": "talents",
+  "class": "Shield Knight",
+  "talents": [
+    {
+      "name": "Lightforged Body",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1200.webp",
+      "id": "lightforged_body",
+      "desc": "Every 1 Holy Sigil consumed grants a Radiant Shield equal to 45% ATK (depending on Adventurer Level, up to 90%)."
+    },
+    {
+      "name": "Condemn",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1201.webp",
+      "id": "condemn",
+      "desc": "When casting a skill that consumes Photon Energy, there is a 30% fixed chance for Basic Attacks to evolve into Condemn."
+    },
+    {
+      "name": "Blessing of Holy Sigil",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1202.webp",
+      "id": "blessing_of_holy_sigil",
+      "desc": "When using a Skill that consumes Holy Sigils, 20% chance for your next Holy Sigil-consuming skill to consume no Holy Sigils. The effect lasts for 8s or until a Holy Sigil-consuming skill is cast."
+    },
+    {
+      "name": "Ring of Judgment",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1203.webp",
+      "id": "ring_of_judgment",
+      "desc": "Casting Judgment generates a Divine Circle, with a CD of 30s. Each Holy Sigil consumed reduces the remaining CD by 1s."
+    },
+    {
+      "name": "Lightforge Continuum",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1204.webp",
+      "id": "lightforge_continuum",
+      "desc": "For every 20 Photon Energy consumed, gains Radiant Shield equal to 45% ATK (this ratio is affected by Adventurer Level, up to 90%)."
+    },
+    {
+      "name": "Haste Sigil",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1205.webp",
+      "id": "haste_sigil",
+      "desc": "Each 1% Haste increases the recovery speed of Holy Sigil by 1%. Recovery time = Initial recovery time / (1 + recovery speed bonus)."
+    },
+    {
+      "name": "Power Conversion",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1206.webp",
+      "id": "power_conversion",
+      "desc": "Armor 3300"
+    },
+    {
+      "name": "Light of Condemn",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1207.webp",
+      "id": "light_of_condemn",
+      "desc": "While inside a Divine Circle, your Condemn is enhanced, thrusting a blade of light forward and dealing double DMG."
+    },
+    {
+      "name": "Recovery Spec",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1208.webp",
+      "id": "recovery_spec",
+      "desc": "Further enhances your ability to use Valor Bash. Valor Bash is accompanied by Radiant Impact. Try to maintain the Armor bonus from Valor Bash, and trigger Inferno Reckon through high Crits to gain more Photon Energy. Sufficient Photon Energy means continuous self-healing under the blessing of Judgment and Scorching Judgment."
+    },
+    {
+      "name": "Oracle",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1209.webp",
+      "id": "oracle",
+      "desc": "When a skill that consumes Holy Sigil critically hits, gain an additional 30% Photon Energy. Crit DMG of skills that consume Photon Energy +30%."
+    },
+    {
+      "name": "Judgment Revelation",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1210.webp",
+      "id": "judgment_revelation",
+      "desc": "When Divine Strike Crits, there's a 50% fixed chance to automatically cast Judgment on the target (this Judgment cannot trigger Divine Strike)."
+    },
+    {
+      "name": "Divine Circle Defender",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1211.webp",
+      "id": "divine_circle_defender",
+      "desc": "While within the Divine Circle, the Armor effect provided by Valor Bash +30%."
+    },
+    {
+      "name": "Radiant Guard",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1212.webp",
+      "id": "radiant_guard",
+      "desc": "Casting Shield Toss immediately grants a Radiant shield equal to 150% ATK (depending on Adventurer Level, up to 300%). The charge count of Shield Toss +1."
+    },
+    {
+      "name": "Aegis Ward's Anthem",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1213.webp",
+      "id": "aegis_ward_s_anthem",
+      "desc": "For every 2 Holy Sigils consumed, the remaining CD of Aegis Ward -1 second."
+    },
+    {
+      "name": "Fearless Shield",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1214.webp",
+      "id": "fearless_shield",
+      "desc": "Each time Shield Toss deals DMG, gains Radiant Shield equal to 37.5% ATK (this ratio is affected by Adventurer Level, up to 75%)."
+    },
+    {
+      "name": "Aegis Ward's Retribution",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1215.webp",
+      "id": "aegis_ward_s_retribution",
+      "desc": "During Aegis Ward, Block chance is increased to 1.5 times. When attacked, reduces Aegis Ward's remaining CD by 0.5s. This effect can only trigger once per second."
+    },
+    {
+      "name": "Lightforged Greatsword",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1216.webp",
+      "id": "lightforged_greatsword",
+      "desc": "After every 10 casts of Judgment, the next Judgment is enhanced into Scorching Judgment. Scorching Judgment: Summon a holy greatsword to descend upon the target area for 5s, healing yourself (Healing equal to that of Judgment) while dealing damage over time to nearby enemies and inflicting Scorch, totally dealing Attack Damage equal to 600% ATK (scales with Judgment level/rank). Scorch: Reduces damage taken from the target by 3% for 10s. Stacks up to 10 times. Grants 3 stacks of Scorch on Crit."
+    },
+    {
+      "name": "Holy Barrier",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1217.webp",
+      "id": "holy_barrier",
+      "desc": "Using Ultimate creates a Holy Barrier, shielding nearby allies from DMG. The Holy Barrier lasts for 15s or until it absorbs DMG equal to 150% Max HP +3000% Armor."
+    },
+    {
+      "name": "Shield Spec",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1218.webp",
+      "id": "shield_spec",
+      "desc": "Replaces Special Attack with Vanguard Strike and enhances its power. Each additional enemy hit by Vanguard Strike grants 2 extra Photon Energy, up to 10. Successfully Block prevents losing the stacks of Lightforged Barrier. Lightforged Barrier: Each stack increases Max HP by 2%, up to 10 stacks, with each instance of DMG removing 1 stack. It lasts 25s or until all stacks are consumed. gaining stacks resets the duration. Managing Lightforged Barrier is crucial for sustaining high HP and triggering self-healing and Defense effects from Judgment, Zeal Crusade, and Radiance."
+    },
+    {
+      "name": "Light Barrier",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1219.webp",
+      "id": "light_barrier",
+      "desc": "Lightforged Barrier cap +2."
+    },
+    {
+      "name": "Ascension of the Lightforged Barrier",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1220.webp",
+      "id": "ascension_of_the_lightforged_barrier",
+      "desc": "Photon Energy cap +20. When you have at least 5 stacks of Lightforged Barrier, Judgment consumes 5 less Photon Energy."
+    },
+    {
+      "name": "Divine Circle Chant",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1221.webp",
+      "id": "divine_circle_chant",
+      "desc": "The recovery rate of Holy Sigils from Haste +100%."
+    },
+    {
+      "name": "Holy Strike",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1222.webp",
+      "id": "holy_strike",
+      "desc": "Each time 1 stack of Lightforged Barrier is consumed or deducted, 10% chance to obtain 1 Holy Sigil."
+    },
+    {
+      "name": "Holy Radiance",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1223.webp",
+      "id": "holy_radiance",
+      "desc": "When Sacred Blade hits an enemy target, it applies a Holy Mark to the target. Vanguard Strike can spread this Holy Mark to hit enemy targets."
+    },
+    {
+      "name": "Determination Slash",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1224.webp",
+      "id": "determination_slash",
+      "desc": "When Lightforged Barrier has 5 or fewer stacks, taking DMG no longer reduces its stacks. When Lightforged Barrier has more than 5 stacks, taking DMG has a 50% fixed chance not to reduce its stacks."
+    },
+    {
+      "name": "Lightforged Drive",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1225.webp",
+      "id": "lightforged_drive",
+      "desc": "When casting Radiance, it automatically releases Judgment to up to 5 nearby enemy targets."
+    },
+    {
+      "name": "Ruthless Rewind",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1226.webp",
+      "id": "ruthless_rewind",
+      "desc": "During Zeal Crusade, each Holy Sigil consumed grants Zeal Crusade 1 stack of charge. When the charge reaches 3 stacks, Zeal Crusade bursts outward, dealing DMG equal to 6% max HP."
+    },
+    {
+      "name": "Divine Circle Resonance",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1227.webp",
+      "id": "divine_circle_resonance",
+      "desc": "For each enemy inside Divine Circle, increases Divine Circle DMG by 25% and Divine Circle Healing by 5% (caps at 10 enemies)."
+    },
+    {
+      "name": "Judgment of All Beings",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1228.webp",
+      "id": "judgment_of_all_beings",
+      "desc": "When Judgment hits only 1 enemy target, its damage +25%."
+    },
+    {
+      "name": "Divine Circle Blessing",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1229.webp",
+      "id": "divine_circle_blessing",
+      "desc": "While within the Divine Circle, your Healing Received +10%."
+    },
+    {
+      "name": "Lightforged Balance",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1230.webp",
+      "id": "lightforged_balance",
+      "desc": "When your HP percentage is higher than your target's, DMG taken from that target -5%. When your HP percentage is lower than your target's, Judgment deals 50% more DMG."
+    },
+    {
+      "name": "Lightforged Fortitude",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1231.webp",
+      "id": "lightforged_fortitude",
+      "desc": "Throughout the duration of Radiant Shield, Block chance +10%."
+    },
+    {
+      "name": "Energy Guard",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1232.webp",
+      "id": "energy_guard",
+      "desc": "After casting an Ultimate, all allies' Max HP is increased by 10% for 10s (this effect does not stack)."
+    },
+    {
+      "name": "Life Enhancement",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1233.webp",
+      "id": "life_enhancement",
+      "desc": "When Strength reaches 500 points, Max HP +12%."
+    },
+    {
+      "name": "Condemn Time Limit",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1234.webp",
+      "id": "condemn_time_limit",
+      "desc": "When Condemn deals damage, it immediately cools down 1 Holy Sigil (prioritizing the Holy Sigil with the longest remaining CD)."
+    },
+    {
+      "name": "Sword Dance",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1235.webp",
+      "id": "sword_dance",
+      "desc": "When a Expertise Skill critically heals, gain a 15% healing bonus."
+    },
+    {
+      "name": "Shield Impact",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1236.webp",
+      "id": "shield_impact",
+      "desc": "Hold Valor Bash to charge, then dash forward a short distance."
+    },
+    {
+      "name": "Reckon Shield",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1237.webp",
+      "id": "reckon_shield",
+      "desc": "Each time Inferno Reckon or Reckoning deals Crit DMG to 1 enemy target, Block chance +5%, lasting for 10s, stacking up to 5 times."
+    },
+    {
+      "name": "Holy Light Time Limit",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1238.webp",
+      "id": "holy_light_time_limit",
+      "desc": "During Aegis Ward, when an Expertise Skill deals Crit DMG, there's a 50% fixed chance to instantly reset 1 Holy Sigil CD (prioritizing Holy Sigil with the longest remaining CD). This effect triggers only once when multiple targets are hit."
+    },
+    {
+      "name": "Holy Summon",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1239.webp",
+      "id": "holy_summon",
+      "desc": "When Shield Toss or Judgment deals DMG, 10% chance to trigger Divine Strike. If Crit DMG is dealt, the chance increases to 50%."
+    },
+    {
+      "name": "Light Chain",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1240.webp",
+      "id": "light_chain",
+      "desc": "While Aegis Ward is active, the chance of Divine Strike is doubled. Every 3 times Divine Strike is triggered, the duration of Aegis Ward is extended by 1 second."
+    },
+    {
+      "name": "Reckon Blaze",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1241.webp",
+      "id": "reckon_blaze",
+      "desc": "When Valor Bash deals Crit DMG, gain Blazing. Casting Aegis Ward guarantees Blazing. Blazing: For the next 10s, Reckoning evolves into Inferno Reckon."
+    },
+    {
+      "name": "Holy Heal",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1242.webp",
+      "id": "holy_heal",
+      "desc": "While having Radiant Shield, gains 12% healing bonus."
+    },
+    {
+      "name": "Light Protection",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1243.webp",
+      "id": "light_protection",
+      "desc": "While having Radiant Shield, gain 5% Light bonus."
+    },
+    {
+      "name": "Ultimate Guard",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1244.webp",
+      "id": "ultimate_guard",
+      "desc": "For 10s after casting Shield Toss, increases Block Chance by 15%."
+    },
+    {
+      "name": "Shield Guard",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1245.webp",
+      "id": "shield_guard",
+      "desc": "Valor Bash heals for 120% ATK when it deals DMG, and increases DMG dealt by 8% for 8s."
+    },
+    {
+      "name": "Radiant Heal",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1246.webp",
+      "id": "radiant_heal",
+      "desc": "Increases Judgment Healing by 25%."
+    },
+    {
+      "name": "Ultimate Strike",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1247.webp",
+      "id": "ultimate_strike",
+      "desc": "When Divine Strike deals DMG, increases Strength by 2% for 10s, stacking up to 5 times."
+    },
+    {
+      "name": "Shield Strike Enhancement",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1248.webp",
+      "id": "shield_strike_enhancement",
+      "desc": "Increases Valor Bash DMG by 10%."
+    },
+    {
+      "name": "Ultimate Conquest",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1249.webp",
+      "id": "ultimate_conquest",
+      "desc": "Increases Zeal Crusade DMG by 50%."
+    },
+    {
+      "name": "Light's Crit",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1250.webp",
+      "id": "light_s_crit",
+      "desc": "Crit +10%"
+    },
+    {
+      "name": "Adversity Enhancement",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1251.webp",
+      "id": "adversity_enhancement",
+      "desc": "Special Attack and damaging Expertise are enhanced based on missing HP. For every 1% HP lost, increases their DMG by 1%."
+    },
+    {
+      "name": "Wide Raid",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1252.webp",
+      "id": "wide_raid",
+      "desc": "Increases Zeal Crusade range by 100%. While Zeal Crusade is active, the effect of Bold Fearless is doubled."
+    },
+    {
+      "name": "Bold Fearless",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1253.webp",
+      "id": "bold_fearless",
+      "desc": "When Sacred Blade or Judgment deals DMG, there is a fixed 25% chance to cause Vanguard Strike to evolve into Vanguard Hunt. Vanguard Hunt: Deals Attack Damage equal to 240% ATK to the target, restores 2% of your max HP, and gains Bold Fearless. Bold Fearless: Increases Haste by 3% for 10s, stacking up to 10 times."
+    },
+    {
+      "name": "Radiant Core",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1254.webp",
+      "id": "radiant_core",
+      "desc": "Vanguard Hunt can grant Radiant Core. Gaining Radiant Core again reduces its burst time by 2s."
+    },
+    {
+      "name": "Conquest Pursuit",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1255.webp",
+      "id": "conquest_pursuit",
+      "desc": "While Zeal Crusade is active, Vanguard Strike evolves into Vanguard Hunt."
+    },
+    {
+      "name": "Decisive Blade",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1256.webp",
+      "id": "decisive_blade",
+      "desc": "After Radiant Core explosion, Sacred Blade DMG +100% for 20s. Holds up to 3 charges, casting Sacred Blade consumes one charge."
+    },
+    {
+      "name": "Zeal Haste",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1257.webp",
+      "id": "zeal_haste",
+      "desc": "For every 15 points of Photon Energy consumed, the remaining CD of Zeal Crusade -1 second."
+    },
+    {
+      "name": "Holy Sigil Enhancement",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1258.webp",
+      "id": "holy_sigil_enhancement",
+      "desc": "When Judgment deals DMG, the target takes double DMG from Holy Mark for the next 5s."
+    },
+    {
+      "name": "Divine Guard",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1259.webp",
+      "id": "divine_guard",
+      "desc": "When in the Divine Circle, reduces all DMG taken by 10%. For each enemy within 10m, ATK Reduction increases by 1.5% (up to 9%), and MATK Reduction increases by 0.75% (up to 4.5%)."
+    },
+    {
+      "name": "Judgment Improvement",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1260.webp",
+      "id": "judgment_improvement",
+      "desc": "For each 1 stack of Lightforged Barrier you possess, Judgment gains 2% healing bonus. When Lightforged Barrier≥5 stacks, Resistance +8%."
+    },
+    {
+      "name": "Sigil Pursuit",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1261.webp",
+      "id": "sigil_pursuit",
+      "desc": "DMG dealt by Vanguard Hunt and Sacred Blade to targets with Holy Mark increases by 20%."
+    },
+    {
+      "name": "Overflow Healwall",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1262.webp",
+      "id": "overflow_healwall",
+      "desc": "When your accumulated overhealing reaches 10% of your Max HP, gains 1 stack of Lightforged Barrier."
+    },
+    {
+      "name": "Light Healing",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1263.webp",
+      "id": "light_healing",
+      "desc": "While having Radiant shield, gains 12% healing bonus."
+    },
+    {
+      "name": "Light Protection",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1264.webp",
+      "id": "light_protection_1",
+      "desc": "While having Radiant shield, gain 5% Light bonus."
+    },
+    {
+      "name": "Resolved to Return",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1265.webp",
+      "id": "resolved_to_return",
+      "desc": "Each time 1 stack of Lightforged Barrier is consumed or deducted, reduces the remaining CD of Radiance by 1 second."
+    },
+    {
+      "name": "Halo",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1266.webp",
+      "id": "halo",
+      "desc": "Divine Circle now has a halo effect, stunning enemy targets for 3s the first time it deals DMG."
+    }
+  ]
+}

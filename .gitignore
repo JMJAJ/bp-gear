@@ -19,3 +19,4 @@ datamine
 saves
 bpsr-*.json
 data
+public/planner-data/*.html

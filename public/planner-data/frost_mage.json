@@ -1,0 +1,414 @@
+{
+  "kind": "talents",
+  "class": "Frost Mage",
+  "talents": [
+    {
+      "name": "Cold Intent - Sharp",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/mozhang238.webp",
+      "id": "cold_intent_sharp",
+      "desc": "Max Ice Energy +10. Special Attack DMG +12%."
+    },
+    {
+      "name": "Intellect Conversion",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_inttran.webp",
+      "id": "intellect_conversion",
+      "desc": "Every 10 Intellect grants 1 MATK."
+    },
+    {
+      "name": "Frost Curse Sigil",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_icenucleus.webp",
+      "id": "frost_curse_sigil",
+      "desc": "When a Special Attack deals DMG, it has a fixed 5% chance to Frozen the target."
+    },
+    {
+      "name": "Ice Revelation",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_doubleicearrow.webp",
+      "id": "ice_revelation",
+      "desc": "Summons 2 permanent Ice Crystal Cores that float beside you. Ice Crystal Core When Basic Attacks deal DMG, Ice Crystal Cores have a fixed 10% chance to fire 2 Ice Arrows. Ice Arrow: Each arrow deals Magic Damage equal to 28% ATK to the target and grants 1 Frost Crystal (up to 2 Frost Crystals can be stored)."
+    },
+    {
+      "name": "Breath of Frost",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/mozhang262.webp",
+      "id": "breath_of_frost",
+      "desc": "Frost Crystal cap +1."
+    },
+    {
+      "name": "Tide Mastery",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_icelasermastery.webp",
+      "id": "tide_mastery",
+      "desc": "While casting Frostbeam, you can channel Tidepool."
+    },
+    {
+      "name": "Crystal Resonance",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_dps_sacrificeconversion.webp",
+      "id": "crystal_resonance",
+      "desc": "When Frostbeam deals DMG, it has a 30% fixed chance to make Ice Crystal Core fire an Ice Arrow. Up to 1 Ice Arrow can be fired every 0.5s. The final DMG of the Ice Arrow is doubled."
+    },
+    {
+      "name": "Frost Explosion",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_icearrowaoe.webp",
+      "id": "frost_explosion",
+      "desc": "Ice Arrows fired by Ice Crystal Cores deal an additional instance of AoE Magic Damage equal to 28% ATK."
+    },
+    {
+      "name": "Ice Crystal Expansion",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/mozhang270.webp",
+      "id": "ice_crystal_expansion",
+      "desc": "Max Ice Energy +40."
+    },
+    {
+      "name": "Ice Shard Pact",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_iceenergycost.webp",
+      "id": "ice_shard_pact",
+      "desc": "Increases Maelstrom's Ice Energy recovery rate by 200%."
+    },
+    {
+      "name": "Cold Wind Convergence",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_iceenergyget.webp",
+      "id": "cold_wind_convergence",
+      "desc": "When Frozen Gale hits a target (only triggers once when hitting multiple targets), it consumes all Frost Crystals to summon Icy Bolt, with the number of Icy Bolt equal to the consumed Frost Crystals. Icy Bolt deals DMG, restores 5 Ice Energy, and reduces the Ice Energy cost of skills by 3% for the next 15s, stacking up to 6 times."
+    },
+    {
+      "name": "Frostbeam Spec",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_icespearget.webp",
+      "id": "frostbeam_spec",
+      "desc": "Replaces Special Attack with ​Frostbeam​ and enhances the skill. Every Frost Crystal increases ​Frostbeam​ DMG by 15%. Each 10% Mastery grants an additional 0.85% DMG bonus (up to 5%) and increases the Ice Energy consumed by 30%. When ​Frostbeam​ hits a target, every 13 hits reduce the remaining CD of Permafrostby 1s (hitting multiple targets only counts once). Consumes Ice Energy to channel Frostbeam continuously at the target. High Haste and Mastery greatly speed up its channeling while improving Ice Energy recovery."
+    },
+    {
+      "name": "Snow Shadow",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_icespearluck.webp",
+      "id": "snow_shadow",
+      "desc": "For every 25 Ice Energy consumed, the CD of Crystal Veil -1s."
+    },
+    {
+      "name": "Frost Comet",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_icecomet.webp",
+      "id": "frost_comet",
+      "desc": "When Frost Lance that consumes Frost Crystals deals DMG, there is a fixed 21% chance to summon Frost Comet."
+    },
+    {
+      "name": "Frozen Stars",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_luckandcri.webp",
+      "id": "frozen_stars",
+      "desc": "When Frost Lance triggers both a Crit and a Lucky Strike, Meteor Storm's CD is immediately reset. If Meteor Storm is already off cooldown, it will be automatically cast (but this Meteor Storm will deal half damage)."
+    },
+    {
+      "name": "Blizzard Dual Spears",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_icepearextra.webp",
+      "id": "blizzard_dual_spears",
+      "desc": "Within 8s after casting Blizzard, Frost Lance can fire an additional Frost Lance at another target near the original one."
+    },
+    {
+      "name": "Stormy Encounter",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_icespeardouble.webp",
+      "id": "stormy_encounter",
+      "desc": "When Crystal Veil deals DMG, it has a fixed chance to reduce the CD of Blizzard by 1s. The chance equals half percentage of your Luck."
+    },
+    {
+      "name": "Shattering Strike",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_crushedice.webp",
+      "id": "shattering_strike",
+      "desc": "When Meteor Storm deals DMG, it causes Ice Crystal Cores to fire Ice Arrows. This effect can trigger up to once per Meteor Storm cast."
+    },
+    {
+      "name": "Glacier fury",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_crithreetimes.webp",
+      "id": "glacier_fury",
+      "desc": "Consuming 15 Frost Crystals enhances the next Blizzard. Blizzard: Bypasses the casting time and increases DMG dealt by 30%, and trigger Lucky Strike."
+    },
+    {
+      "name": "Icicle Volley",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_bigicespear.webp",
+      "id": "icicle_volley",
+      "desc": "For every 10 casts of Frost Lance, a Piercing Ice Spear is launched forward."
+    },
+    {
+      "name": "Glazed Vastness",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_tank_suppressex.webp",
+      "id": "glazed_vastness",
+      "desc": "Ice skills deal 8% more DMG to Elites and stronger targets."
+    },
+    {
+      "name": "Continuous Stream",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_icedamgeup.webp",
+      "id": "continuous_stream",
+      "desc": "Dealing DMG triggers Trickle. Trickle: Grants a 1% Ice damage bonus for 6s, stacking up to 5 times."
+    },
+    {
+      "name": "Boundless Frost",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_iceskyhit.webp",
+      "id": "boundless_frost",
+      "desc": "Every 50 Ice Energy consumed grants 1 Frost Crystal. Max Frost Crystal +3. Each possessed Frost Crystal increases Frostbeam DMG by 5%."
+    },
+    {
+      "name": "Frost Shock",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_icecharge.webp",
+      "id": "frost_shock",
+      "desc": "When an Expertise Skill or Ultimate lands a Lucky Strike, it has a fixed 30% chance to trigger Frost Shock, once every 3s."
+    },
+    {
+      "name": "Quick Frozen Blast",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_icecharge02.webp",
+      "id": "quick_frozen_blast",
+      "desc": "When an Expertise Skill or Ultimate deals DMG to a target with Frozen, it triggers Frost Shock, once per second."
+    },
+    {
+      "name": "Icy Calm",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_arrtuprandom.webp",
+      "id": "icy_calm",
+      "desc": "Each additional target hit by an Expertise Skill or Ultimate grants a 2% bonus to your highest stat among Mastery, Haste, Crit, or Luck for 5s. Hitting more than 5 additional targets still only counts as 5."
+    },
+    {
+      "name": "Instant Cooling",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_iceenergy.webp",
+      "id": "instant_cooling",
+      "desc": "Every 35 Ice Energy consumed reduces the remaining CD of Meteor Storm and Frozen Gale by 1.3s."
+    },
+    {
+      "name": "Cold Stream",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_iceenergy02.webp",
+      "id": "cold_stream",
+      "desc": "Max Ice Energy +25. Every 1% Haste increases Ice Energy's auto REG SPD by 1%."
+    },
+    {
+      "name": "Frostjade Staff",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_icejoin.webp",
+      "id": "frostjade_staff",
+      "desc": "When Ice Arrow cast with Ice Crystal Core deals DMG, restores 1 Ice Energy. In the Permafrost status, the recovery doubles."
+    },
+    {
+      "name": "Icicle Spec",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_skilltriggericearrow.webp",
+      "id": "icicle_spec",
+      "desc": "Further enhances Frost Lance. When Frost Lance deals Crit DMG, there is a fixed 30% chance for Ice Crystal Cores to fire Ice Arrows. Time your use of Ice Energy to chant and launch Frost Lance. Crit and Luck increase the chance to skip chanting and significantly boost the lance's DMG."
+    },
+    {
+      "name": "Frost Domain",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_icearea.webp",
+      "id": "frost_domain",
+      "desc": "The area of Glacier Hymn -50%. While within the domain, you gain a 25% Ice bonus."
+    },
+    {
+      "name": "Cold Pulse",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_icepulse.webp",
+      "id": "cold_pulse",
+      "desc": "Every 50 hits by Frostbeam trigger a Cold Pulse. For each additional enemy hit, increases Cold Pulse DMG by 20%, up to 500%."
+    },
+    {
+      "name": "Intellect Cooling",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/mozhang236.webp",
+      "id": "intellect_cooling",
+      "desc": "When Intellect reaches 300, skill CD -10%."
+    },
+    {
+      "name": "Secondary Amp",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/mozhang237.webp",
+      "id": "secondary_amp",
+      "desc": "Boost the highest stat among the following 5 stats: Crit, Haste, Luck, Mastery, and Versatility by 3.5% as a final value."
+    },
+    {
+      "name": "Cold Intent - Flow",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/mozhang238.webp",
+      "id": "cold_intent_flow",
+      "desc": "Ice Energy cap +40. Special Attack damage +4%."
+    },
+    {
+      "name": "Ice Comet",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/mozhang239.webp",
+      "id": "ice_comet",
+      "desc": "When Intellect reaches 500, gain 5% Ice bonus."
+    },
+    {
+      "name": "Endless Cold",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/mozhang240.webp",
+      "id": "endless_cold",
+      "desc": "Every 20 Frost Crystals consumed grants Endless Cold effect. Endless Cold: For 10s, increases Meteor Storm DMG by 150%, and removes its CD and Ice Energy cost. During this period, Ice Arrows triggered by Meteor Storm cannot produce Frost Crystal. When Endless Cold is triggered during Permafrost, enter the Endless Cold state after the effect of Permafrost ends. If the number of Frost Crystals consumed during this period exceeds 20, proportionally increase the final damage dealt by Meteor Storm (up to 100%)."
+    },
+    {
+      "name": "Frost Lance Barrage",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/mozhang241.webp",
+      "id": "frost_lance_barrage",
+      "desc": "During Permafrost, Frost Lance fires 2 consecutive shots."
+    },
+    {
+      "name": "Freezing Meteor Storm",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/mozhang242.webp",
+      "id": "freezing_meteor_storm",
+      "desc": "When Meteor Storm deals damage, 20% chance to apply Frozen to the target. Throughout the duration of Permafrost, when Frost Lance and Meteor Storm critically hit, extends the duration of Permafrost by 0.5s, up to 5s of extension."
+    },
+    {
+      "name": "Energy Saving",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/mozhang243.webp",
+      "id": "energy_saving",
+      "desc": "When consuming Frost Crystal to cast Frost Lance, refunds 50% of the Ice Energy consumed after the cast. When casting Frost Lance without consuming Frost Crystal, an additional 50% of the Frost Energy consumed is deducted after the cast."
+    },
+    {
+      "name": "Frost Blade",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/mozhang244.webp",
+      "id": "frost_blade",
+      "desc": "Frost Lances that consume Frost Crystal deal 20% more DMG."
+    },
+    {
+      "name": "Deep Cold Magic Spear",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/mozhang245.webp",
+      "id": "deep_cold_magic_spear",
+      "desc": "Frost Lance deals 70% more DMG. Frost Lance costs 100% more time to use."
+    },
+    {
+      "name": "Meteor Storm Expansion",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/mozhang246.webp",
+      "id": "meteor_storm_expansion",
+      "desc": "Meteor Storm hit count +1. Meteor Storm gains 10% Ice Bonus."
+    },
+    {
+      "name": "Frost Lance Crit",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/mozhang247.webp",
+      "id": "frost_lance_crit",
+      "desc": "Frost Lance deals 1.5% more Crit DMG. The effect lasts 6s and stacks up to 10 times."
+    },
+    {
+      "name": "Infusion Sublimation",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/mozhang248.webp",
+      "id": "infusion_sublimation",
+      "desc": "Increases Max Frost Crystal by 1. During Permafrost, Ice ATK increases by 150. When Permafrost ends, your Frost Crystal resets to the amount you had before the activation of Permafrost."
+    },
+    {
+      "name": "Deadly Frost Lance",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/mozhang249.webp",
+      "id": "deadly_frost_lance",
+      "desc": "Frost Lance deals 20% more DMG to targets with HP less than 35%"
+    },
+    {
+      "name": "Critical Cold",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/mozhang250.webp",
+      "id": "critical_cold",
+      "desc": "During Permafrost, increases Crit DMG dealt by 15%. During Permafrost, increases allies' critical rate by 3%."
+    },
+    {
+      "name": "Bitter Cold",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/mozhang251.webp",
+      "id": "bitter_cold",
+      "desc": "Every 150 Intellect grants 0.5 bonus Crit DMG."
+    },
+    {
+      "name": "Sharp Blizzard",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/mozhang252.webp",
+      "id": "sharp_blizzard",
+      "desc": "Increases the critical rate of Blizzard by 50%. Increases the Crit DMG of Blizzard by 15%."
+    },
+    {
+      "name": "Frost Crystal Empowerment",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/mozhang253.webp",
+      "id": "frost_crystal_empowerment",
+      "desc": "Each Frost Crystal consumed increases Intellect by 40. This effect lasts 10s and stacks up to 5 times."
+    },
+    {
+      "name": "Frost Assault",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/mozhang254.webp",
+      "id": "frost_assault",
+      "desc": "Blizzard reduces the Ice Resistance of targets hit by 10%. The effect lasts 10s and does not stack, and only works on your own."
+    },
+    {
+      "name": "Luck Damage",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/mozhang255.webp",
+      "id": "luck_damage",
+      "desc": "Lucky Strike DMG Multiplier +15%. Every 2% Luck grants 1% Lucky Strike DMG Multiplier."
+    },
+    {
+      "name": "Cold Retention",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/mozhang256.webp",
+      "id": "cold_retention",
+      "desc": "In the Permafrost status, the cost of Frostbeam decreases by 25%."
+    },
+    {
+      "name": "Frost Revelation",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/mozhang257.webp",
+      "id": "frost_revelation",
+      "desc": "The first hit of Tidepool on the target grants 5 Ice Energy. Each additional Frost Crystal increases Ice Energy restored by 10."
+    },
+    {
+      "name": "Law of Energy Surge",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/mozhang258.webp",
+      "id": "law_of_energy_surge",
+      "desc": "Every 50 Ice Arrows shot increases the DMG of your next Frozen Gale by 200% for 30s. Additionally, casting Frozen Gale grants the Law of Energy Surge."
+    },
+    {
+      "name": "Power of Ice Crystals",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/mozhang259.webp",
+      "id": "power_of_ice_crystals",
+      "desc": "When Ice Energy is above 50%, deals 8% more Ice damage."
+    },
+    {
+      "name": "Ice Crystal Recovery",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/mozhang260.webp",
+      "id": "ice_crystal_recovery",
+      "desc": "When Ice Energy is below 50%, enhances the recovery rate of Ice Energy by 10%."
+    },
+    {
+      "name": "Rapid Ice Arrow",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/mozhang261.webp",
+      "id": "rapid_ice_arrow",
+      "desc": "During Permafrost, Frostbeam fires 2 additional Ice Arrows generated by Ice Crystal Core. However, during Permafrost, Lucky Strike's final damage is reduced by 50%."
+    },
+    {
+      "name": "Endless Tide",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/mozhang262.webp",
+      "id": "endless_tide",
+      "desc": "During Permafrost, each Ice Arrow triggered by Ice Crystal Core extends the duration of Permafrost by 0.5s, up to 5s."
+    },
+    {
+      "name": "Frost Tide",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/mozhang263.webp",
+      "id": "frost_tide",
+      "desc": "When dealing DMG, Frostbeam has a fixed 20% chance to grant Frost Crystal. If Max Frost Crystal is reached, grants 5% bonus Ice damage dealt instead for 3s."
+    },
+    {
+      "name": "Ray Mastery I",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/mozhang264.webp",
+      "id": "ray_mastery_i",
+      "desc": "Frostbeam deals 2% more Ice damage. Frostbeam deals 5% more Ice damage to the main target."
+    },
+    {
+      "name": "Wide Area Ice Arrow",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/mozhang265.webp",
+      "id": "wide_area_ice_arrow",
+      "desc": "Every 15 hits of Expertise Skill allows Ice Crystal Core to fire Ice Arrow."
+    },
+    {
+      "name": "Intellect Ice Crystal",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/mozhang266.webp",
+      "id": "intellect_ice_crystal",
+      "desc": "Every 50 Intellect grants 1 Max Ice Energy, up to 100 from this source."
+    },
+    {
+      "name": "Quick Chant",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/mozhang267.webp",
+      "id": "quick_chant",
+      "desc": "Increases Haste by 1000. During Permafrost, Cast Speed increases by 15%."
+    },
+    {
+      "name": "Sharp Ice Arrow",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/mozhang268.webp",
+      "id": "sharp_ice_arrow",
+      "desc": "Increases the critical rate of Ice Arrows from Ice Crystal Core by 50%. Increases the Crit DMG of Ice Arrows from Ice Crystal Core by 10%."
+    },
+    {
+      "name": "Ray's Swan Song",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/mozhang269.webp",
+      "id": "ray_s_swan_song",
+      "desc": "When dealing DMG, Frostbeam gains a fixed 10% chance to double Mastery for 3s (which can only be triggers once on multiple hits)."
+    },
+    {
+      "name": "Ice Crystal Expansion",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/mozhang270.webp",
+      "id": "ice_crystal_expansion_1",
+      "desc": "Max Ice Energy +40."
+    },
+    {
+      "name": "Intellect Amp",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/mozhang271.webp",
+      "id": "intellect_amp",
+      "desc": "Increases Intellect by 5%."
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState, type Dispatch, type SetStateAction } from "react"
+import type { TalentNodeSelections } from "@/lib/app-context"
 import type { TalentEntry } from "@/lib/talent-data"
 import type { GuideTalentTreeData, GuideTalentTreeNode, TalentTreeEdge } from "@/lib/talent-tree-parser"
 
@@ -36,82 +37,37 @@ interface MaxrollTalentTreeProps {
   spec: string
   talents: TalentEntry[]
   selected: string[]
+  nodeSelections: TalentNodeSelections
+  setNodeSelections: Dispatch<SetStateAction<TalentNodeSelections>>
   onToggle: (id: string, next: boolean) => void
   guideData?: GuideTalentTreeData | null
+  editMode?: boolean
+  onGuideDataSaved?: (next: GuideTalentTreeData) => void
 }
 
 const CLASS_ICON = "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/professions/profession_horizontal_03.webp"
 const SPEC_ICON = "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_sickleget.webp"
 const ICON_MINOR = "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/common_icon08.webp"
-const ICON_AGI = "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/common_attrdexterity.webp"
-const ICON_BOSS = "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/common_icon03.webp"
 
-const STORMBLADE_LAYOUT: LayoutNode[] = [
-  { key: "sb-root", x: 160, y: 16, size: "hex", row: 0, icon: CLASS_ICON, name: "Stormblade", desc: "Stormblade tree root." },
-  { key: "blade_intent", talentId: "blade_intent", x: 106, y: 78, size: "small", row: 1 },
-  { key: "agility_conversion", talentId: "agility_conversion", x: 214, y: 78, size: "small", row: 1 },
-  { key: "thunder_whirl", talentId: "thunder_whirl", x: 106, y: 136, size: "large", row: 2 },
-  { key: "keen_strike", talentId: "keen_strike", x: 214, y: 136, size: "large", row: 2 },
-  { key: "agility-1", x: 52, y: 194, size: "small", row: 3, icon: ICON_AGI, name: "Agility", desc: "+10 Agility" },
-  { key: "iaido_mastery", talentId: "iaido_mastery", x: 160, y: 194, size: "small", row: 3 },
-  { key: "agility-2", x: 268, y: 194, size: "small", row: 3, icon: ICON_AGI, name: "Agility", desc: "+10 Agility" },
-  { key: "zen_moment", talentId: "zen_moment", x: 52, y: 252, size: "large", row: 4 },
-  { key: "thunder_sigil_charm", talentId: "thunder_sigil_charm", x: 160, y: 252, size: "large", row: 4 },
-  { key: "thunder_reversal", talentId: "thunder_reversal", x: 268, y: 252, size: "large", row: 4 },
-  { key: "vacuum_slash", talentId: "vacuum_slash", x: 106, y: 312, size: "small", row: 5 },
-  { key: "flash_frenzy_blade", talentId: "flash_frenzy_blade", x: 214, y: 312, size: "small", row: 5 },
-  { key: "bladewind_domain", talentId: "bladewind_domain", x: 52, y: 370, size: "large", row: 6 },
-  { key: "duel_awareness", talentId: "duel_awareness", x: 160, y: 370, size: "small", row: 6 },
-  { key: "frenzied_thunder_roar", talentId: "frenzied_thunder_roar", x: 268, y: 370, size: "large", row: 6 },
-  { key: "shadow_despise", talentId: "shadow_despise", x: 106, y: 430, size: "small", row: 7 },
-  { key: "iai_thunder_dance", talentId: "iai_thunder_dance", x: 214, y: 430, size: "small", row: 7 },
-  { key: "flash_sharp_strike", talentId: "flash_sharp_strike", x: 52, y: 490, size: "large", row: 8 },
-  { key: "rapid_thunder_assault", talentId: "rapid_thunder_assault", x: 160, y: 490, size: "large", row: 8 },
-  { key: "end_of_annihilation", talentId: "end_of_annihilation", x: 268, y: 490, size: "large", row: 8 },
-]
-
-const MOONSTRIKE_LAYOUT: LayoutNode[] = [
-  { key: "ms-root", x: 160, y: 16, size: "hex", row: 0, icon: SPEC_ICON, name: "Moonstrike Spec", desc: "Moonstrike specialization root." },
-  { key: "thunder_seed", talentId: "thunder_seed", x: 106, y: 74, size: "small", row: 1 },
-  { key: "thunder_rune_mastery", talentId: "thunder_rune_mastery", x: 214, y: 74, size: "small", row: 1 },
-  { key: "touch_of_thunder_soul", talentId: "touch_of_thunder_soul", x: 52, y: 132, size: "large", row: 2 },
-  { key: "moonstrike_delay", talentId: "moonstrike_delay", x: 160, y: 132, size: "large", row: 2 },
-  { key: "thunder_scythe", talentId: "thunder_scythe", x: 268, y: 132, size: "large", row: 2 },
-  { key: "agi-1", x: 106, y: 190, size: "small", row: 3, icon: ICON_AGI, name: "Agility", desc: "+10 Agility" },
-  { key: "thunder_curse", talentId: "thunder_curse", x: 0, y: 190, size: "small", row: 3 },
-  { key: "enhanced_thunderstrike", talentId: "enhanced_thunderstrike", x: 160, y: 190, size: "large", row: 3 },
-  { key: "agi-2", x: 214, y: 190, size: "small", row: 3, icon: ICON_AGI, name: "Agility", desc: "+10 Agility" },
-  { key: "minor-1", x: 322, y: 190, size: "small", row: 3, icon: ICON_MINOR, name: "Minor Passive", desc: "Minor passive node." },
-  { key: "moonlight_charge", talentId: "moonlight_charge", x: 52, y: 248, size: "large", row: 4 },
-  { key: "phantom_delay", talentId: "phantom_delay", x: 160, y: 248, size: "large", row: 4 },
-  { key: "thousand_thunder_flashes", talentId: "thousand_thunder_flashes", x: 268, y: 248, size: "large", row: 4 },
-  { key: "minor-2", x: 0, y: 306, size: "small", row: 5, icon: ICON_MINOR, name: "Minor Passive", desc: "Minor passive node." },
-  { key: "chaos_breaker", talentId: "chaos_breaker", x: 106, y: 306, size: "large", row: 5 },
-  { key: "minor-3", x: 160, y: 306, size: "small", row: 5, icon: ICON_AGI, name: "Agility", desc: "+10 Agility" },
-  { key: "minor-4", x: 214, y: 306, size: "small", row: 5, icon: ICON_MINOR, name: "Minor Passive", desc: "Minor passive node." },
-  { key: "minor-5", x: 322, y: 306, size: "small", row: 5, icon: ICON_BOSS, name: "Boss Damage", desc: "+3% Boss Damage" },
-  { key: "blade_intent_rare", talentId: "blade_intent_rare", x: 52, y: 364, size: "large", row: 6 },
-  { key: "phantom_scythe_realm_i", talentId: "phantom_scythe_realm_i", x: 160, y: 364, size: "large", row: 6 },
-  { key: "divine_sickle", talentId: "divine_sickle", x: 268, y: 364, size: "large", row: 6 },
-  { key: "breath_of_mark", talentId: "breath_of_mark", x: 52, y: 422, size: "large", row: 7 },
-  { key: "phantom_scythe_realm_ii", talentId: "phantom_scythe_realm_ii", x: 160, y: 422, size: "large", row: 7 },
-  { key: "lightning_flash", talentId: "lightning_flash", x: 268, y: 422, size: "large", row: 7 },
-  { key: "minor-6", x: 0, y: 482, size: "small", row: 8, icon: ICON_MINOR, name: "Minor Passive", desc: "Minor passive node." },
-  { key: "power_of_thunder", talentId: "power_of_thunder", x: 106, y: 482, size: "large", row: 8 },
-  { key: "minor-7", x: 160, y: 482, size: "small", row: 8, icon: ICON_AGI, name: "Agility", desc: "+10 Agility" },
-  { key: "minor-8", x: 214, y: 482, size: "small", row: 8, icon: ICON_MINOR, name: "Minor Passive", desc: "Minor passive node." },
-  { key: "minor-9", x: 322, y: 482, size: "small", row: 8, icon: ICON_MINOR, name: "Minor Passive", desc: "Minor passive node." },
-  { key: "thunder_might_2", talentId: "thunder_might_2", x: 52, y: 542, size: "large", row: 9 },
-  { key: "thunder_sigil_charm_4", talentId: "thunder_sigil_charm_4", x: 160, y: 542, size: "large", row: 9 },
-  { key: "thunderstrike_whisper", talentId: "thunderstrike_whisper", x: 268, y: 542, size: "large", row: 9 },
-  { key: "moonstrike_sharp_strike", talentId: "moonstrike_sharp_strike", x: 106, y: 600, size: "large", row: 10 },
-  { key: "minor-10", x: 160, y: 600, size: "small", row: 10, icon: ICON_MINOR, name: "Minor Passive", desc: "Minor passive node." },
-  { key: "minor-11", x: 214, y: 600, size: "small", row: 10, icon: ICON_AGI, name: "Agility", desc: "+10 Agility" },
-  { key: "swift", talentId: "swift", x: 52, y: 660, size: "large", row: 11 },
-  { key: "minor-12", x: 160, y: 660, size: "small", row: 11, icon: ICON_MINOR, name: "Minor Passive", desc: "Minor passive node." },
-  { key: "raijin_dash_charge", talentId: "raijin_dash_charge", x: 268, y: 660, size: "large", row: 11 },
-  { key: "moonblade_swift", talentId: "moonblade_swift", x: 160, y: 718, size: "large", row: 12 },
-]
+function getGenericNodeMeta(icon: string, size: NodeSize) {
+  const lower = icon.toLowerCase()
+  if (lower.includes("common_attrdexterity")) {
+    return { name: "Agility", desc: "General agility stat node." }
+  }
+  if (lower.includes("common_attrendurance")) {
+    return { name: "Endurance", desc: "General endurance stat node." }
+  }
+  if (lower.includes("common_icon03")) {
+    return { name: "Boss Damage", desc: "General boss-damage passive node." }
+  }
+  if (lower.includes("common_icon08")) {
+    return { name: "Minor Passive", desc: "General passive node." }
+  }
+  if (size === "hex") {
+    return { name: "Spec Root", desc: "Specialization root node." }
+  }
+  return { name: "Talent", desc: "Talent node" }
+}
 
 function sizeToInner(size: NodeSize) {
   if (size === "hex") return { inner: 36, icon: 22 }
@@ -131,19 +87,7 @@ function getNodeMetrics(size: NodeSize, treeType: "class" | "spec") {
   return { frame: 42, inner: 25, icon: 15 }
 }
 
-function buildRenderNodes(layout: LayoutNode[], talentsById: Map<string, TalentEntry>, selectedSet: Set<string>): RenderNode[] {
-  return layout.map((node) => {
-    const talent = node.talentId ? talentsById.get(node.talentId) : undefined
-    return {
-      ...node,
-      icon: talent?.icon ?? node.icon ?? ICON_MINOR,
-      name: talent?.name ?? node.name ?? "Talent",
-      desc: talent?.desc ?? node.desc ?? "Talent node",
-      selectable: Boolean(node.talentId && talent),
-      active: node.talentId ? selectedSet.has(node.talentId) : node.size === "hex",
-    }
-  })
-}
+// Removed - no longer using hardcoded layouts
 
 function pickGuideTab(
   guideData: GuideTalentTreeData | null | undefined,
@@ -162,6 +106,7 @@ function buildRenderNodesFromGuide(
   talentsById: Map<string, TalentEntry>,
   talentsByIcon: Map<string, TalentEntry[]>,
   selectedSet: Set<string>,
+  rootLabel: string,
 ): RenderNode[] {
   const iconUsage = new Map<string, number>()
 
@@ -177,6 +122,8 @@ function buildRenderNodesFromGuide(
     const talent = node.talentId
       ? (talentsById.get(node.talentId) ?? iconMatchedTalent)
       : iconMatchedTalent
+    const generic = getGenericNodeMeta(node.icon, node.size)
+    const isRoot = node.size === "hex"
 
     const row = Math.round(node.y / 58)
     return {
@@ -187,8 +134,8 @@ function buildRenderNodesFromGuide(
       size: node.size,
       row,
       icon: talent?.icon ?? node.icon ?? ICON_MINOR,
-      name: talent?.name ?? node.name ?? "Talent",
-      desc: talent?.desc ?? node.desc ?? "Talent node",
+      name: talent?.name ?? node.name ?? (isRoot ? rootLabel : generic.name),
+      desc: talent?.desc ?? node.desc ?? generic.desc,
       selectable: Boolean(node.talentId && talent),
       active: node.talentId ? selectedSet.has(node.talentId) : node.defaultActive || node.size === "hex",
       frame: node.outerWidth,
@@ -200,58 +147,20 @@ function buildRenderNodesFromGuide(
   })
 }
 
-function buildEdges(nodes: LayoutNode[]): Array<{ from: string; to: string }> {
-  const rows = new Map<number, LayoutNode[]>()
-  for (const node of nodes) {
-    const existing = rows.get(node.row) ?? []
-    existing.push(node)
-    rows.set(node.row, existing)
-  }
+// buildEdges removed - edges are now loaded from guide data
 
-  const edges: Array<{ from: string; to: string }> = []
-  const orderedRows = [...rows.entries()].sort((a, b) => a[0] - b[0])
-
-  for (let index = 1; index < orderedRows.length; index += 1) {
-    const current = orderedRows[index][1]
-    const previous = orderedRows[index - 1][1]
-
-    for (const node of current) {
-      const from = previous
-        .map((candidate) => ({
-          candidate,
-          dist: Math.abs((candidate.x + 18) - (node.x + 18)),
-        }))
-        .sort((a, b) => a.dist - b.dist)[0]?.candidate
-
-      if (from) edges.push({ from: from.key, to: node.key })
-    }
-  }
-
-  return edges
-}
-
-function buildPrereqs(nodes: RenderNode[], edges: Array<{ from: string; to: string }>): Map<string, string[]> {
-  const byKey = new Map(nodes.map((node) => [node.key, node]))
-  const result = new Map<string, string[]>()
-
-  for (const edge of edges) {
-    const from = byKey.get(edge.from)
-    const to = byKey.get(edge.to)
-    if (!from?.talentId || !to?.talentId) continue
-
-    const existing = result.get(to.talentId) ?? []
-    if (!existing.includes(from.talentId)) {
-      existing.push(from.talentId)
-      result.set(to.talentId, existing)
-    }
-  }
-
-  return result
-}
-
-export function MaxrollTalentTree({ className, spec, talents, selected, onToggle, guideData }: MaxrollTalentTreeProps) {
+export function MaxrollTalentTree({ className, spec, talents, selected, nodeSelections, setNodeSelections, onToggle, guideData, editMode, onGuideDataSaved }: MaxrollTalentTreeProps) {
   const [activeTree, setActiveTree] = useState<"class" | "spec">("spec")
   const [focusedNodeKey, setFocusedNodeKey] = useState<string | null>(null)
+  const [editingEdges, setEditingEdges] = useState<TalentTreeEdge[]>([])
+  const [selectedNodeForEdge, setSelectedNodeForEdge] = useState<string | null>(null)
+  const [saving, setSaving] = useState(false)
+  const [editingClassNodes, setEditingClassNodes] = useState<GuideTalentTreeNode[] | null>(null)
+  const [editingSpecNodes, setEditingSpecNodes] = useState<GuideTalentTreeNode[] | null>(null)
+  const [talentSearchQuery, setTalentSearchQuery] = useState("")
+  const treeViewportRef = useRef<HTMLDivElement | null>(null)
+  const edgeCanvasRef = useRef<HTMLCanvasElement | null>(null)
+  const [treeViewportSize, setTreeViewportSize] = useState({ width: 0, height: 0 })
   const selectedSet = useMemo(() => new Set(selected), [selected])
   const talentsById = useMemo(() => new Map(talents.map((talent) => [talent.id, talent])), [talents])
   const talentsByIcon = useMemo(() => {
@@ -264,66 +173,265 @@ export function MaxrollTalentTree({ className, spec, talents, selected, onToggle
     return map
   }, [talents])
 
-  const classNodes = useMemo(() => buildRenderNodes(STORMBLADE_LAYOUT, talentsById, selectedSet), [talentsById, selectedSet])
-  const specNodes = useMemo(() => buildRenderNodes(MOONSTRIKE_LAYOUT, talentsById, selectedSet), [talentsById, selectedSet])
-
   const classGuideTab = useMemo(() => pickGuideTab(guideData, "class", className, spec), [guideData, className, spec])
   const specGuideTab = useMemo(() => pickGuideTab(guideData, "spec", className, spec), [guideData, className, spec])
 
-  const classNodesFromGuide = useMemo(
-    () => (classGuideTab ? buildRenderNodesFromGuide(classGuideTab.tree.nodes, talentsById, talentsByIcon, selectedSet) : null),
-    [classGuideTab, talentsById, talentsByIcon, selectedSet],
+  // Initialize editing nodes when entering edit mode
+  // Reset editing state when editMode is disabled or guide data changes
+  const editSessionKey = useMemo(() => `${guideData?.tabs?.map((tab) => tab.label).join("|") ?? "unknown"}-${guideData?.tabs?.length ?? 0}`, [guideData])
+  
+  useEffect(() => {
+    if (!editMode) {
+      // Clear editing state when exiting edit mode
+      setEditingClassNodes(null)
+      setEditingSpecNodes(null)
+      return
+    }
+    // Initialize editing nodes from guide data
+    if (classGuideTab?.tree.nodes) {
+      setEditingClassNodes((prev) => prev ?? classGuideTab.tree.nodes.map((node) => ({ ...node })))
+    }
+    if (specGuideTab?.tree.nodes) {
+      setEditingSpecNodes((prev) => prev ?? specGuideTab.tree.nodes.map((node) => ({ ...node })))
+    }
+  }, [editMode, classGuideTab, specGuideTab, editSessionKey])
+
+  const classGuideNodesSource = useMemo(() => {
+    if (!classGuideTab?.tree.nodes) return []
+    if (!editMode) return classGuideTab.tree.nodes
+    return editingClassNodes ?? classGuideTab.tree.nodes
+  }, [classGuideTab, editMode, editingClassNodes])
+
+  const specGuideNodesSource = useMemo(() => {
+    if (!specGuideTab?.tree.nodes) return []
+    if (!editMode) return specGuideTab.tree.nodes
+    return editingSpecNodes ?? specGuideTab.tree.nodes
+  }, [specGuideTab, editMode, editingSpecNodes])
+
+  const classNodes = useMemo(
+    () => buildRenderNodesFromGuide(classGuideNodesSource, talentsById, talentsByIcon, selectedSet, className || "Stormblade"),
+    [classGuideNodesSource, talentsById, talentsByIcon, selectedSet, className],
   )
-  const specNodesFromGuide = useMemo(
-    () => (specGuideTab ? buildRenderNodesFromGuide(specGuideTab.tree.nodes, talentsById, talentsByIcon, selectedSet) : null),
-    [specGuideTab, talentsById, talentsByIcon, selectedSet],
+  const specNodes = useMemo(
+    () => buildRenderNodesFromGuide(specGuideNodesSource, talentsById, talentsByIcon, selectedSet, `${spec} Spec`),
+    [specGuideNodesSource, talentsById, talentsByIcon, selectedSet, spec],
   )
 
-  const classEdges = useMemo(() => buildEdges(classNodes), [classNodes])
-  const specEdges = useMemo(() => buildEdges(specNodes), [specNodes])
+  const classEdges = useMemo<TalentTreeEdge[]>(() => classGuideTab?.tree.edges ?? [], [classGuideTab])
+  const specEdges = useMemo<TalentTreeEdge[]>(() => specGuideTab?.tree.edges ?? [], [specGuideTab])
 
-  const classGuideEdges = useMemo<TalentTreeEdge[] | null>(() => classGuideTab?.tree.edges ?? null, [classGuideTab])
-  const specGuideEdges = useMemo<TalentTreeEdge[] | null>(() => specGuideTab?.tree.edges ?? null, [specGuideTab])
+  // In edit mode, use editingEdges state; otherwise use guide edges
+  const activeEdges = editMode
+    ? editingEdges
+    : (activeTree === "class" ? classEdges : specEdges)
+
+  const activeNodes = activeTree === "class" ? classNodes : specNodes
+
+  // Calculate tree bounds from actual nodes
+  const treeBounds = useMemo(() => {
+    if (activeNodes.length === 0) return { minX: 0, minY: 0, maxX: 365, maxY: 600 }
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity
+    for (const node of activeNodes) {
+      const nodeWidth = node.frame ?? 45
+      const nodeHeight = node.frame ?? 45
+      minX = Math.min(minX, node.x)
+      minY = Math.min(minY, node.y)
+      maxX = Math.max(maxX, node.x + nodeWidth)
+      maxY = Math.max(maxY, node.y + nodeHeight)
+    }
+    const padding = 20
+    return {
+      minX: minX - padding,
+      minY: minY - padding,
+      maxX: maxX + padding,
+      maxY: maxY + padding,
+    }
+  }, [activeNodes])
+
+  const treeWidth = treeBounds.maxX - treeBounds.minX
+  const treeHeight = treeBounds.maxY - treeBounds.minY
 
   const tree = activeTree === "class"
     ? {
         label: className || "Stormblade",
-        nodes: classNodesFromGuide ?? classNodes,
-        edges: classGuideEdges ?? classEdges,
+        nodes: activeNodes,
+        edges: activeEdges,
         cap: 30,
-        width: classGuideTab?.tree.width ?? 365,
-        height: classGuideTab?.tree.height ?? 560,
+        width: treeWidth,
+        height: treeHeight,
+        offsetX: -treeBounds.minX,
+        offsetY: -treeBounds.minY,
       }
     : {
         label: `${spec} Spec`,
-        nodes: specNodesFromGuide ?? specNodes,
-        edges: specGuideEdges ?? specEdges,
+        nodes: activeNodes,
+        edges: activeEdges,
         cap: 40,
-        width: specGuideTab?.tree.width ?? 365,
-        height: specGuideTab?.tree.height ?? 760,
+        width: treeWidth,
+        height: treeHeight,
+        offsetX: -treeBounds.minX,
+        offsetY: -treeBounds.minY,
       }
 
-  const prereqs = useMemo(() => buildPrereqs(tree.nodes, tree.edges), [tree.nodes, tree.edges])
   const nodeByKey = useMemo(() => new Map(tree.nodes.map((node) => [node.key, node])), [tree.nodes])
+  const selectedNodeKeysByTalentId = useMemo(() => nodeSelections[activeTree] ?? {}, [nodeSelections, activeTree])
+  const updateSelectedNodeKeysForActiveTree = useCallback((updater: (prev: Record<string, string[]>) => Record<string, string[]>) => {
+    setNodeSelections((prev) => {
+      const prevTree = prev[activeTree] ?? {}
+      const nextTree = updater(prevTree)
+      if (nextTree === prevTree) return prev
+      return {
+        ...prev,
+        [activeTree]: nextTree,
+      }
+    })
+  }, [activeTree, setNodeSelections])
+  const duplicateNodeKeysByTalentId = useMemo(() => {
+    const map = new Map<string, string[]>()
+    for (const node of tree.nodes) {
+      if (!node.talentId) continue
+      const existing = map.get(node.talentId) ?? []
+      existing.push(node.key)
+      map.set(node.talentId, existing)
+    }
+    for (const [id, keys] of map.entries()) {
+      if (keys.length <= 1) map.delete(id)
+    }
+    return map
+  }, [tree.nodes])
+  // Memoized isNodeSelected check - inline to avoid stale closures
+  const isNodeSelectedCheck = useCallback((
+    node: RenderNode,
+    selSet: Set<string>,
+    dupKeys: Map<string, string[]>,
+    selNodeKeys: Record<string, string[]>
+  ): boolean => {
+    if (!node.talentId) return node.size === "hex"
+    if (!selSet.has(node.talentId)) return false
+    const duplicateKeys = dupKeys.get(node.talentId)
+    if (!duplicateKeys) return true
+    const selectedKeys = selNodeKeys[node.talentId]
+    if (!selectedKeys || selectedKeys.length === 0) {
+      return node.key === duplicateKeys[0]
+    }
+    return selectedKeys.includes(node.key)
+  }, [])
+  const incomingByKey = useMemo(() => {
+    const map = new Map<string, string[]>()
+    for (const edge of tree.edges) {
+      const existing = map.get(edge.to) ?? []
+      existing.push(edge.from)
+      map.set(edge.to, existing)
+    }
+    return map
+  }, [tree.edges])
+  const outgoingByKey = useMemo(() => {
+    const map = new Map<string, string[]>()
+    for (const edge of tree.edges) {
+      const existing = map.get(edge.from) ?? []
+      existing.push(edge.to)
+      map.set(edge.from, existing)
+    }
+    return map
+  }, [tree.edges])
 
-  const selectedInTree = tree.nodes.filter((node) => node.talentId && selectedSet.has(node.talentId)).length
+  const activeNodeKeys = useMemo(() => {
+    const active = new Set<string>()
+
+    for (const node of tree.nodes) {
+      if (node.size === "hex") active.add(node.key)
+      if (isNodeSelectedCheck(node, selectedSet, duplicateNodeKeysByTalentId, selectedNodeKeysByTalentId)) {
+        active.add(node.key)
+      }
+    }
+
+    let changed = true
+    while (changed) {
+      changed = false
+      for (const node of tree.nodes) {
+        if (active.has(node.key) || node.talentId) continue
+        const parents = incomingByKey.get(node.key) ?? []
+        if (parents.length > 0 && parents.some((key) => active.has(key))) {
+          active.add(node.key)
+          changed = true
+        }
+      }
+    }
+
+    return active
+  }, [tree.nodes, incomingByKey, selectedSet, duplicateNodeKeysByTalentId, selectedNodeKeysByTalentId, isNodeSelectedCheck])
+
+  const nodeByTalentId = useMemo(() => {
+    const map = new Map<string, RenderNode>()
+    for (const node of tree.nodes) {
+      if (!node.talentId || map.has(node.talentId)) continue
+      const duplicateKeys = duplicateNodeKeysByTalentId.get(node.talentId)
+      if (!duplicateKeys) {
+        map.set(node.talentId, node)
+        continue
+      }
+      const selectedKeys = selectedNodeKeysByTalentId[node.talentId]
+      const resolved = selectedKeys && selectedKeys.length > 0 ? selectedKeys[0] : duplicateKeys[0]
+      const resolvedNode = nodeByKey.get(resolved)
+      map.set(node.talentId, resolvedNode ?? node)
+    }
+    return map
+  }, [tree.nodes, duplicateNodeKeysByTalentId, selectedNodeKeysByTalentId, nodeByKey])
+
+  useEffect(() => {
+    updateSelectedNodeKeysForActiveTree((prev) => {
+      if (Object.keys(prev).length === 0) return prev
+      let changed = false
+      const next: Record<string, string[]> = {}
+      for (const [talentId, selectedKeys] of Object.entries(prev)) {
+        if (!selectedSet.has(talentId)) {
+          changed = true
+          continue
+        }
+        const duplicateKeys = duplicateNodeKeysByTalentId.get(talentId)
+        if (duplicateKeys) {
+          const filtered = selectedKeys.filter((key) => duplicateKeys.includes(key))
+          if (filtered.length > 0) {
+            next[talentId] = filtered
+          } else {
+            changed = true
+          }
+        } else {
+          changed = true
+        }
+      }
+      return changed ? next : prev
+    })
+  }, [duplicateNodeKeysByTalentId, selectedSet, updateSelectedNodeKeysForActiveTree])
+
+  const selectedInTree = useMemo(() => 
+    tree.nodes.filter((node) => node.talentId && isNodeSelectedCheck(node, selectedSet, duplicateNodeKeysByTalentId, selectedNodeKeysByTalentId)).length,
+    [tree.nodes, selectedSet, duplicateNodeKeysByTalentId, selectedNodeKeysByTalentId, isNodeSelectedCheck]
+  )
+
+  const canSelectNode = useCallback((node: RenderNode): boolean => {
+    if (!node.talentId || isNodeSelectedCheck(node, selectedSet, duplicateNodeKeysByTalentId, selectedNodeKeysByTalentId)) return false
+    if (selectedInTree >= tree.cap) return false
+    return true
+  }, [selectedSet, duplicateNodeKeysByTalentId, selectedNodeKeysByTalentId, selectedInTree, tree.cap])
+
+  const canDeselectNode = useCallback((node: RenderNode): boolean => {
+    return Boolean(node.talentId && isNodeSelectedCheck(node, selectedSet, duplicateNodeKeysByTalentId, selectedNodeKeysByTalentId))
+  }, [selectedSet, duplicateNodeKeysByTalentId, selectedNodeKeysByTalentId])
 
   const canSelect = (talentId: string): boolean => {
-    const required = prereqs.get(talentId) ?? []
-    return required.every((id) => selectedSet.has(id))
+    const node = nodeByTalentId.get(talentId)
+    return node ? canSelectNode(node) : false
   }
 
   const canDeselect = (talentId: string): boolean => {
-    for (const [childId, required] of prereqs) {
-      if (!selectedSet.has(childId)) continue
-      if (required.includes(talentId)) return false
-    }
-    return true
+    const node = nodeByTalentId.get(talentId)
+    return node ? canDeselectNode(node) : false
   }
 
   const defaultFocusedNode = useMemo(
-    () => tree.nodes.find((node) => node.talentId && selectedSet.has(node.talentId)) ?? tree.nodes[0] ?? null,
-    [tree.nodes, selectedSet],
+    () => tree.nodes.find((node) => node.talentId && isNodeSelectedCheck(node, selectedSet, duplicateNodeKeysByTalentId, selectedNodeKeysByTalentId)) ?? tree.nodes[0] ?? null,
+    [tree.nodes, selectedSet, duplicateNodeKeysByTalentId, selectedNodeKeysByTalentId, isNodeSelectedCheck],
   )
 
   const focusedNode = useMemo(
@@ -335,19 +443,276 @@ export function MaxrollTalentTree({ className, spec, talents, selected, onToggle
     setFocusedNodeKey(null)
   }, [activeTree])
 
+  useEffect(() => {
+    const el = treeViewportRef.current
+    if (!el) return
+
+    const observer = new ResizeObserver((entries) => {
+      const entry = entries[0]
+      if (!entry) return
+      setTreeViewportSize({
+        width: entry.contentRect.width,
+        height: entry.contentRect.height,
+      })
+    })
+
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
+
+  // Initialize editingEdges when switching trees in edit mode
+  useEffect(() => {
+    if (editMode) {
+      const initialEdges = activeTree === "class" ? classEdges : specEdges
+      setEditingEdges(initialEdges)
+    }
+  }, [editMode, activeTree, classEdges, specEdges])
+
+  // Toggle edge between two nodes (directed edges only)
+  const toggleEdge = (fromKey: string, toKey: string) => {
+    setEditingEdges(prev => {
+      const existing = prev.findIndex(e => e.from === fromKey && e.to === toKey)
+      if (existing >= 0) {
+        // Remove edge
+        return prev.filter((_, i) => i !== existing)
+      } else {
+        // Add edge (directed)
+        return [...prev, { from: fromKey, to: toKey }]
+      }
+    })
+  }
+
+  // Handle node click in edit mode
+  const handleNodeClickInEditMode = (nodeKey: string) => {
+    if (!selectedNodeForEdge) {
+      // First node selected
+      setSelectedNodeForEdge(nodeKey)
+    } else if (selectedNodeForEdge === nodeKey) {
+      // Same node clicked, deselect
+      setSelectedNodeForEdge(null)
+    } else {
+      // Second node selected, create/remove edge
+      toggleEdge(selectedNodeForEdge, nodeKey)
+      setSelectedNodeForEdge(null)
+    }
+  }
+
+  const setNodePositionInEditMode = (nodeKey: string, nextX: number, nextY: number) => {
+    const applyUpdate = (nodes: GuideTalentTreeNode[]) => nodes.map((node) => {
+      if (node.key !== nodeKey) return node
+      return {
+        ...node,
+        x: Math.round(nextX * 1000) / 1000,
+        y: Math.round(nextY * 1000) / 1000,
+      }
+    })
+
+    if (activeTree === "class") {
+      const base = editingClassNodes ?? classGuideTab?.tree.nodes ?? []
+      setEditingClassNodes(applyUpdate(base))
+    } else {
+      const base = editingSpecNodes ?? specGuideTab?.tree.nodes ?? []
+      setEditingSpecNodes(applyUpdate(base))
+    }
+  }
+
+  const nudgeNodeInEditMode = (nodeKey: string, dx: number, dy: number) => {
+    const applyUpdate = (nodes: GuideTalentTreeNode[]) => nodes.map((node) => {
+      if (node.key !== nodeKey) return node
+      return {
+        ...node,
+        x: Math.round((node.x + dx) * 1000) / 1000,
+        y: Math.round((node.y + dy) * 1000) / 1000,
+      }
+    })
+
+    if (activeTree === "class") {
+      const base = editingClassNodes ?? classGuideTab?.tree.nodes ?? []
+      setEditingClassNodes(applyUpdate(base))
+    } else {
+      const base = editingSpecNodes ?? specGuideTab?.tree.nodes ?? []
+      setEditingSpecNodes(applyUpdate(base))
+    }
+  }
+
+  const setNodeTalentInEditMode = (nodeKey: string, talentId: string | undefined) => {
+    const talent = talentId ? talentsById.get(talentId) : undefined
+    const applyUpdate = (nodes: GuideTalentTreeNode[]) => nodes.map((node) => {
+      if (node.key !== nodeKey) return node
+      if (!talent) {
+        const { talentId: _talentId, name: _name, desc: _desc, ...rest } = node
+        return { ...rest }
+      }
+      return {
+        ...node,
+        talentId: talent.id,
+        icon: talent.icon,
+        name: talent.name,
+        desc: talent.desc,
+      }
+    })
+
+    if (activeTree === "class") {
+      const base = editingClassNodes ?? classGuideTab?.tree.nodes ?? []
+      setEditingClassNodes(applyUpdate(base))
+    } else {
+      const base = editingSpecNodes ?? specGuideTab?.tree.nodes ?? []
+      setEditingSpecNodes(applyUpdate(base))
+    }
+  }
+
+  // Save edge and node edits to JSON file
+  const saveEdges = async () => {
+    if (!guideData) return
+    setSaving(true)
+    try {
+      const editedNodesForClass = editingClassNodes ?? classGuideTab?.tree.nodes ?? []
+      const editedNodesForSpec = editingSpecNodes ?? specGuideTab?.tree.nodes ?? []
+      const classTabIndex = classGuideTab ? guideData.tabs.findIndex((tab) => tab === classGuideTab) : -1
+      const specTabIndex = specGuideTab ? guideData.tabs.findIndex((tab) => tab === specGuideTab) : -1
+      const updatedData = {
+        ...guideData,
+        tabs: guideData.tabs.map((tab, i) => {
+          if (i === classTabIndex) {
+            return {
+              ...tab,
+              tree: {
+                ...tab.tree,
+                edges: activeTree === "class" ? editingEdges : tab.tree.edges,
+                nodes: editedNodesForClass,
+              },
+            }
+          }
+          if (i === specTabIndex) {
+            return {
+              ...tab,
+              tree: {
+                ...tab.tree,
+                edges: activeTree === "spec" ? editingEdges : tab.tree.edges,
+                nodes: editedNodesForSpec,
+              },
+            }
+          }
+          return tab
+        })
+      }
+      const response = await fetch("/api/talent-tree/save", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedData)
+      })
+      if (response.ok) {
+        onGuideDataSaved?.(updatedData)
+        alert("Edges saved successfully!")
+      } else {
+        alert("Failed to save edges")
+      }
+    } catch (err) {
+      console.error(err)
+      alert("Error saving edges")
+    } finally {
+      setSaving(false)
+    }
+  }
+
   const focusedStatus = focusedNode?.talentId
-    ? selectedSet.has(focusedNode.talentId)
+    ? isNodeSelectedCheck(focusedNode, selectedSet, duplicateNodeKeysByTalentId, selectedNodeKeysByTalentId)
       ? "Selected"
       : canSelect(focusedNode.talentId)
         ? "Available"
         : "Locked"
-    : "Root"
+    : focusedNode?.size === "hex"
+      ? "Root"
+      : "Passive"
 
-  const focusedPrereqs = focusedNode?.talentId
-    ? (prereqs.get(focusedNode.talentId) ?? []).map((id) => talentsById.get(id)?.name ?? id)
-    : []
+  const focusedPrereqs = useMemo(() => {
+    if (!focusedNode?.talentId) return []
+    const parentKeys = incomingByKey.get(focusedNode.key) ?? []
+    const labels = parentKeys.map((key) => {
+      const node = nodeByKey.get(key)
+      if (!node) return key
+      if (node.talentId) return talentsById.get(node.talentId)?.name ?? node.name
+      return node.name && node.name !== "Talent" ? node.name : "Path Node"
+    })
+    return Array.from(new Set(labels))
+  }, [focusedNode, incomingByKey, nodeByKey, talentsById])
 
   const treeType = activeTree
+  const treeScale = useMemo(() => {
+    if (treeViewportSize.width <= 0 || treeViewportSize.height <= 0) return 1
+    return Math.min(treeViewportSize.width / tree.width, treeViewportSize.height / tree.height)
+  }, [treeViewportSize.width, treeViewportSize.height, tree.width, tree.height])
+
+  useEffect(() => {
+    const canvas = edgeCanvasRef.current
+    if (!canvas) return
+
+    const dpr = window.devicePixelRatio || 1
+    canvas.width = Math.max(1, Math.round(tree.width * dpr))
+    canvas.height = Math.max(1, Math.round(tree.height * dpr))
+    canvas.style.width = `${tree.width}px`
+    canvas.style.height = `${tree.height}px`
+
+    const ctx = canvas.getContext("2d")
+    if (!ctx) return
+
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+    ctx.clearRect(0, 0, tree.width, tree.height)
+    ctx.lineWidth = 1.8
+    ctx.lineJoin = "round"
+    ctx.lineCap = "round"
+
+    for (const edge of tree.edges) {
+      const from = nodeByKey.get(edge.from)
+      const to = nodeByKey.get(edge.to)
+      if (!from || !to) continue
+
+      const fromMetrics = from.frame
+        ? { frame: from.frame, inner: from.inner ?? from.frame, icon: from.iconPx ?? 15 }
+        : getNodeMetrics(from.size, treeType)
+      const toMetrics = to.frame
+        ? { frame: to.frame, inner: to.inner ?? to.frame, icon: to.iconPx ?? 15 }
+        : getNodeMetrics(to.size, treeType)
+
+      const active = (from.talentId ? isNodeSelectedCheck(from, selectedSet, duplicateNodeKeysByTalentId, selectedNodeKeysByTalentId) : from.size === "hex")
+        && (to.talentId ? isNodeSelectedCheck(to, selectedSet, duplicateNodeKeysByTalentId, selectedNodeKeysByTalentId) : to.size === "hex")
+
+      const x1 = from.x + tree.offsetX + (fromMetrics.frame / 2)
+      const y1 = from.y + tree.offsetY + (fromMetrics.frame / 2)
+      const x2 = to.x + tree.offsetX + (toMetrics.frame / 2)
+      const y2 = to.y + tree.offsetY + (toMetrics.frame / 2)
+
+      const dx = x2 - x1
+      const dy = y2 - y1
+      const absDx = Math.abs(dx)
+      const absDy = Math.abs(dy)
+      const signX = dx === 0 ? 1 : Math.sign(dx)
+      const signY = dy === 0 ? 1 : Math.sign(dy)
+
+      ctx.strokeStyle = active ? "rgba(255,255,255,0.92)" : "rgba(88,69,67,0.78)"
+      ctx.beginPath()
+
+      // Keep connector geometry consistent: only horizontal/vertical/45deg segments.
+      if (absDx < 0.01 || absDy < 0.01 || Math.abs(absDx - absDy) < 0.01) {
+        ctx.moveTo(x1, y1)
+        ctx.lineTo(x2, y2)
+      } else if (absDx > absDy) {
+        const pivotX = x1 + (signX * absDy)
+        const pivotY = y2
+        ctx.moveTo(x1, y1)
+        ctx.lineTo(pivotX, pivotY)
+        ctx.lineTo(x2, y2)
+      } else {
+        const pivotX = x2
+        const pivotY = y1 + (signY * absDx)
+        ctx.moveTo(x1, y1)
+        ctx.lineTo(pivotX, pivotY)
+        ctx.lineTo(x2, y2)
+      }
+
+      ctx.stroke()
+    }
+  }, [tree.width, tree.height, tree.edges, tree.offsetX, tree.offsetY, nodeByKey, selectedSet, treeType, duplicateNodeKeysByTalentId, selectedNodeKeysByTalentId, isNodeSelectedCheck])
 
   return (
     <div className="overflow-hidden rounded-[18px] border border-[#302324] bg-[#09060a]">
@@ -377,12 +742,23 @@ export function MaxrollTalentTree({ className, spec, talents, selected, onToggle
           <img src={SPEC_ICON} width={18} height={18} alt="Moonstrike Spec" />
           <span>{spec} Spec</span>
         </button>
+
+        {editMode && (
+          <button
+            type="button"
+            className="ml-auto flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-lg mr-2 my-1 disabled:opacity-50"
+            onClick={saveEdges}
+            disabled={saving}
+          >
+            {saving ? "Saving..." : "Save Edges"}
+          </button>
+        )}
       </div>
 
       <div className="relative" style={{ background: "linear-gradient(rgb(29, 17, 15) 0%, rgb(75, 23, 10) 48.08%, rgb(132, 69, 70) 100%)" }}>
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.03),transparent_24%,rgba(0,0,0,0.14))]" />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.03),transparent_24%,rgba(0,0,0,0.14))" />
 
-        <div className="relative grid gap-3 p-3 lg:grid-cols-[minmax(0,1fr)_290px]">
+        <div className="relative grid gap-3 p-3 lg:grid-cols-[1fr_290px]">
           <div>
             <div className="mb-2 flex items-center justify-between px-1 text-white">
               <div className="text-sm italic text-[#edd3ca]">
@@ -400,120 +776,157 @@ export function MaxrollTalentTree({ className, spec, talents, selected, onToggle
             </div>
 
             <div className="px-1 pb-1">
-              <div className="relative mx-auto w-full max-w-[365px]" style={{ height: `${Math.round((tree.height / tree.width) * 365)}px` }}>
-                <svg className="absolute inset-0 h-full w-full" viewBox={`0 0 ${tree.width} ${tree.height}`} preserveAspectRatio="xMidYMid meet" style={{ pointerEvents: "none" }}>
-                  {tree.edges.map((edge, index) => {
-                    const from = nodeByKey.get(edge.from)
-                    const to = nodeByKey.get(edge.to)
-                    if (!from || !to) return null
-                    const fromMetrics = from.frame
-                      ? { frame: from.frame, inner: from.inner ?? from.frame, icon: from.iconPx ?? 15 }
-                      : getNodeMetrics(from.size, treeType)
-                    const toMetrics = to.frame
-                      ? { frame: to.frame, inner: to.inner ?? to.frame, icon: to.iconPx ?? 15 }
-                      : getNodeMetrics(to.size, treeType)
-                    const active = (from.talentId ? selectedSet.has(from.talentId) : from.size === "hex") && (to.talentId ? selectedSet.has(to.talentId) : to.size === "hex")
+              <div
+                ref={treeViewportRef}
+                className="relative w-full overflow-hidden rounded-[10px] border border-[#3a2d2d] bg-[rgba(9,6,10,0.35)]"
+                style={{
+                  height: activeTree === "spec" ? "clamp(500px, 72vh, 780px)" : "clamp(430px, 62vh, 620px)",
+                }}
+              >
+                <div className="absolute left-1/2 top-1/2" style={{ transform: `translate(-50%, -50%) scale(${treeScale})`, transformOrigin: "center center" }}>
+                  <div className="relative" style={{ width: tree.width, height: tree.height }}>
+                    <canvas ref={edgeCanvasRef} className="absolute inset-0" style={{ pointerEvents: "none" }} />
 
-                    return (
-                      <line
-                        key={`${edge.from}-${edge.to}-${index}`}
-                        x1={from.x + (fromMetrics.frame / 2)}
-                        y1={from.y + (fromMetrics.frame / 2)}
-                        x2={to.x + (toMetrics.frame / 2)}
-                        y2={to.y + (toMetrics.frame / 2)}
-                        stroke={active ? "rgba(255,255,255,0.92)" : "rgba(88,69,67,0.78)"}
-                        strokeWidth={1.8}
-                      />
-                    )
-                  })}
-                </svg>
+                    <div className="absolute inset-0">
+                      {tree.nodes.map((node) => {
+                        const metrics = node.frame
+                          ? { frame: node.frame, inner: node.inner ?? node.frame, icon: node.iconPx ?? 15 }
+                          : getNodeMetrics(node.size, treeType)
+                        const { frame, inner, icon } = metrics
+                        const selectedNow = isNodeSelectedCheck(node, selectedSet, duplicateNodeKeysByTalentId, selectedNodeKeysByTalentId)
+                        const unlocked = editMode || (node.talentId
+                          ? (selectedNow || canSelectNode(node))
+                          : (node.size === "hex" || activeNodeKeys.has(node.key)))
+                        const locked = !unlocked
+                        const clickable = editMode || unlocked
+                        const isSelectedForEdge = selectedNodeForEdge === node.key
 
-                <div className="absolute inset-0">
-                  {tree.nodes.map((node) => {
-                    const { frame, inner, icon } = node.frame
-                      ? {
-                          frame: node.frame,
-                          inner: node.inner ?? node.frame,
-                          icon: node.iconPx ?? 15,
-                        }
-                      : getNodeMetrics(node.size, treeType)
-                    const selectedNow = node.talentId ? selectedSet.has(node.talentId) : node.active
-                    const locked = node.talentId ? !selectedNow && !canSelect(node.talentId) : false
-                    const clickable = node.talentId ? (selectedNow ? canDeselect(node.talentId) : canSelect(node.talentId)) : false
+                        const fill = isSelectedForEdge ? "#22c55e" : (selectedNow ? "#db8787" : "rgb(4, 6, 12)")
+                        const border = isSelectedForEdge
+                          ? "#22c55e"
+                          : selectedNow
+                            ? "rgb(255,255,255)"
+                            : locked
+                              ? "rgb(85, 90, 106)"
+                              : "rgb(255,255,255)"
 
-                    const fill = selectedNow ? "#db8787" : (node.fillColor ?? "rgb(4, 6, 12)")
-                    const border = selectedNow
-                      ? "rgb(255,255,255)"
-                      : locked
-                        ? "rgb(85, 90, 106)"
-                        : (node.borderColor ?? "rgb(255,255,255)")
-
-                    return (
-                      <button
-                        key={node.key}
-                        type="button"
-                        className="absolute flex items-center justify-center"
-                        style={{
-                          left: node.x,
-                          top: node.y,
-                          width: frame,
-                          height: frame,
-                          background: "transparent",
-                          border: "none",
-                          opacity: locked ? 0.58 : 1,
-                          cursor: clickable ? "pointer" : "default",
-                          padding: 0,
-                        }}
-                        onMouseEnter={() => setFocusedNodeKey(node.key)}
-                        onFocus={() => setFocusedNodeKey(node.key)}
-                        onClick={() => {
-                          setFocusedNodeKey(node.key)
-                          if (!node.talentId || !clickable) return
-                          onToggle(node.talentId, !selectedNow)
-                        }}
-                        title={node.name}
-                      >
-                        {node.size === "hex" ? (
-                          <svg width={inner} height={inner} viewBox={`0 0 ${inner} ${inner}`}>
-                            <polygon
-                              points={`${inner * 0.91},${inner * 0.27} ${inner * 0.91},${inner * 0.73} ${inner * 0.5},${inner - 1} ${inner * 0.09},${inner * 0.73} ${inner * 0.09},${inner * 0.27} ${inner * 0.5},1`}
-                              fill={fill}
-                              stroke={border}
-                              strokeWidth={1}
-                            />
-                          </svg>
-                        ) : (
-                          <div
-                            className="absolute"
+                        return (
+                          <button
+                            key={node.key}
+                            type="button"
+                            className="absolute flex items-center justify-center"
                             style={{
-                              width: inner,
-                              height: inner,
-                              border: `1px solid ${border}`,
-                              borderRadius: node.size === "small" ? 999 : 0,
-                              background: fill,
+                              left: node.x + tree.offsetX,
+                              top: node.y + tree.offsetY,
+                              width: frame,
+                              height: frame,
+                              background: "transparent",
+                              border: "none",
+                              opacity: editMode ? 1 : (locked ? 0.58 : 1),
+                              cursor: clickable ? "pointer" : "default",
+                              padding: 0,
+                              outline: isSelectedForEdge ? "2px solid #22c55e" : "none",
+                              outlineOffset: "2px",
                             }}
-                          />
-                        )}
+                            onMouseEnter={() => setFocusedNodeKey(node.key)}
+                            onFocus={() => setFocusedNodeKey(node.key)}
+                            onClick={() => {
+                              setFocusedNodeKey(node.key)
+                              if (editMode) {
+                                handleNodeClickInEditMode(node.key)
+                              } else {
+                                const talentId = node.talentId
+                                if (!talentId || !clickable) return
 
-                        <img
-                          src={node.icon}
-                          width={icon}
-                          height={icon}
-                          alt={node.name}
-                          className="relative z-[1] object-contain"
-                          style={{ filter: locked ? "grayscale(0.3) brightness(0.72)" : "none" }}
-                          onError={(event) => {
-                            event.currentTarget.style.display = "none"
-                          }}
-                        />
-                      </button>
-                    )
-                  })}
+                                const duplicateKeys = duplicateNodeKeysByTalentId.get(talentId)
+                                if (duplicateKeys) {
+                                  if (selectedNow) {
+                                    const current = selectedNodeKeysByTalentId[talentId] && selectedNodeKeysByTalentId[talentId].length > 0
+                                      ? selectedNodeKeysByTalentId[talentId]
+                                      : duplicateKeys
+                                    const nextKeys = current.filter((key) => key !== node.key)
+                                    if (nextKeys.length === 0) {
+                                      onToggle(talentId, false)
+                                    }
+                                    updateSelectedNodeKeysForActiveTree((prev) => {
+                                      const prevCurrent = prev[talentId] && prev[talentId].length > 0
+                                        ? prev[talentId]
+                                        : duplicateKeys
+                                      const prevNextKeys = prevCurrent.filter((key) => key !== node.key)
+                                      if (prevNextKeys.length === prevCurrent.length) return prev
+                                      const next = { ...prev }
+                                      if (prevNextKeys.length === 0) {
+                                        delete next[talentId]
+                                      } else {
+                                        next[talentId] = prevNextKeys
+                                      }
+                                      return next
+                                    })
+                                  } else {
+                                    if (selectedInTree >= tree.cap) return
+                                    if (!selectedSet.has(talentId)) {
+                                      onToggle(talentId, true)
+                                    }
+                                    updateSelectedNodeKeysForActiveTree((prev) => {
+                                      const current = prev[talentId] ?? []
+                                      if (current.includes(node.key)) return prev
+                                      return {
+                                        ...prev,
+                                        [talentId]: [...current, node.key],
+                                      }
+                                    })
+                                  }
+                                  return
+                                }
+
+                                onToggle(talentId, !selectedNow)
+                              }
+                            }}
+                            title={editMode ? `${node.name} (click to ${isSelectedForEdge ? 'deselect' : 'connect'})` : node.name}
+                          >
+                            {node.size === "hex" ? (
+                              <svg className="absolute" width={inner} height={inner} viewBox={`0 0 ${inner} ${inner}`}>
+                                <polygon
+                                  points={`${inner * 0.91},${inner * 0.27} ${inner * 0.91},${inner * 0.73} ${inner * 0.5},${inner - 1} ${inner * 0.09},${inner * 0.73} ${inner * 0.09},${inner * 0.27} ${inner * 0.5},1`}
+                                  fill={fill}
+                                  stroke={border}
+                                  strokeWidth={1}
+                                />
+                              </svg>
+                            ) : (
+                              <div
+                                className="absolute"
+                                style={{
+                                  width: inner,
+                                  height: inner,
+                                  border: `1px solid ${border}`,
+                                  borderRadius: node.size === "small" ? 999 : 0,
+                                  background: fill,
+                                }}
+                              />
+                            )}
+
+                            <img
+                              src={node.icon}
+                              width={icon}
+                              height={icon}
+                              alt={node.name}
+                              className="relative z-[1] object-contain"
+                              style={{ filter: locked ? "grayscale(0.3) brightness(0.72)" : "none" }}
+                              onError={(event) => {
+                                event.currentTarget.style.display = "none"
+                              }}
+                            />
+                          </button>
+                        )
+                      })}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-          <aside className="rounded-[12px] border border-[#3a2d2d] bg-[rgba(8,8,12,0.72)] p-3 text-[#ded9e0]">
+          <aside className="rounded-[12px] border border-[#3a2d2d] bg-[rgba(8,8,12,0.72)] p-3 text-[#ded9e0] lg:w-[290px] shrink-0">
             {focusedNode ? (
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
@@ -533,6 +946,111 @@ export function MaxrollTalentTree({ className, spec, talents, selected, onToggle
                   </span>
                 </div>
 
+                {editMode && (
+                  <div>
+                    <div className="mb-1 text-[11px] uppercase tracking-[1px] text-[#9d8f8f]">Edit Talent Mapping</div>
+                    <input
+                      type="text"
+                      placeholder="Search talents..."
+                      className="w-full rounded border border-[#4a3b3a] bg-[#0c0a10] px-2 py-1.5 text-xs text-[#e6d8d3] mb-1"
+                      value={talentSearchQuery}
+                      onChange={(e) => setTalentSearchQuery(e.target.value)}
+                    />
+                    <select
+                      className="w-full rounded border border-[#4a3b3a] bg-[#0c0a10] px-2 py-1.5 text-xs text-[#e6d8d3]"
+                      value={focusedNode.talentId ?? ""}
+                      onChange={(event) => {
+                        const value = event.target.value
+                        setNodeTalentInEditMode(focusedNode.key, value ? value : undefined)
+                        setTalentSearchQuery("")
+                      }}
+                      size={8}
+                    >
+                      <option value="">No Talent (Generic/Path Node)</option>
+                      {talents
+                        .slice()
+                        .filter((t) => t.name.toLowerCase().includes(talentSearchQuery.toLowerCase()))
+                        .sort((a, b) => a.name.localeCompare(b.name))
+                        .map((talent) => (
+                          <option key={talent.id} value={talent.id}>{talent.name}</option>
+                        ))}
+                    </select>
+                  </div>
+                )}
+
+                {editMode && (
+                  <div>
+                    <div className="mb-1 text-[11px] uppercase tracking-[1px] text-[#9d8f8f]">Edit Position</div>
+                    <div className="grid grid-cols-2 gap-2">
+                      <label className="text-[11px] text-[#b7aab0]">
+                        X
+                        <input
+                          type="number"
+                          step={0.1}
+                          className="mt-1 w-full rounded border border-[#4a3b3a] bg-[#0c0a10] px-2 py-1 text-xs text-[#e6d8d3]"
+                          value={Number.isFinite(focusedNode.x) ? Number(focusedNode.x.toFixed(3)) : 0}
+                          onChange={(event) => {
+                            const value = Number.parseFloat(event.target.value)
+                            if (!Number.isFinite(value)) return
+                            setNodePositionInEditMode(focusedNode.key, value, focusedNode.y)
+                          }}
+                        />
+                      </label>
+                      <label className="text-[11px] text-[#b7aab0]">
+                        Y
+                        <input
+                          type="number"
+                          step={0.1}
+                          className="mt-1 w-full rounded border border-[#4a3b3a] bg-[#0c0a10] px-2 py-1 text-xs text-[#e6d8d3]"
+                          value={Number.isFinite(focusedNode.y) ? Number(focusedNode.y.toFixed(3)) : 0}
+                          onChange={(event) => {
+                            const value = Number.parseFloat(event.target.value)
+                            if (!Number.isFinite(value)) return
+                            setNodePositionInEditMode(focusedNode.key, focusedNode.x, value)
+                          }}
+                        />
+                      </label>
+                    </div>
+
+                    <div className="mt-2 grid grid-cols-3 gap-1">
+                      <span />
+                      <button
+                        type="button"
+                        className="rounded border border-[#4a3b3a] bg-[#0c0a10] px-2 py-1 text-xs text-[#e6d8d3]"
+                        onClick={() => nudgeNodeInEditMode(focusedNode.key, 0, -5)}
+                        title="Move up"
+                      >
+                        Up
+                      </button>
+                      <span />
+                      <button
+                        type="button"
+                        className="rounded border border-[#4a3b3a] bg-[#0c0a10] px-2 py-1 text-xs text-[#e6d8d3]"
+                        onClick={() => nudgeNodeInEditMode(focusedNode.key, -5, 0)}
+                        title="Move left"
+                      >
+                        Left
+                      </button>
+                      <button
+                        type="button"
+                        className="rounded border border-[#4a3b3a] bg-[#0c0a10] px-2 py-1 text-xs text-[#e6d8d3]"
+                        onClick={() => nudgeNodeInEditMode(focusedNode.key, 0, 5)}
+                        title="Move down"
+                      >
+                        Down
+                      </button>
+                      <button
+                        type="button"
+                        className="rounded border border-[#4a3b3a] bg-[#0c0a10] px-2 py-1 text-xs text-[#e6d8d3]"
+                        onClick={() => nudgeNodeInEditMode(focusedNode.key, 5, 0)}
+                        title="Move right"
+                      >
+                        Right
+                      </button>
+                    </div>
+                  </div>
+                )}
+
                 <p className="text-xs leading-5 text-[#d7d0dc]">{focusedNode.desc || "No description available."}</p>
 
                 {focusedPrereqs.length > 0 && (
@@ -549,7 +1067,9 @@ export function MaxrollTalentTree({ className, spec, talents, selected, onToggle
                 )}
 
                 <div className="text-[11px] text-[#92878f]">
-                  Hover or click a node to inspect it here.
+                  {editMode
+                    ? "Click nodes to connect/disconnect edges. You can also remap this node to any talent above."
+                    : "Hover or click a node to inspect it here."}
                 </div>
               </div>
             ) : (

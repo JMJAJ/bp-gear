@@ -1,0 +1,408 @@
+{
+  "kind": "talents",
+  "class": "Heavy Guardian",
+  "talents": [
+    {
+      "name": "Stone Fragment Tide",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_tank_angerinhibit.webp",
+      "id": "stone_fragment_tide",
+      "desc": "For 8s after you cast Cracking Echo, each Basic Attack pulls a target between 8 and 20 meters away toward you. The same target cannot be pulled again within 3s."
+    },
+    {
+      "name": "Power Conversion",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_tank_deftran.webp",
+      "id": "power_conversion",
+      "desc": "Armor 3300"
+    },
+    {
+      "name": "Life Suppress",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_tank_angerinhibitget.webp",
+      "id": "life_suppress",
+      "desc": "You gain the Suppress Expertise effect."
+    },
+    {
+      "name": "Weakness Strike",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_tank_ridicule03.webp",
+      "id": "weakness_strike",
+      "desc": "When dealing DMG, Basic Attacks have a fixed 10% chance to trigger Weakness Strike once."
+    },
+    {
+      "name": "Enhanced Weak Point Strike",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_tank_ridicule03.webp",
+      "id": "enhanced_weak_point_strike",
+      "desc": "Weakness Strike's fixed trigger chance +10%."
+    },
+    {
+      "name": "Block Recovery",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_sup_starfield.webp",
+      "id": "block_recovery",
+      "desc": "Successful Block restores 1% of your HP and 2 Rage. This can only occur once per second. Triggering Lucky Block restores 2% of your HP and 4 Rage. This can only occur once per second."
+    },
+    {
+      "name": "Countercrush",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_sup_guide.webp",
+      "id": "countercrush",
+      "desc": "A successful Block triggers a Countercrush, once per second. On a Lucky Block, randomly triggers 1 to 3 Countercrush, once per second."
+    },
+    {
+      "name": "Sandgrip",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_tank_pierce.webp",
+      "id": "sandgrip",
+      "desc": "After casting Sandgrip, gains 10% Versatility for 10s."
+    },
+    {
+      "name": "Healing Sands",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_tank_adjustment.webp",
+      "id": "healing_sands",
+      "desc": "Max HP +10%"
+    },
+    {
+      "name": "Fortune Bastion",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_tank_counterattack.webp",
+      "id": "fortune_bastion",
+      "desc": "During Brave Bastion, you can Block Magic Damage."
+    },
+    {
+      "name": "Slam Shelter",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_tank_growing.webp",
+      "id": "slam_shelter",
+      "desc": "A successful hit with Shield Bash reduces the target's DMG dealt to you by 3% for 10s, stacking up to 3 times."
+    },
+    {
+      "name": "Resolute Breath",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_tank_unrelent.webp",
+      "id": "resolute_breath",
+      "desc": "While shielded, use Basic Attack midair to slam down, detonating the shield and dealing damage equal to 30% max HP to nearby enemies."
+    },
+    {
+      "name": "Smash Support",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_tank_violent05.webp",
+      "id": "smash_support",
+      "desc": "Increases the effectiveness of Shield granted by Shield Bash by 30%."
+    },
+    {
+      "name": "Sandy Shelter",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_tank_barrier.webp",
+      "id": "sandy_shelter",
+      "desc": "During Stoneform, every 20 Rage gained triggers Sandy Shelter."
+    },
+    {
+      "name": "Shield Combo",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_sup_meleeconversion.webp",
+      "id": "shield_combo",
+      "desc": "Basic Attacks have a fixed 5% chance to trigger Shield Combo upon dealing DMG. Each 1% Mastery grants an extra 0.2% chance."
+    },
+    {
+      "name": "Breath of Stone",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_tank_victoryrush.webp",
+      "id": "breath_of_stone",
+      "desc": "Each Sand Crystal consumed reduces the CD of Stoneform by 1s."
+    },
+    {
+      "name": "Elemental Harmony",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_tank_violentconversion.webp",
+      "id": "elemental_harmony",
+      "desc": "While shielded, Magic Damage and Wind DMG you take are -25% and 50% respectively."
+    },
+    {
+      "name": "Shield Echo",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_tank_ridicule02.webp",
+      "id": "shield_echo",
+      "desc": "During Sandshroud, adding a shield to yourself via Shield Bash triggers Shield Echo."
+    },
+    {
+      "name": "Shattering Rageblow",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_tank_violent01.webp",
+      "id": "shattering_rageblow",
+      "desc": "When dealing DMG, Granite Fury has a 20% chance to allow your next Basic Attack to evolve into Rageblow. Each 2% Luck adds 1% chance. After casting Rageblow, increases Block DMG Reduction by 10% for 10s."
+    },
+    {
+      "name": "Fang of the Alpha",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_tank_ridiculeconversion.webp",
+      "id": "fang_of_the_alpha",
+      "desc": "DMG Reduction vs. Bosses +8%"
+    },
+    {
+      "name": "Survival Instinct",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_sup_inspire.webp",
+      "id": "survival_instinct",
+      "desc": "When HP falls below 30%, triggers Survival Instinct, once every 60s."
+    },
+    {
+      "name": "Shadow Veil",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_tank_bk03.webp",
+      "id": "shadow_veil",
+      "desc": "Each enemy within 3 meters increases your Block chance by 3%, up to 15%. (Doubles the effect against Elite or stronger enemies.) Remains unchanged when Earthfort Spec is active. If Block Spec is activated, the effect becomes: Every enemy within 3 meters increases Block DMG Reduction by 1%, up to 5%. (Doubles the effect against Elite or stronger enemies.)"
+    },
+    {
+      "name": "Valiant Fury",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_sup_melee04.webp",
+      "id": "valiant_fury",
+      "desc": "When Enraged, you gain 30% bonus Armor, decreasing by 5% per second."
+    },
+    {
+      "name": "Group Suppress",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_tank_bk04.webp",
+      "id": "group_suppress",
+      "desc": "Each enemy within 3 meters enhances the effectiveness of Suppress by 3%, up to 15%. This effect is doubled against Elite or stronger enemies."
+    },
+    {
+      "name": "Rage Awakening",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_tank_tough.webp",
+      "id": "rage_awakening",
+      "desc": "Consuming Rage has a chance to enter Enraged state for 5s. The more Rage you consume, the higher the chance. Each Rage increases the chance by 1%."
+    },
+    {
+      "name": "Block Spec",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_sup_inspireex.webp",
+      "id": "block_spec",
+      "desc": "Replaces Special Attack with Countercrush, and enhances the ability. When Lucky Block triggers, increases Block DMG Reduction by 10%. Try to keep Countercrush active as much as possible. While it's active, part of incoming DMG can be blocked. High Luck allows parry to yield various buffs."
+    },
+    {
+      "name": "Earthfort Spec",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_tank_shieldcounter.webp",
+      "id": "earthfort_spec",
+      "desc": "Further enhances the ability to use Shield Bash. Each additional enemy hit increases the damage dealt by Shield Bash by 30%, up to 150%. When attacked, increases All-Element Resistance by 0.6% for 4s, stacking up to 10 times. Each 1% Mastery increases this effect by 2%. Maintain shield uptime whenever possible. Besides reducing incoming damage, the shield also applies certain effects when active."
+    },
+    {
+      "name": "Resonant Domain",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_tank_stonearea.webp",
+      "id": "resonant_domain",
+      "desc": "Cracking Echo generates a Sandfield that lasts for 5s."
+    },
+    {
+      "name": "Sandstone Rewind",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_tank_luckblockcd.webp",
+      "id": "sandstone_rewind",
+      "desc": "When Rageblow deals DMG, it reduces the CD of Brave Bastion by 3s."
+    },
+    {
+      "name": "Sandstone Shock",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_tank_grind.webp",
+      "id": "sandstone_shock",
+      "desc": "During Brave Bastion, casting Countercrush or Granite Fury triggers Sand Crystal Shock."
+    },
+    {
+      "name": "Block Blessing",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_tank_blockbless.webp",
+      "id": "block_blessing",
+      "desc": "A successful Block grants a fixed 30% chance for your next Granite Fury cast to consume no Sand Crystals. This effect can occur up to once every 3s."
+    },
+    {
+      "name": "Fury Shelter",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/weiren936.webp",
+      "id": "fury_shelter",
+      "desc": "While Enraged, Max HP +20%."
+    },
+    {
+      "name": "Enraged Suppress",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/weiren937.webp",
+      "id": "enraged_suppress",
+      "desc": "While Enraged, Suppress effect +50%."
+    },
+    {
+      "name": "Enrage Delay",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/weiren938.webp",
+      "id": "enrage_delay",
+      "desc": "When Strength reaches 500, extends the duration of Enraged by 1 second."
+    },
+    {
+      "name": "Sandstone Revival",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/weiren939.webp",
+      "id": "sandstone_revival",
+      "desc": "For each 1 Sand Crystal consumed, restore 1% of Max HP."
+    },
+    {
+      "name": "Enrage Expansion",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/weiren940.webp",
+      "id": "enrage_expansion",
+      "desc": "While Enraged, Attack Speed +8%."
+    },
+    {
+      "name": "Rage Burst improvement",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/weiren941.webp",
+      "id": "rage_burst_improvement",
+      "desc": "The charge count of Rage Burst +1. While Enraged, Rage Burst and Terra Sunder become instant cast."
+    },
+    {
+      "name": "Star Fury",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/weiren942.webp",
+      "id": "star_fury",
+      "desc": "Increases Star Shatter and Starfall DMG by 30%, and guarantees Enraged status."
+    },
+    {
+      "name": "Stone Domain",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/weiren943.webp",
+      "id": "stone_domain",
+      "desc": "throughout the duration of Sandshroud, being attacked reduces the attack speed of enemy targets within a 5 meter radius by 30% for 3s. throughout the duration of Sandshroud, Armor of allies within an 8 meter radius +10%."
+    },
+    {
+      "name": "Amplified Earthfort",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/weiren944.webp",
+      "id": "amplified_earthfort",
+      "desc": "Upon the triggering of Weakness Strike, gains Amplified Earthfort."
+    },
+    {
+      "name": "Boulder Shield",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/weiren945.webp",
+      "id": "boulder_shield",
+      "desc": "During Stoneform, reduces all DMG taken by 10%."
+    },
+    {
+      "name": "Shield Bash",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/weiren946.webp",
+      "id": "shield_bash",
+      "desc": "Enhances Shield effectiveness by 10%. During Sandshroud, additionally enhances Shield effectiveness by 10%."
+    },
+    {
+      "name": "Recovery",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/weiren947.webp",
+      "id": "recovery",
+      "desc": "Each successful hit of Expertise Skill or Special Attack increases Strength by 1% in 5s. The effect stacks up to 10 times. With 10 stacks, increases Strength by 10% for 8s. During this effect, the next Expertise Skill heals you for 20% of the DMG dealt, yet no additional Strength stacks can be gained."
+    },
+    {
+      "name": "Starfall",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/weiren948.webp",
+      "id": "starfall",
+      "desc": "For every 20 Sand Crystals consumed, Star Shatter evolves into Starfall."
+    },
+    {
+      "name": "Rock Master",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/weiren949.webp",
+      "id": "rock_master",
+      "desc": "Casting Starfall grants Rock Master. Rock Master: For 15s, Basic Attack evolves into 1 Rupture, and Rage Burst evolves into 1 Terra Sunder. When Rock Master activates, grants 10% Rock Bonus for 10s."
+    },
+    {
+      "name": "Shatter Strike",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/weiren950.webp",
+      "id": "shatter_strike",
+      "desc": "When Star Shatter or Starfall defeats a target, Star Shatter immediately recovers 1 charge."
+    },
+    {
+      "name": "Enraged Rupture",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/weiren951.webp",
+      "id": "enraged_rupture",
+      "desc": "While Enraged, Rupture is bound to trigger Weakness Strike."
+    },
+    {
+      "name": "Star Shatter Pursuit",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/weiren952.webp",
+      "id": "star_shatter_pursuit",
+      "desc": "Star Shatter and Starfall deals additionally 200% DMG to targets with current HP less than or equal to 35%."
+    },
+    {
+      "name": "Great Rock Master",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/weiren953.webp",
+      "id": "great_rock_master",
+      "desc": "Casting Stoneform​ grants Rock Master: For 15s, Basic Attack evolves into 1 Rupture, and Rage Burst evolves into 1 Terra Sunder."
+    },
+    {
+      "name": "Bravery in Battle",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/weiren954.webp",
+      "id": "bravery_in_battle",
+      "desc": "In combat, 50% of overhealing converts to a shield (accumulated shield cannot exceed 50% of Max HP)."
+    },
+    {
+      "name": "Rock Guard",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/weiren955.webp",
+      "id": "rock_guard",
+      "desc": "Armor +5%. Each attack of Terra Sunder deals an additional instance of Attack Damage to the target, equal to 100% Armor."
+    },
+    {
+      "name": "Rampart Fury",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/weiren956.webp",
+      "id": "rampart_fury",
+      "desc": "When you take DMG, Lucky Block reduces DMG taken by 2%, lasting for 8s, stacking up to 3 times."
+    },
+    {
+      "name": "Block Shelter",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/weiren957.webp",
+      "id": "block_shelter",
+      "desc": "Granite Fury DMG enhances Lucky Block DMG Reduction by 2% for 8s. Stacks up to 3 times."
+    },
+    {
+      "name": "Sand Block",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/weiren958.webp",
+      "id": "sand_block",
+      "desc": "Successfully Blocking has a fixed 20% chance to gain 1 Sand Crystal. If it was a Lucky Block, gain an additional 1 Sand Crystal."
+    },
+    {
+      "name": "Rock Heart",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/weiren959.webp",
+      "id": "rock_heart",
+      "desc": "Every 10 casts of ​Granite Fury​ grant Rock Heart. Rock Heart: For 10s, ​Granite Fury​ evolves into Stone Fist. When Rock Heart activates, grants 10% Rock Bonus for 10s. Casting Stone Fist guarantees Enraged."
+    },
+    {
+      "name": "Granite",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/weiren960.webp",
+      "id": "granite",
+      "desc": "After casting Stone Fist, for the next 10s, summons 1 Granite every 2s."
+    },
+    {
+      "name": "Granite Fury",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/weiren961.webp",
+      "id": "granite_fury",
+      "desc": "For every 50 Rage generated, summons 1 Granite."
+    },
+    {
+      "name": "Rock Heal",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/weiren962.webp",
+      "id": "rock_heal",
+      "desc": "Stone Fist restores 5% max HP. For every 1 extra enemy hit, restores an additional 2% max HP (up to a total of 15%. Excess healing is converted into an equivalent Shield."
+    },
+    {
+      "name": "Rampart Fortitude",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/weiren963.webp",
+      "id": "rampart_fortitude",
+      "desc": "While Brave Bastion is active, taking DMG doubles Countercrush DMG."
+    },
+    {
+      "name": "Rage Enhancement",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/weiren964.webp",
+      "id": "rage_enhancement",
+      "desc": "Granite Fury consumes 1 Sand Crystal."
+    },
+    {
+      "name": "Granite Combo",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/weiren965.webp",
+      "id": "granite_combo",
+      "desc": "When Granite deals DMG, there is a chance, of which equals Luck Chance, to summon an additional Granite."
+    },
+    {
+      "name": "Intimidation",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/weiren966.webp",
+      "id": "intimidation",
+      "desc": "When Granite hits a target, it reduces all DMG taken by 10% for the next 5s."
+    },
+    {
+      "name": "Granite Fury",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/weiren967.webp",
+      "id": "granite_fury_1",
+      "desc": "Summoning 20 Granites grants Rock Heart: For 10s, Granite Fury evolves into Stone Fist."
+    },
+    {
+      "name": "Counter Storm",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/weiren968.webp",
+      "id": "counter_storm",
+      "desc": "For 10s after casting Cracking Echo, trigger 1 Countercrush every 2s."
+    },
+    {
+      "name": "Rock Luck",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/weiren969.webp",
+      "id": "rock_luck",
+      "desc": "Luck Chance +5%. Countercrush Crit +50%."
+    },
+    {
+      "name": "Rock Mastery",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/weiren970.webp",
+      "id": "rock_mastery",
+      "desc": "Mastery +2,500. During Brave Bastion, Mastery +8%."
+    },
+    {
+      "name": "Enraged Rock Heart",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/weiren971.webp",
+      "id": "enraged_rock_heart",
+      "desc": "While Enraged, increases Luck Chance by 10%."
+    }
+  ]
+}

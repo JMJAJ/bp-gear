@@ -23,6 +23,11 @@ export interface ModuleSlot {
 
 export interface ImagineSlot { key: string; idx: number }
 
+export interface TalentNodeSelections {
+  class: Record<string, string[]>
+  spec: Record<string, string[]>
+}
+
 export interface GearSet {
   id: string
   name: string
@@ -32,6 +37,7 @@ export interface GearSet {
   imagines: ImagineSlot[]
   modules: ModuleSlot[]
   selectedTalents: string[]
+  talentNodeSelections: TalentNodeSelections
   talentAspd: number
   psychoscopeConfig: PsychoscopeConfig
   createdAt: string
@@ -45,6 +51,7 @@ export interface SpecSnapshot {
   imagines: ImagineSlot[]
   modules: ModuleSlot[]
   selectedTalents: string[]
+  talentNodeSelections: TalentNodeSelections
   talentAspd: number
   psychoscopeConfig: PsychoscopeConfig
   gearSets: GearSet[]
@@ -89,6 +96,33 @@ function normalizeImagineSlots(slots: ImagineSlot[]): ImagineSlot[] {
 
 const defaultBase = (): BaseStats => ({ vers: 0, mast: 0, haste: 0, crit: 0, luck: 0, agi: 0 })
 const defaultBuffs = (): ExtBuffs => ({ crit: 0, luck: 0, haste: 0, mast: 0, vers: 0, aspd: 0, cspd: 0, illu: 0 })
+const defaultTalentNodeSelections = (): TalentNodeSelections => ({ class: {}, spec: {} })
+
+function normalizeTalentNodeSelections(value: unknown): TalentNodeSelections {
+  const normalizeTree = (treeValue: unknown): Record<string, string[]> => {
+    if (!treeValue || typeof treeValue !== "object") return {}
+    const out: Record<string, string[]> = {}
+    for (const [talentId, keys] of Object.entries(treeValue as Record<string, unknown>)) {
+      if (!Array.isArray(keys)) continue
+      out[talentId] = keys.filter((k): k is string => typeof k === "string")
+    }
+    return out
+  }
+
+  if (!value || typeof value !== "object") return defaultTalentNodeSelections()
+  const raw = value as Record<string, unknown>
+  return {
+    class: normalizeTree(raw.class),
+    spec: normalizeTree(raw.spec),
+  }
+}
+
+function cloneTalentNodeSelections(value: TalentNodeSelections): TalentNodeSelections {
+  return {
+    class: Object.fromEntries(Object.entries(value.class).map(([k, v]) => [k, [...v]])),
+    spec: Object.fromEntries(Object.entries(value.spec).map(([k, v]) => [k, [...v]])),
+  }
+}
 
 // ── Core Logic ────────────────────────────────────────────
 
@@ -694,6 +728,8 @@ interface AppState {
 
   selectedTalents: string[]
   setSelectedTalents: (t: string[]) => void
+  talentNodeSelections: TalentNodeSelections
+  setTalentNodeSelections: Dispatch<SetStateAction<TalentNodeSelections>>
   talentAspd: number
   setTalentAspd: (v: number) => void
 
@@ -741,6 +777,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [gearLib, setGearLib] = useState<GearLibItem[]>([])
   const [selectedClass, setSelectedClass] = useState<string | null>(null)
   const [selectedTalents, setSelectedTalents] = useState<string[]>([])
+  const [talentNodeSelections, setTalentNodeSelections] = useState<TalentNodeSelections>(defaultTalentNodeSelections)
   const [talentAspd, setTalentAspd] = useState<number>(0)
   const [gearSets, setGearSets] = useState<GearSet[]>([])
   const [psychoscopeConfig, setPsychoscopeConfig] = useState<PsychoscopeConfig>(DEFAULT_PSYCHOSCOPE_CONFIG)
@@ -839,12 +876,13 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       imagines: imagines.map(im => ({ ...im })),
       modules: modules.map(m => ({ ...m })),
       selectedTalents: [...selectedTalents],
+      talentNodeSelections: cloneTalentNodeSelections(talentNodeSelections),
       talentAspd,
       psychoscopeConfig: { ...psychoscopeConfig },
       createdAt: new Date().toISOString(),
     }
     setGearSets(prev => [...prev, newSet])
-  }, [gear, legendaryTypes, legendaryVals, imagines, modules, selectedTalents, talentAspd, psychoscopeConfig])
+  }, [gear, legendaryTypes, legendaryVals, imagines, modules, selectedTalents, talentNodeSelections, talentAspd, psychoscopeConfig])
 
   const deleteGearSet = useCallback((id: string) => {
     setGearSets(prev => prev.filter(s => s.id !== id))
@@ -857,6 +895,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setAllImagines(set.imagines.map(im => ({ ...im })))
     setModules(set.modules.map(m => ({ ...m, enabled: m.enabled ?? true })))
     setSelectedTalents([...set.selectedTalents])
+    setTalentNodeSelections(normalizeTalentNodeSelections((set as unknown as { talentNodeSelections?: unknown }).talentNodeSelections))
     setTalentAspd(set.talentAspd)
     setPsychoscopeConfig(set.psychoscopeConfig ? { ...set.psychoscopeConfig } : { ...DEFAULT_PSYCHOSCOPE_CONFIG })
   }, [setAllImagines])
@@ -878,12 +917,13 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         imagines: imagines.map(im => ({ ...im })),
         modules: modules.map(m => ({ ...m })),
         selectedTalents: [...selectedTalents],
+        talentNodeSelections: cloneTalentNodeSelections(talentNodeSelections),
         talentAspd,
         psychoscopeConfig: { ...psychoscopeConfig },
         createdAt: new Date().toISOString(),
       }
     }))
-  }, [gear, legendaryTypes, legendaryVals, imagines, modules, selectedTalents, talentAspd, psychoscopeConfig])
+  }, [gear, legendaryTypes, legendaryVals, imagines, modules, selectedTalents, talentNodeSelections, talentAspd, psychoscopeConfig])
 
   const renameGearSet = useCallback((id: string, name: string) => {
     setGearSets(prev => prev.map(s => s.id === id ? { ...s, name } : s))
@@ -893,7 +933,12 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setGearSets(prev => {
       // Merge: keep existing sets, add new ones (skip duplicates by id)
       const existingIds = new Set(prev.map(s => s.id))
-      const newSets = sets.filter(s => !existingIds.has(s.id))
+      const newSets = sets
+        .filter(s => !existingIds.has(s.id))
+        .map((s) => ({
+          ...s,
+          talentNodeSelections: normalizeTalentNodeSelections((s as unknown as { talentNodeSelections?: unknown }).talentNodeSelections),
+        }))
       return [...prev, ...newSets]
     })
   }, [])
@@ -912,9 +957,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         imagines: imagines.map(im => ({ ...im })),
         modules: modules.map(m => ({ ...m })),
         selectedTalents: [...selectedTalents],
+        talentNodeSelections: cloneTalentNodeSelections(talentNodeSelections),
         talentAspd,
         psychoscopeConfig: { ...psychoscopeConfig },
-        gearSets: gearSets.map(s => ({ ...s, gear: s.gear.map(g => ({ ...g })), imagines: s.imagines.map(im => ({ ...im })), modules: s.modules.map(m => ({ ...m })), selectedTalents: [...s.selectedTalents], legendaryTypes: [...s.legendaryTypes], legendaryVals: [...s.legendaryVals] })),
+        gearSets: gearSets.map(s => ({ ...s, gear: s.gear.map(g => ({ ...g })), imagines: s.imagines.map(im => ({ ...im })), modules: s.modules.map(m => ({ ...m })), selectedTalents: [...s.selectedTalents], talentNodeSelections: cloneTalentNodeSelections(normalizeTalentNodeSelections((s as unknown as { talentNodeSelections?: unknown }).talentNodeSelections)), legendaryTypes: [...s.legendaryTypes], legendaryVals: [...s.legendaryVals] })),
       }
     }))
 
@@ -930,6 +976,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         setAllImagines(snap.imagines.map(im => ({ ...im })))
         setModules(snap.modules.map(m => ({ ...m, enabled: m.enabled ?? true })))
         setSelectedTalents([...snap.selectedTalents])
+        setTalentNodeSelections(cloneTalentNodeSelections(snap.talentNodeSelections ?? defaultTalentNodeSelections()))
         setTalentAspd(snap.talentAspd)
         setPsychoscopeConfig({ ...snap.psychoscopeConfig })
         setGearSets(snap.gearSets.map(s => ({ ...s })))
@@ -941,6 +988,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         setImagines(defaultImageSlots())
         setModules(defaultModules())
         setSelectedTalents([])
+        setTalentNodeSelections(defaultTalentNodeSelections())
         setTalentAspd(0)
         setPsychoscopeConfig(DEFAULT_PSYCHOSCOPE_CONFIG)
         setGearSets([])
@@ -951,7 +999,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     // 3. Set new build and spec
     setBuildState(newBuild)
     setSpec(newSpec)
-  }, [spec, gear, legendaryTypes, legendaryVals, imagines, modules, selectedTalents, talentAspd, psychoscopeConfig, gearSets, setAllImagines])
+  }, [spec, gear, legendaryTypes, legendaryVals, imagines, modules, selectedTalents, talentNodeSelections, talentAspd, psychoscopeConfig, gearSets, setAllImagines])
 
   const recalculate = useCallback(() => {
     const className = getClassForSpec(spec)
@@ -969,11 +1017,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (!canSave.current) return
     try {
-      localStorage.setItem(SAVE_KEY, JSON.stringify({ build, spec, gear, legendaryTypes, legendaryVals, imagines, modules, base, ext, accent, theme, gearLib, selectedTalents, talentAspd, gearSets, psychoscopeConfig, specSnapshots }))
+      localStorage.setItem(SAVE_KEY, JSON.stringify({ build, spec, gear, legendaryTypes, legendaryVals, imagines, modules, base, ext, accent, theme, gearLib, selectedTalents, talentNodeSelections, talentAspd, gearSets, psychoscopeConfig, specSnapshots }))
     } catch (e) {
       console.error('[BPSR] Save failed:', e)
     }
-  }, [build, spec, gear, legendaryTypes, legendaryVals, imagines, modules, base, ext, accent, gearLib, selectedTalents, talentAspd, gearSets, psychoscopeConfig, specSnapshots])
+  }, [build, spec, gear, legendaryTypes, legendaryVals, imagines, modules, base, ext, accent, gearLib, selectedTalents, talentNodeSelections, talentAspd, gearSets, psychoscopeConfig, specSnapshots])
 
   // Load persisted state on mount
   useEffect(() => {
@@ -1027,8 +1075,14 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       }
       if (saved.gearLib && Array.isArray(saved.gearLib)) setGearLib(saved.gearLib)
       if (saved.selectedTalents && Array.isArray(saved.selectedTalents)) setSelectedTalents(saved.selectedTalents)
+      if (saved.talentNodeSelections) setTalentNodeSelections(normalizeTalentNodeSelections(saved.talentNodeSelections))
       if (typeof saved.talentAspd === "number") setTalentAspd(saved.talentAspd)
-      if (saved.gearSets && Array.isArray(saved.gearSets)) setGearSets(saved.gearSets)
+      if (saved.gearSets && Array.isArray(saved.gearSets)) {
+        setGearSets(saved.gearSets.map((s: GearSet) => ({
+          ...s,
+          talentNodeSelections: normalizeTalentNodeSelections((s as unknown as { talentNodeSelections?: unknown }).talentNodeSelections),
+        })))
+      }
       if (saved.psychoscopeConfig?.projectionId) {
         // Migrate: add bondLevel and enabled if missing from old saves
         const cfg = { ...DEFAULT_PSYCHOSCOPE_CONFIG, ...saved.psychoscopeConfig }
@@ -1064,6 +1118,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     selectedClass, setSelectedClass,
     getAllowedForSlot,
     selectedTalents, setSelectedTalents,
+    talentNodeSelections, setTalentNodeSelections,
     talentAspd, setTalentAspd,
     gearSets, setGearSets, saveGearSet, deleteGearSet, loadGearSet, applyGearSet, updateGearSet, renameGearSet, importGearSets,
     psychoscopeConfig, setPsychoscopeConfig,

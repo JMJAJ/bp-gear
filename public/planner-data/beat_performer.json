@@ -1,0 +1,414 @@
+{
+  "kind": "talents",
+  "class": "Beat Performer",
+  "talents": [
+    {
+      "name": "Passion Surge",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1300.webp",
+      "id": "passion_surge",
+      "desc": "When Melody is active, there is a 15% fixed chance per second to gain Passion Surge. Passion Surge: Special Attack costs zero Performance Passion for 10s. Removed after Special Attack is cast."
+    },
+    {
+      "name": "String Expansion",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1301.webp",
+      "id": "string_expansion",
+      "desc": "Performance Passion max limit +1."
+    },
+    {
+      "name": "Heat Surge",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1302.webp",
+      "id": "heat_surge",
+      "desc": "When Melody is activated, the trigger chance for Passion Surge +an extra 3% every 1 second (up to 30%). Passion Surge: Special Attack costs zero Performance Passion for 10s. Removed after Special Attack is cast."
+    },
+    {
+      "name": "Intellect Conversion",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1303.webp",
+      "id": "intellect_conversion",
+      "desc": "Every 10 points of Intellect provides 1 point of MATK."
+    },
+    {
+      "name": "Arcane Ascension",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1304.webp",
+      "id": "arcane_ascension",
+      "desc": "Special Attack costs 1 less Performance Passion."
+    },
+    {
+      "name": "Melody: Heat Core",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1305.webp",
+      "id": "melody_heat_core",
+      "desc": "Melody heals ally targets below 50% HP with 100% bonus effect."
+    },
+    {
+      "name": "Flame Pursuit",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1306.webp",
+      "id": "flame_pursuit",
+      "desc": "After using 3 Special Attacks, the next Basic Attack hit triggers Flame Pillar Blast."
+    },
+    {
+      "name": "Flame Pursuit II",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1307.webp",
+      "id": "flame_pursuit_ii",
+      "desc": "Flame Pillar Blast becomes a two-hit combo."
+    },
+    {
+      "name": "Dissonance Spec",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1308.webp",
+      "id": "dissonance_spec",
+      "desc": "While in Rhapsody of Flame, increases all Luck Chance acquired by any means by 50% and increases Resistance by 25%. Healing of Stillness: If you deal no DMG to enemies for 5s, each hit of your Basic Attack will heal up to 10 allies (Party Members Prioritized), with the full 4-hit combo restoring 15.05% of their max HP in total. Maintaining Heroic Melody and Rhapsody of Flame is crucial. Heroic Melody enhances healing while consecutive Fierce Strikes accelerate Harmonic Anthem casting frequency."
+    },
+    {
+      "name": "Lucky Soundwave",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1309.webp",
+      "id": "lucky_soundwave",
+      "desc": "Gains 1 Soundwave Energy whenever Expertise Skills or Amplified Beat trigger a Lucky Strike."
+    },
+    {
+      "name": "Trio Rhapsody",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1310.webp",
+      "id": "trio_rhapsody",
+      "desc": "Rhapsody of Flame always appears in its most powerful form. While in Rhapsody of Flame, healing +20%."
+    },
+    {
+      "name": "Severed Chapter",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1311.webp",
+      "id": "severed_chapter",
+      "desc": "Increases Resilience Break Efficiency of self and Allies within 30 meters by 10%. This effect cannot stack. After activating Heroic Melody, you and Allies within 30 meters have an resilience break efficiency +30% and deal 15% more DMG to Resilience Broken targets. This effect cannot stack."
+    },
+    {
+      "name": "Sound Blaze",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1312.webp",
+      "id": "sound_blaze",
+      "desc": "Gains 1 Soundwave Energy each time you deal DMG equal to 10 times ATK. Soundwave Energy stores up to 50. Skills consuming Performance Passion trigger Scorching Impact when dealing DMG, consuming all Soundwave Energy. Each 1 Soundwave Energy increases Scorching Impact DMG by 10%."
+    },
+    {
+      "name": "Healing Note",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1313.webp",
+      "id": "healing_note",
+      "desc": "Basic Attack deals an extra instance of DMG. For every 5 Soundwave Energy obtained, creates a Note for the ally with the lowest HP."
+    },
+    {
+      "name": "Blazing Heal",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1314.webp",
+      "id": "blazing_heal",
+      "desc": "Stores excess Healing (up to 500% of Max HP). After activating Heroic Melody, consumes stored Healing to recover allies' HP every 1 second, up to 15% of Max HP per second."
+    },
+    {
+      "name": "Concerto",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1315.webp",
+      "id": "concerto",
+      "desc": "During Rhapsody of Flame, Amplified Beat gains 1 additional attack. Amplified Beat's DMG -20%."
+    },
+    {
+      "name": "Restart",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1316.webp",
+      "id": "restart",
+      "desc": "When Harmonic Anthem or Fierce Strike triggers a Lucky Strike, limited to a single activation when striking multiple targets, immediately resets Rhapsody of Flame's CD and allows Rhapsody of Flame not to consume Performance Passion for 10s, this effect is nullified upon casting Rhapsody of Flame."
+    },
+    {
+      "name": "Concerto Spec",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1317.webp",
+      "id": "concerto_spec",
+      "desc": "Replaces Special Attack with Healing Beat. While Healing Melody is active, reduces the remaining CD of Fivefold Crescendo and Passion Burst by 1 second per second. Precisely placing the speaker ensures it echoes your Expertise whenever they are cast."
+    },
+    {
+      "name": "Brilliant Charge",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1318.webp",
+      "id": "brilliant_charge",
+      "desc": "When Healing Beat or Passion Burst applies Crit Healing or deals Crit DMG (triggers only once when hitting multiple targets), gains 1 Performance Passion."
+    },
+    {
+      "name": "Double Recovery Note",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1319.webp",
+      "id": "double_recovery_note",
+      "desc": "Healing Beat provides an additional equal Healing to targets under the influence of Healing Melody."
+    },
+    {
+      "name": "Crit Healing",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1320.webp",
+      "id": "crit_healing",
+      "desc": "Increases Crit Healing by 25%."
+    },
+    {
+      "name": "Fiery Beat",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1321.webp",
+      "id": "fiery_beat",
+      "desc": "Healing Beat Crit Rate +10%. Healing Beat Healing +10%."
+    },
+    {
+      "name": "Critical Encore",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1322.webp",
+      "id": "critical_encore",
+      "desc": "Every 1% Crit Rate grants 1% trigger chance for Encore Strings."
+    },
+    {
+      "name": "Passion Fury",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1323.webp",
+      "id": "passion_fury",
+      "desc": "For each 10 Performance Passion consumed, enhances Passion Burst to Passion Fury for 10s."
+    },
+    {
+      "name": "Stat Resonance",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1324.webp",
+      "id": "stat_resonance",
+      "desc": "While Healing Melody is active, grants allies appropriate buffs (Strength, Intellect, Agility) equal to 8% of Intellect. (Buffs from different Beat Performers cannot stack. Only one with the highest value applies.)"
+    },
+    {
+      "name": "Stat Resonance Crit",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1325.webp",
+      "id": "stat_resonance_crit",
+      "desc": "For 10s after using Passion Burst or its enhanced form (Passion Fury), doubles the buffs that Healing Melody provides to allies."
+    },
+    {
+      "name": "Fire Day",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1326.webp",
+      "id": "fire_day",
+      "desc": "Increases Fire Bonus by 8% when attacking Elite or higher targets."
+    },
+    {
+      "name": "Critical Acclaim",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1327.webp",
+      "id": "critical_acclaim",
+      "desc": "During Center Stage, triggering Encore Strings has a 30% fixed chance to grant Passion Surge. Passion Surge: Special Attack costs zero Performance Passion for 10s. Removed after Special Attack is cast."
+    },
+    {
+      "name": "Rhythm Spirit",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1328.webp",
+      "id": "rhythm_spirit",
+      "desc": "Defeating an enemy has a fixed 50% chance to grant you 1 Performance Passion."
+    },
+    {
+      "name": "Infinite Rhapsody",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1329.webp",
+      "id": "infinite_rhapsody",
+      "desc": "Replace Ultimate Rock the Stage with Infinite Rhapsody."
+    },
+    {
+      "name": "Concert Circuit",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1330.webp",
+      "id": "concert_circuit",
+      "desc": "Replace Ultimate Rock the Stage with Concert Circuit."
+    },
+    {
+      "name": "Encore Chain",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1331.webp",
+      "id": "encore_chain",
+      "desc": "When Encore Strings triggers, it activates a second time on the same target. Lucky Strike Chance is reduced by 20%."
+    },
+    {
+      "name": "Heat Boost",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1332.webp",
+      "id": "heat_boost",
+      "desc": "When Intellect reaches 500, the Performance Energy cap +20%."
+    },
+    {
+      "name": "Variation",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1333.webp",
+      "id": "variation",
+      "desc": "Increases Max HP by 20% and activates Dissonance Spec with its original effect intact. If Concerto Spec is activated, its effect is adjusted to replace Basic Attack with Resonant Strings."
+    },
+    {
+      "name": "Melody Chord",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1334.webp",
+      "id": "melody_chord",
+      "desc": "Melody Healing +20%. Each 1% Haste increases the REG SPD of Performance Passion by 1%."
+    },
+    {
+      "name": "Exaltation",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1335.webp",
+      "id": "exaltation",
+      "desc": "Performance Energy REG SPD +10%."
+    },
+    {
+      "name": "Indomitable Chord",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1336.webp",
+      "id": "indomitable_chord",
+      "desc": "While Heroic Melody is active, grants Super Armor, increases Resistance by 25%, and boosts movement speed by 10%."
+    },
+    {
+      "name": "Swing Reflux",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1337.webp",
+      "id": "swing_reflux",
+      "desc": "Hitting a target with Fierce Strike recovers 5 Performance Energy. Each additional target hit provides 1 extra Performance Energy, up to 10 total."
+    },
+    {
+      "name": "Luck Multiplier",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1338.webp",
+      "id": "luck_multiplier",
+      "desc": "Every 1% Luck grants 0.5% Lucky Strike DMG Multiplier. After activating Heroic Melody, doubles its conversion efficiency."
+    },
+    {
+      "name": "Resonant Counterpoint",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1339.webp",
+      "id": "resonant_counterpoint",
+      "desc": "When a Note forms, there's a 50% fixed chance to create an extra Note for a different target."
+    },
+    {
+      "name": "Sonic Cure",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1340.webp",
+      "id": "sonic_cure",
+      "desc": "When Expertise deal DMG (only triggers once when hitting multiple targets), additionally heal targets with Note."
+    },
+    {
+      "name": "Sonic Therapy",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1341.webp",
+      "id": "sonic_therapy",
+      "desc": "Converted healing from DMG +20% for targets affected by Note."
+    },
+    {
+      "name": "Flame's Rampage",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1342.webp",
+      "id": "flame_s_rampage",
+      "desc": "When Heroic Melody is active, Rhapsody of Flame will erupt, dealing Magic Damage equal to 50% ATK every 3s to targets it touches (DMG interval affected by Haste). While in Rhapsody of Flame, each hit of Harmonic Anthem also heals 1 ally with the lowest HP for 30% of the DMG dealt."
+    },
+    {
+      "name": "Flame Note",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1343.webp",
+      "id": "flame_note",
+      "desc": "When you use an Expertise Skill, Rhapsody of Flame will erupt with Rhythm, dealing Magic Damage equal to 100% of ATK and granting Note to allies it touches."
+    },
+    {
+      "name": "Finale Command",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1344.webp",
+      "id": "finale_command",
+      "desc": "Within 10s of casting Encore, each use of Rhapsody of Flame caused targets affected by Encore to trigger Encore Strings."
+    },
+    {
+      "name": "Encore Persistence",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1345.webp",
+      "id": "encore_persistence",
+      "desc": "Permanently benefits from Encore effect. For every 5 triggers of Encore Strings, the next Amplified Beat and Harmonic Anthem deal 50% more DMG."
+    },
+    {
+      "name": "Encore Luck Boost",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1346.webp",
+      "id": "encore_luck_boost",
+      "desc": "Every 1% Luck Chance grants 1% trigger chance for Encore Strings."
+    },
+    {
+      "name": "Encore Sharp Strike",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1347.webp",
+      "id": "encore_sharp_strike",
+      "desc": "Triggering Encore Strings to deal DMG or healing grants 2 Performance Energy. If the Encore Strings triggers Lucky Strike, grants 3 additional Performance Energy."
+    },
+    {
+      "name": "Absolute Center Stage",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1348.webp",
+      "id": "absolute_center_stage",
+      "desc": "After you use Center Stage, the number of enhanced skills increases from 1 to 2."
+    },
+    {
+      "name": "Center Stage: Mad Tune",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1349.webp",
+      "id": "center_stage_mad_tune",
+      "desc": "Each Performance Passion consumed reduces the CD of Center Stage by 1 second."
+    },
+    {
+      "name": "Tower Multiwave",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1350.webp",
+      "id": "tower_multiwave",
+      "desc": "Casting Center Stage immediately extends Heroic Melody by 5s."
+    },
+    {
+      "name": "Soundwave Overclock",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1351.webp",
+      "id": "soundwave_overclock",
+      "desc": "Upon casting Center Stage, grants 15 Soundwave Energy, and doubles all the Soundwave Energy gained in the next 10s."
+    },
+    {
+      "name": "Crit Charge Rhythm",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1352.webp",
+      "id": "crit_charge_rhythm",
+      "desc": "Fivefold Crescendo deals Crit DMG or healing (only triggers once for multiple targets), grants 2 Performance Energy. When Healing Melody lands a Crit Hit, grants 1 Performance Energy(only triggers once for multiple targets)."
+    },
+    {
+      "name": "Tower Flame Blast",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1353.webp",
+      "id": "tower_flame_blast",
+      "desc": "The speaker releases a Flame Shock every 5s."
+    },
+    {
+      "name": "Multi-Target Heat Amp",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1354.webp",
+      "id": "multi_target_heat_amp",
+      "desc": "Passion Burst and its enhanced version (Passion Fury) deal 5% more DMG per additional target hit, up to 25%."
+    },
+    {
+      "name": "Heated Tower Flame Blast",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1355.webp",
+      "id": "heated_tower_flame_blast",
+      "desc": "When Passion Burst and its enhanced version (Passion Fury) hit the speaker, it immediately releases a Flame Shock."
+    },
+    {
+      "name": "Sonic Verdict",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1356.webp",
+      "id": "sonic_verdict",
+      "desc": "While Healing Melody is active, Fivefold Crescendo also deals DMG, with its total DMG scaling equal to its healing multiplier. While Healing Melody is active, reduces the caster's DMG taken by 15%."
+    },
+    {
+      "name": "Harmonic Amplifier",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1357.webp",
+      "id": "harmonic_amplifier",
+      "desc": "Increases the DMG dealt and healing of skills triggered by the speaker by 30%."
+    },
+    {
+      "name": "Crescendo Healing Chord",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1358.webp",
+      "id": "crescendo_healing_chord",
+      "desc": "For every second Healing Melody remains active, enhances its Healing by 7%, stacking up to 5 times."
+    },
+    {
+      "name": "Crit Scale",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1359.webp",
+      "id": "crit_scale",
+      "desc": "Increases Crit Rate by 10% against enemies above 50% HP. Increases Crit Rate by 10% against enemies below 50% HP."
+    },
+    {
+      "name": "Symphonic Aria",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1360.webp",
+      "id": "symphonic_aria",
+      "desc": "Enhances Healing by 10% for targets affected by Healing Melody."
+    },
+    {
+      "name": "Vitality Unleash",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1361.webp",
+      "id": "vitality_unleash",
+      "desc": "7% of DMG dealt and 15% of healing done is stored as Rhythm. Within 10s after you cast Center Stage, the use of Expertise and Healing Beat consumes Rhythm to grant up to 40% bonus healing. The cap for Rhythm storage is 30 times MATK."
+    },
+    {
+      "name": "Encore Chain",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1362.webp",
+      "id": "encore_chain_1",
+      "desc": "Within 10s after you cast Encore, each use of Expertise Skill triggers Encore Strings for targets affected by Encore."
+    },
+    {
+      "name": "Tower Resonance",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1363.webp",
+      "id": "tower_resonance",
+      "desc": "Permanently benefits from Encore effect. Each trigger of Encore Strings reduces the remaining CD of Expertise by 1 second."
+    },
+    {
+      "name": "Stat Resonance Overload",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1364.webp",
+      "id": "stat_resonance_overload",
+      "desc": "For 15s after actively casting Encore, the stat bonuses provided by Healing Melody are +100%."
+    },
+    {
+      "name": "Center Stage: Concerto",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1365.webp",
+      "id": "center_stage_concerto",
+      "desc": "The charges of Center Stage increase by 1."
+    },
+    {
+      "name": "Absolute Center Stage",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1366.webp",
+      "id": "absolute_center_stage_1",
+      "desc": "After you use Center Stage, the number of enhanced skills increases from 1 to 2."
+    },
+    {
+      "name": "Spiral Flame",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1367.webp",
+      "id": "spiral_flame",
+      "desc": "After casting Center Stage, summon a wave of Sonic Surge."
+    }
+  ]
+}

@@ -1,0 +1,217 @@
+{
+  "kind": "talents",
+  "class": "General",
+  "description": "General talents available to all classes",
+  "talents": [
+    {
+      "name": "Strength",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/common_icon05.webp",
+      "id": "strength",
+      "desc": "Strength 10"
+    },
+    {
+      "name": "Intellect",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/common_icon06.webp",
+      "id": "intellect",
+      "desc": "Intellect 10"
+    },
+    {
+      "name": "Agility",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/common_attrdexterity.webp",
+      "id": "agility",
+      "desc": "Agility 10"
+    },
+    {
+      "name": "Endurance",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/common_icon08.webp",
+      "id": "endurance",
+      "desc": "Endurance 30"
+    },
+    {
+      "name": "Crit",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/common_icon12.webp",
+      "id": "crit",
+      "desc": "Crit 25"
+    },
+    {
+      "name": "Haste",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/common_attrhaste.webp",
+      "id": "haste",
+      "desc": "Haste 25"
+    },
+    {
+      "name": "Luck",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/common_attrluck.webp",
+      "id": "luck",
+      "desc": "Luck 25"
+    },
+    {
+      "name": "Mastery",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/common_attrmastery.webp",
+      "id": "mastery",
+      "desc": "Mastery 25"
+    },
+    {
+      "name": "Versatility",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/common_attrversatility.webp",
+      "id": "versatility",
+      "desc": "Versatility 25"
+    },
+    {
+      "name": "Ice Attack",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/common_icon03.webp",
+      "id": "ice_attack",
+      "desc": "Ice Attack 5"
+    },
+    {
+      "name": "Rock Attack",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/common_icon03.webp",
+      "id": "rock_attack",
+      "desc": "Rock Attack 5"
+    },
+    {
+      "name": "Thunder Attack",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/common_icon03.webp",
+      "id": "thunder_attack",
+      "desc": "Thunder Attack 5"
+    },
+    {
+      "name": "Forest Attack",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/common_icon03.webp",
+      "id": "forest_attack",
+      "desc": "Forest Attack 5"
+    },
+    {
+      "name": "Light Attack",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/common_icon03.webp",
+      "id": "light_attack",
+      "desc": "Light Attack 5"
+    },
+    {
+      "name": "Dark Attack",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/common_icon03.webp",
+      "id": "dark_attack",
+      "desc": "Dark Attack 5"
+    },
+    {
+      "name": "Wind Attack",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/common_icon03.webp",
+      "id": "wind_attack",
+      "desc": "Wind Attack 5"
+    },
+    {
+      "name": "Fire Attack",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/common_icon03.webp",
+      "id": "fire_attack",
+      "desc": "Fire Attack 5"
+    },
+    {
+      "name": "Crit Chance",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/common_icon12.webp",
+      "id": "crit_chance",
+      "desc": "Crit +7%"
+    },
+    {
+      "name": "Attack Speed",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/common_icon13.webp",
+      "id": "attack_speed",
+      "desc": "Attack Speed +1%"
+    },
+    {
+      "name": "Casting SPD",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/common_icon13.webp",
+      "id": "casting_spd",
+      "desc": "Attack Speed +1%"
+    },
+    {
+      "name": "Skill CD",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/common_icon13.webp",
+      "id": "skill_cd",
+      "desc": "Skill CD Reduction +1%"
+    },
+    {
+      "name": "Luck Chance",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/common_attrluck.webp",
+      "id": "luck_chance",
+      "desc": "Luck +7%"
+    },
+    {
+      "name": "Crit DMG",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/common_icon12.webp",
+      "id": "crit_dmg",
+      "desc": "Crit DMG +3%"
+    },
+    {
+      "name": "Luck Damage",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/common_attrluck.webp",
+      "id": "luck_damage",
+      "desc": "Lucky Strike DMG Multiplier +3%"
+    },
+    {
+      "name": "Healing",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/common_icon04.webp",
+      "id": "healing",
+      "desc": "Healing Output +3%"
+    },
+    {
+      "name": "Shield Defense",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/common_icon04.webp",
+      "id": "shield_defense",
+      "desc": "Shield Defense +4%"
+    },
+    {
+      "name": "Block Defense",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/common_icon04.webp",
+      "id": "block_defense",
+      "desc": "Block Defense +4%"
+    },
+    {
+      "name": "Universal Damage Bonus",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/common_attrversatility.webp",
+      "id": "universal_damage_bonus",
+      "desc": "Versatility Enhancement +3%"
+    },
+    {
+      "name": "Universal Defense",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/common_attrversatility.webp",
+      "id": "universal_defense",
+      "desc": "Versatility Resistance +3%"
+    },
+    {
+      "name": "Vulnerability factor",
+      "description": "",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/common_icon05.webp",
+      "id": "vulnerability_factor"
+    },
+    {
+      "name": "Vulnerability Damage Bonus",
+      "description": "",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/common_icon07.webp",
+      "id": "vulnerability_damage_bonus"
+    },
+    {
+      "name": "Suppress Damage Bonus",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/common_icon05.webp",
+      "id": "suppress_damage_bonus",
+      "desc": "Suppress Damage +3%"
+    },
+    {
+      "name": "Suppress Defense",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/common_icon07.webp",
+      "id": "suppress_defense",
+      "desc": "Suppress Defense +3%"
+    },
+    {
+      "name": "Inspiring Effect",
+      "description": "",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/common_icon05.webp",
+      "id": "inspiring_effect"
+    },
+    {
+      "name": "Ignore Defense",
+      "icon": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/common_icon13.webp",
+      "id": "ignore_defense",
+      "desc": "Armor Penetration +2%"
+    }
+  ]
+}

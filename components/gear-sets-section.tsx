@@ -219,6 +219,7 @@ export function GearSetsSection() {
         imagines: remoteSet.imagines.map(im => ({ ...im })),
         modules: remoteSet.modules.map(m => ({ ...m })),
         selectedTalents: [...remoteSet.selectedTalents],
+        talentNodeSelections: remoteSet.talentNodeSelections ?? { class: {}, spec: {} },
         talentAspd: remoteSet.talentAspd,
         psychoscopeConfig: remoteSet.psychoscopeConfig ? { ...remoteSet.psychoscopeConfig } : { ...DEFAULT_PSYCHOSCOPE_CONFIG },
         createdAt: new Date().toISOString(),
